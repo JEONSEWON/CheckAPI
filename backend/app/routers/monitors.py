@@ -26,7 +26,7 @@ router = APIRouter(prefix="/monitors", tags=["Monitors"])
 
 # Plan limits
 PLAN_LIMITS = {
-    "free": {"max_monitors": 3, "min_interval": 300},  # 5 minutes
+    "free": {"max_monitors": 10, "min_interval": 300},  # 5 minutes
     "starter": {"max_monitors": 20, "min_interval": 60},  # 1 minute
     "pro": {"max_monitors": 100, "min_interval": 30},  # 30 seconds
     "business": {"max_monitors": -1, "min_interval": 10},  # unlimited, 10 seconds
