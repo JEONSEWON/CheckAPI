@@ -64,8 +64,8 @@ export default function ContactPage() {
               icon: <Twitter className="h-8 w-8 text-green-600" />,
               title: 'Twitter / X',
               description: 'DM us or mention us for quick responses.',
-              action: '@checkapi_io',
-              href: 'https://twitter.com/checkapi_io',
+              action: '@imwon_dev',
+              href: 'https://x.com/imwon_dev',
             },
           ].map((item, i) => (
             <div key={i} className="bg-white p-6 rounded-xl border border-gray-200 hover:border-green-300 hover:shadow-lg transition text-center">
