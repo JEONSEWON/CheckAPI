@@ -10,13 +10,13 @@ export default function HomePage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                API Health Monitor
+                CheckAPI
               </span>
             </div>
             <nav className="hidden md:flex space-x-8">
               <a href="#features" className="text-gray-700 hover:text-green-600 transition">Features</a>
               <a href="#pricing" className="text-gray-700 hover:text-green-600 transition">Pricing</a>
-              <a href="#docs" className="text-gray-700 hover:text-green-600 transition">Docs</a>
+              <Link href="/docs" className="text-gray-700 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
               <Link 
@@ -192,7 +192,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <h3 className="font-bold text-gray-900 mb-4">API Health Monitor</h3>
+              <h3 className="font-bold text-gray-900 mb-4">CheckAPI</h3>
               <p className="text-gray-600 text-sm">
                 Simple, reliable API monitoring for developers and teams.
               </p>
@@ -202,27 +202,27 @@ export default function HomePage() {
               <ul className="space-y-2 text-sm text-gray-600">
                 <li><a href="#features" className="hover:text-green-600">Features</a></li>
                 <li><a href="#pricing" className="hover:text-green-600">Pricing</a></li>
-                <li><a href="#docs" className="hover:text-green-600">Documentation</a></li>
+                <li><Link href="/docs" className="hover:text-green-600">Documentation</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><a href="#" className="hover:text-green-600">About</a></li>
-                <li><a href="#" className="hover:text-green-600">Blog</a></li>
-                <li><a href="#" className="hover:text-green-600">Contact</a></li>
+                <li><Link href="/about" className="hover:text-green-600">About</Link></li>
+                <li><Link href="/blog" className="hover:text-green-600">Blog</Link></li>
+                <li><Link href="/contact" className="hover:text-green-600">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><a href="#" className="hover:text-green-600">Privacy</a></li>
-                <li><a href="#" className="hover:text-green-600">Terms</a></li>
+                <li><Link href="/privacy" className="hover:text-green-600">Privacy</Link></li>
+                <li><Link href="/terms" className="hover:text-green-600">Terms</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600">
-            © 2026 API Health Monitor. All rights reserved.
+            © 2026 CheckAPI. All rights reserved.
           </div>
         </div>
       </footer>
