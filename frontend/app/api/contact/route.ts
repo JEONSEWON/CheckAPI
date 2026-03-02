@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   }
 
   const { error } = await resend.emails.send({
-    from: 'CheckAPI <onboarding@resend.dev>',
+    from: 'CheckAPI Contact <noreply@checkapi.io>',
     to: 'wjsypdnjs123@gmail.com',
     replyTo: email,
     subject: `[Contact] ${subject}`,
