@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserPlus, Trash2, Mail, CheckCircle, Clock, Crown, Loader2 } from 'lucide-react';
 import { teamsAPI } from '@/lib/api';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 interface TeamMember {

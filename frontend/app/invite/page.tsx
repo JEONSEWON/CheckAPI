@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { teamsAPI } from '@/lib/api';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/lib/store';
 
 export default function InvitePage() {
   const router = useRouter();
