@@ -288,3 +288,20 @@ export default {
   subscriptionAPI,
   publicApi,
 };
+
+export const teamsAPI = {
+  listMembers: () => apiRequest('/api/v1/teams/members'),
+  invite: (email: string) =>
+    apiRequest('/api/v1/teams/invite', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+  removeMember: (memberId: string) =>
+    apiRequest(`/api/v1/teams/members/${memberId}`, { method: 'DELETE' }),
+  acceptInvite: (token: string) =>
+    apiRequest('/api/v1/teams/accept', {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+    }),
+  myTeam: () => apiRequest('/api/v1/teams/my-team'),
+};

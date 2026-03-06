@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from uuid import UUID
 
 from app.database import get_db
-from app.models import User, Monitor, Check
+from app.models import User, Monitor, Check, TeamMember
 from app.schemas import (
     MonitorCreate,
     MonitorUpdate,
@@ -22,6 +22,23 @@ from app.schemas import (
 from app.auth import get_current_user
 
 router = APIRouter(prefix="/monitors", tags=["Monitors"])
+
+
+def get_effective_owner_id(current_user: User, db: Session) -> str:
+    """팀 멤버인 경우 오너의 user_id 반환, 아니면 본인 id 반환"""
+    membership = db.query(TeamMember).filter(
+        TeamMember.member_id == current_user.id,
+        TeamMember.status == "active"
+    ).first()
+    return membership.owner_id if membership else current_user.id
+
+
+def get_effective_owner(current_user: User, db: Session) -> User:
+    """팀 멤버인 경우 오너 User 객체 반환"""
+    owner_id = get_effective_owner_id(current_user, db)
+    if owner_id != current_user.id:
+        return db.query(User).filter(User.id == owner_id).first()
+    return current_user
 
 
 # Plan limits
@@ -67,15 +84,15 @@ def list_monitors(
     """
     Get all monitors for the current user
     """
+    owner_id = get_effective_owner_id(current_user, db)
     monitors = (
         db.query(Monitor)
-        .filter(Monitor.user_id == current_user.id)
+        .filter(Monitor.user_id == owner_id)
         .order_by(desc(Monitor.created_at))
         .offset(skip)
         .limit(limit)
         .all()
     )
-    
     return monitors
 
 

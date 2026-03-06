@@ -32,6 +32,9 @@ class User(Base):
     monitors = relationship("Monitor", back_populates="user", cascade="all, delete-orphan")
     alert_channels = relationship("AlertChannel", back_populates="user", cascade="all, delete-orphan")
     subscription = relationship("Subscription", back_populates="user", uselist=False)
+    # Team
+    owned_team_members = relationship("TeamMember", foreign_keys="TeamMember.owner_id", back_populates="owner", cascade="all, delete-orphan")
+    team_memberships = relationship("TeamMember", foreign_keys="TeamMember.member_id", back_populates="member")
 
 
 class Monitor(Base):
@@ -107,6 +110,25 @@ class MonitorAlertChannel(Base):
     
     monitor_id = Column(String(36), ForeignKey("monitors.id", ondelete="CASCADE"), primary_key=True)
     alert_channel_id = Column(String(36), ForeignKey("alert_channels.id", ondelete="CASCADE"), primary_key=True)
+
+
+class TeamMember(Base):
+    """Team member - links a member user to an owner user"""
+    __tablename__ = "team_members"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    owner_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    member_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=True)  # null until accepted
+    invited_email = Column(String(255), nullable=False)
+    role = Column(String(20), default="member")  # owner, member
+    status = Column(String(20), default="pending")  # pending, active
+    invite_token = Column(String(100), unique=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    accepted_at = Column(DateTime)
+
+    # Relationships
+    owner = relationship("User", foreign_keys=[owner_id], back_populates="owned_team_members")
+    member = relationship("User", foreign_keys=[member_id], back_populates="team_memberships")
 
 
 class Subscription(Base):
