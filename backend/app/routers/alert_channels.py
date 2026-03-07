@@ -1,12 +1,10 @@
 """
 Alert Channel management routes: CRUD operations for alert channels
 """
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
-
 from app.database import get_db
 from app.models import User, AlertChannel, Monitor
 from app.schemas import (
@@ -22,20 +20,17 @@ router = APIRouter(prefix="/alert-channels", tags=["Alert Channels"])
 
 def validate_channel_config(channel_type: str, config: dict) -> None:
     """Validate alert channel configuration based on type"""
-    
     if channel_type == "email":
         if "email" not in config:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email channel requires 'email' in config"
             )
-        # Basic email validation
         if "@" not in config["email"]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid email address"
             )
-    
     elif channel_type == "slack":
         if "webhook_url" not in config:
             raise HTTPException(
@@ -47,14 +42,12 @@ def validate_channel_config(channel_type: str, config: dict) -> None:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid Slack webhook URL"
             )
-    
     elif channel_type == "telegram":
         if "chat_id" not in config or "bot_token" not in config:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Telegram channel requires 'chat_id' and 'bot_token' in config"
             )
-    
     elif channel_type == "discord":
         if "webhook_url" not in config:
             raise HTTPException(
@@ -66,7 +59,6 @@ def validate_channel_config(channel_type: str, config: dict) -> None:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid Discord webhook URL"
             )
-    
     elif channel_type == "webhook":
         if "url" not in config:
             raise HTTPException(
@@ -85,13 +77,10 @@ def list_alert_channels(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Get all alert channels for the current user
-    """
+    """Get all alert channels for the current user"""
     channels = db.query(AlertChannel).filter(
         AlertChannel.user_id == current_user.id
     ).all()
-    
     return channels
 
 
@@ -101,24 +90,77 @@ def create_alert_channel(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Create a new alert channel
-    """
-    # Validate config
+    """Create a new alert channel"""
     validate_channel_config(channel_data.type, channel_data.config)
-    
-    # Create channel
     new_channel = AlertChannel(
         user_id=current_user.id,
         type=channel_data.type,
         config=channel_data.config
     )
-    
     db.add(new_channel)
     db.commit()
     db.refresh(new_channel)
-    
     return new_channel
+
+
+@router.post("/{channel_id}/test", response_model=MessageResponse)
+def test_alert_channel(
+    channel_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Send a test alert to the specified channel"""
+    from app.alerts import (
+        send_email_alert,
+        send_slack_alert,
+        send_telegram_alert,
+        send_discord_alert,
+        send_webhook_alert,
+    )
+
+    channel = db.query(AlertChannel).filter(
+        AlertChannel.id == channel_id,
+        AlertChannel.user_id == current_user.id
+    ).first()
+
+    if not channel:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Alert channel not found"
+        )
+
+    monitor_name = "CheckAPI Test"
+    monitor_url = "https://checkapi.io"
+    new_status = "up"
+    old_status = "down"
+
+    try:
+        success = False
+        if channel.type == "email":
+            success = send_email_alert(channel.config, monitor_name, monitor_url, new_status, old_status)
+        elif channel.type == "slack":
+            success = send_slack_alert(channel.config, monitor_name, monitor_url, new_status, old_status)
+        elif channel.type == "telegram":
+            success = send_telegram_alert(channel.config, monitor_name, monitor_url, new_status, old_status)
+        elif channel.type == "discord":
+            success = send_discord_alert(channel.config, monitor_name, monitor_url, new_status, old_status)
+        elif channel.type == "webhook":
+            success = send_webhook_alert(channel.config, monitor_name, monitor_url, new_status, old_status, channel_id)
+
+        if success:
+            return {"message": "Test alert sent successfully"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to send test alert"
+            )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error sending test alert: {str(e)}"
+        )
 
 
 @router.get("/{channel_id}", response_model=AlertChannelResponse)
@@ -127,20 +169,16 @@ def get_alert_channel(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Get a specific alert channel
-    """
+    """Get a specific alert channel"""
     channel = db.query(AlertChannel).filter(
         AlertChannel.id == channel_id,
         AlertChannel.user_id == current_user.id
     ).first()
-    
     if not channel:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Alert channel not found"
         )
-    
     return channel
 
 
@@ -151,33 +189,23 @@ def update_alert_channel(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Update an alert channel
-    """
+    """Update an alert channel"""
     channel = db.query(AlertChannel).filter(
         AlertChannel.id == channel_id,
         AlertChannel.user_id == current_user.id
     ).first()
-    
     if not channel:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Alert channel not found"
         )
-    
-    # Update fields
     update_data = channel_data.model_dump(exclude_unset=True)
-    
-    # Validate config if being updated
     if "config" in update_data:
         validate_channel_config(channel.type, update_data["config"])
-    
     for field, value in update_data.items():
         setattr(channel, field, value)
-    
     db.commit()
     db.refresh(channel)
-    
     return channel
 
 
@@ -187,23 +215,18 @@ def delete_alert_channel(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Delete an alert channel
-    """
+    """Delete an alert channel"""
     channel = db.query(AlertChannel).filter(
         AlertChannel.id == channel_id,
         AlertChannel.user_id == current_user.id
     ).first()
-    
     if not channel:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Alert channel not found"
         )
-    
     db.delete(channel)
     db.commit()
-    
     return {"message": "Alert channel deleted successfully"}
 
 
@@ -214,37 +237,22 @@ def attach_channel_to_monitor(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Attach an alert channel to a monitor
-    """
-    # Verify ownership of both
+    """Attach an alert channel to a monitor"""
     channel = db.query(AlertChannel).filter(
         AlertChannel.id == channel_id,
         AlertChannel.user_id == current_user.id
     ).first()
-    
     monitor = db.query(Monitor).filter(
         Monitor.id == monitor_id,
         Monitor.user_id == current_user.id
     ).first()
-    
     if not channel:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Alert channel not found"
-        )
-    
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alert channel not found")
     if not monitor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Monitor not found"
-        )
-    
-    # Attach
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Monitor not found")
     if channel not in monitor.alert_channels:
         monitor.alert_channels.append(channel)
         db.commit()
-    
     return {"message": "Alert channel attached to monitor"}
 
 
@@ -255,35 +263,20 @@ def detach_channel_from_monitor(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Detach an alert channel from a monitor
-    """
-    # Verify ownership of both
+    """Detach an alert channel from a monitor"""
     channel = db.query(AlertChannel).filter(
         AlertChannel.id == channel_id,
         AlertChannel.user_id == current_user.id
     ).first()
-    
     monitor = db.query(Monitor).filter(
         Monitor.id == monitor_id,
         Monitor.user_id == current_user.id
     ).first()
-    
     if not channel:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Alert channel not found"
-        )
-    
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alert channel not found")
     if not monitor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Monitor not found"
-        )
-    
-    # Detach
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Monitor not found")
     if channel in monitor.alert_channels:
         monitor.alert_channels.remove(channel)
         db.commit()
-    
     return {"message": "Alert channel detached from monitor"}
