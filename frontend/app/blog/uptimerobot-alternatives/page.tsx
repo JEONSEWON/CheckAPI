@@ -96,11 +96,11 @@ export default function BlogPost1() {
               <span className="bg-green-100 text-green-700 text-sm font-bold px-3 py-1 rounded-full">Best Overall</span>
             </div>
             <p className="text-gray-600 mb-6">
-              CheckAPI is purpose-built for API monitoring. The free plan gives you 3 monitors with 5-minute checks — and crucially, commercial use is explicitly allowed with no restrictions.
+              CheckAPI is purpose-built for API monitoring. The free plan gives you 10 monitors with 5-minute checks — and crucially, commercial use is explicitly allowed with no restrictions.
             </p>
             <div className="grid grid-cols-2 gap-4 mb-6">
               {[
-                { label: 'Free monitors', value: '3', ok: true },
+                { label: 'Free monitors', value: '10', ok: true },
                 { label: 'Check interval', value: '5 min', ok: true },
                 { label: 'Commercial use', value: 'Allowed', ok: true },
                 { label: 'Alert channels', value: 'Email, Slack, Telegram, Discord', ok: true },
@@ -178,7 +178,7 @@ export default function BlogPost1() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {[
-                  { name: 'CheckAPI', monitors: '3', interval: '5 min', commercial: true },
+                  { name: 'CheckAPI', monitors: '10', interval: '5 min', commercial: true },
                   { name: 'Freshping', monitors: '50', interval: '1 min', commercial: true },
                   { name: 'Better Stack', monitors: '10', interval: '3 min', commercial: true },
                   { name: 'UptimeRobot', monitors: '50', interval: '5 min', commercial: false },
