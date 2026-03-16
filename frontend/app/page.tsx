@@ -3,19 +3,19 @@ import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe } from 'lu
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'checkapi.io | Simple API Monitoring & Public Status Pages',
-  description: 'Monitor your API uptime and response time in minutes. Get instant Slack/Email alerts and share beautiful status pages with your users. Free forever tier available.',
+  title: 'checkapi.io | Simple API Monitoring by Axiom Technologies',
+  description: 'Professional API uptime monitoring and public status pages. A core technology by Axiom Technologies for solo founders and engineering teams. Free tier available.',
   openGraph: {
-    title: 'checkapi.io | Simple API Monitoring & Public Status Pages',
-    description: 'Monitor your API uptime and response time in minutes. Get instant Slack/Email alerts and share beautiful status pages with your users.',
+    title: 'checkapi.io | Simple API Monitoring by Axiom Technologies',
+    description: 'Professional API uptime monitoring and public status pages. A core technology by Axiom Technologies for solo founders and engineering teams.',
     url: 'https://checkapi.io',
-    siteName: 'CheckAPI',
+    siteName: 'CheckAPI by Axiom Technologies',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'checkapi.io | Simple API Monitoring & Public Status Pages',
-    description: 'Monitor your API uptime and response time in minutes. Free forever tier available.',
+    title: 'checkapi.io | Simple API Monitoring by Axiom Technologies',
+    description: 'Professional API uptime monitoring and public status pages. Free tier available.',
     creator: '@imwon_dev',
   },
 };
@@ -165,11 +165,16 @@ export default function HomePage() {
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-white rounded-2xl border border-gray-200 p-10 shadow-sm">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Why checkapi.io?</h2>
-          <p className="text-gray-600 text-lg leading-relaxed">
+          <p className="text-gray-600 text-lg leading-relaxed mb-6">
             A solo developer built this tool after getting tired of finding out about API downtime from user complaints.
             Enterprise tools were too bloated. Free tools had too many restrictions. So this was built to do one thing well —
             tell you when your API is broken, before anyone else finds out.
           </p>
+          <div className="border-t border-gray-100 pt-6">
+            <p className="text-sm text-gray-400 italic">
+              Axiom Technologies is dedicated to building minimalist, mission-critical tools for the modern developer. checkapi.io is our first step toward a more reliable web.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -378,7 +383,8 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <h3 className="font-bold text-gray-900 mb-4">CheckAPI</h3>
+              <h3 className="font-bold text-gray-900 mb-2">CheckAPI</h3>
+              <p className="text-xs text-gray-400 mb-2">by Axiom Technologies</p>
               <p className="text-gray-600 text-sm">Simple, reliable API monitoring for developers and teams.</p>
             </div>
             <div>
@@ -406,7 +412,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600">
-            © 2026 CheckAPI. All rights reserved.
+            © 2026 Axiom Technologies. All rights reserved.
           </div>
         </div>
       </footer>
