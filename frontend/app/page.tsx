@@ -1,5 +1,24 @@
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Zap, Shield, BarChart3 } from 'lucide-react';
+import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'checkapi.io | Simple API Monitoring & Public Status Pages',
+  description: 'Monitor your API uptime and response time in minutes. Get instant Slack/Email alerts and share beautiful status pages with your users. Free forever tier available.',
+  openGraph: {
+    title: 'checkapi.io | Simple API Monitoring & Public Status Pages',
+    description: 'Monitor your API uptime and response time in minutes. Get instant Slack/Email alerts and share beautiful status pages with your users.',
+    url: 'https://checkapi.io',
+    siteName: 'CheckAPI',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'checkapi.io | Simple API Monitoring & Public Status Pages',
+    description: 'Monitor your API uptime and response time in minutes. Free forever tier available.',
+    creator: '@imwon_dev',
+  },
+};
 
 export default function HomePage() {
   return (
@@ -19,13 +38,8 @@ export default function HomePage() {
               <Link href="/docs" className="text-gray-700 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <Link 
-                href="/login"
-                className="text-gray-700 hover:text-green-600 transition"
-              >
-                Log in
-              </Link>
-              <Link 
+              <Link href="/login" className="text-gray-700 hover:text-green-600 transition">Log in</Link>
+              <Link
                 href="/register"
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
               >
@@ -39,56 +53,106 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-            <span>✓</span> Free for Commercial Use — No restrictions
+          {/* Commercial Use Badge */}
+          <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm font-medium px-4 py-2 rounded-full mb-8">
+            <CheckCircle className="h-4 w-4" />
+            Free for Commercial Use — No restrictions
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            API Monitoring That
+
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            Stop finding out your API
             <br />
             <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-              Won&apos;t Block Your Business
+              is down from your users.
             </span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Unlike UptimeRobot, CheckAPI&apos;s free plan has zero commercial-use restrictions.
-            Monitor your production APIs, get instant alerts, and detect failures even when status code is 200.
+
+          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+            Minimalist API monitoring & status pages built for solo founders.
+            5-minute setup, zero bloat, 24/7 peace of mind.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link 
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link
               href="/register"
-              className="inline-flex items-center justify-center bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition text-lg font-medium"
+              className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition font-semibold text-lg flex items-center gap-2 shadow-lg shadow-green-200"
             >
-              Start Free — No Credit Card
-              <ArrowRight className="ml-2 h-5 w-5" />
+              Protect My API for Free
+              <ArrowRight className="h-5 w-5" />
             </Link>
-            <Link 
-              href="#pricing"
-              className="inline-flex items-center justify-center border-2 border-green-600 text-green-600 px-8 py-3 rounded-lg hover:bg-green-50 transition text-lg font-medium"
-            >
-              View Pricing
-            </Link>
+            <a href="#pricing" className="text-gray-600 hover:text-green-600 transition px-6 py-4">
+              View Pricing →
+            </a>
           </div>
-          <p className="text-sm text-gray-500 mt-4">
-            10 monitors free • Commercial use allowed • No credit card required
+
+          <p className="text-sm text-gray-400 mt-4">
+            No credit card required · 5-minute setup · 10 monitors free
           </p>
         </div>
 
-        {/* Demo Dashboard Preview */}
-        <div className="mt-16 rounded-xl border-4 border-gray-200 shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-8">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Your Monitors</h3>
-                <span className="text-sm text-green-600 font-medium">All systems operational ✓</span>
+        {/* Dashboard Screenshot */}
+        <div className="mt-16 relative">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl overflow-hidden">
+            <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-400" />
+              <div className="w-3 h-3 rounded-full bg-yellow-400" />
+              <div className="w-3 h-3 rounded-full bg-green-400" />
+              <span className="ml-4 text-sm text-gray-500">checkapi.io/dashboard</span>
+            </div>
+            <div className="p-8">
+              {/* Mock Dashboard Preview */}
+              <div className="grid grid-cols-4 gap-4 mb-8">
+                {[
+                  { label: 'Total Monitors', value: '8', color: 'text-gray-900' },
+                  { label: 'Online', value: '8', color: 'text-green-600' },
+                  { label: 'Offline', value: '0', color: 'text-red-500' },
+                  { label: 'Avg Uptime', value: '99.9%', color: 'text-green-600' },
+                ].map((stat) => (
+                  <div key={stat.label} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                    <p className="text-sm text-gray-500 mb-1">{stat.label}</p>
+                    <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+                  </div>
+                ))}
               </div>
+
+              {/* Response Time Graph Placeholder with Callout */}
+              <div className="relative bg-gray-50 rounded-xl border border-gray-200 p-6 mb-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="font-semibold text-gray-900">Response Time — Last 24h</h2>
+                  <span className="text-xs text-gray-400">Updated 30s ago</span>
+                </div>
+                {/* Graph bars simulation */}
+                <div className="flex items-end gap-1 h-24">
+                  {[40, 45, 42, 38, 44, 80, 120, 95, 48, 42, 44, 41, 39, 43, 46, 42, 40, 38, 44, 43, 41, 45, 42, 40].map((h, i) => (
+                    <div
+                      key={i}
+                      className={`flex-1 rounded-sm ${h > 70 ? 'bg-red-400' : 'bg-green-400'}`}
+                      style={{ height: `${(h / 120) * 100}%` }}
+                    />
+                  ))}
+                </div>
+                {/* Callout badge */}
+                <div className="absolute top-12 left-1/3 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg">
+                  ⚡ Latency spike detected — Slack alert sent in 1s
+                </div>
+              </div>
+
+              {/* Monitor List */}
               <div className="space-y-3">
-                {['Production API', 'Staging Environment', 'CDN Endpoint'].map((name, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                      <span className="font-medium text-gray-900">{name}</span>
+                {[
+                  { name: 'Production API', url: 'api.yourapp.com', uptime: '99.9%', status: 'up' },
+                  { name: 'Staging Environment', url: 'staging-api.yourapp.com', uptime: '99.8%', status: 'up' },
+                  { name: 'Payment Webhook', url: 'hooks.yourapp.com/stripe', uptime: '100%', status: 'up' },
+                ].map((monitor) => (
+                  <div key={monitor.name} className="flex items-center justify-between bg-white border border-gray-100 rounded-lg px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                      <div>
+                        <p className="font-medium text-gray-900 text-sm">{monitor.name}</p>
+                        <p className="text-xs text-gray-400">{monitor.url}</p>
+                      </div>
                     </div>
-                    <span className="text-sm text-gray-500">99.8% uptime</span>
+                    <span className="text-sm font-semibold text-green-600">{monitor.uptime} uptime</span>
                   </div>
                 ))}
               </div>
@@ -97,96 +161,215 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Why checkapi.io Section */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-white rounded-2xl border border-gray-200 p-10 shadow-sm">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Why checkapi.io?</h2>
+          <p className="text-gray-600 text-lg leading-relaxed">
+            A solo developer built this tool after getting tired of finding out about API downtime from user complaints.
+            Enterprise tools were too bloated. Free tools had too many restrictions. So this was built to do one thing well —
+            tell you when your API is broken, before anyone else finds out.
+          </p>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Everything you need to monitor your APIs
+      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Reliable API Uptime Checks
           </h2>
-          <p className="text-xl text-gray-600">
-            Simple, powerful, and affordable monitoring for modern teams
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Everything you need to monitor APIs and communicate status to your users.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          <FeatureCard 
-            icon={<Zap className="h-8 w-8 text-green-600" />}
-            title="Real-time Monitoring"
-            description="Check your APIs every minute. Get instant alerts when something goes wrong."
-          />
-          <FeatureCard 
-            icon={<Shield className="h-8 w-8 text-green-600" />}
-            title="Multi-channel Alerts"
-            description="Email, Slack, Telegram, Discord, or custom webhooks. You choose how to be notified."
-          />
-          <FeatureCard 
-            icon={<BarChart3 className="h-8 w-8 text-green-600" />}
-            title="Detailed Analytics"
-            description="Track uptime, response times, and incidents. Visualize trends over time."
-          />
+          {[
+            {
+              icon: <Zap className="h-6 w-6 text-green-600" />,
+              title: 'Instant Alerts',
+              description: 'Check your APIs every minute. Get instant alerts when something goes wrong.',
+            },
+            {
+              icon: <Bell className="h-6 w-6 text-green-600" />,
+              title: 'Multi-Channel Notifications',
+              description: 'Email, Slack, Telegram, Discord, or custom webhooks. You choose how to be notified.',
+            },
+            {
+              icon: <BarChart3 className="h-6 w-6 text-green-600" />,
+              title: '24h Response Time Graphs',
+              description: 'Track uptime, response times, and incidents. Distinguish provider lag from your own code.',
+            },
+            {
+              icon: <Globe className="h-6 w-6 text-green-600" />,
+              title: 'Customizable Status Pages',
+              description: 'Share a public status page with your users. No more "is it down?" support tickets.',
+            },
+            {
+              icon: <Shield className="h-6 w-6 text-green-600" />,
+              title: 'Silent Failure Detection',
+              description: 'Catches failures even when your API returns 200 OK but something is actually broken.',
+            },
+            {
+              icon: <CheckCircle className="h-6 w-6 text-green-600" />,
+              title: 'Free for Commercial Use',
+              description: 'Unlike UptimeRobot, no restrictions on how you use the free plan. Build your business.',
+            },
+          ].map((feature) => (
+            <div key={feature.title} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition">
+              <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center mb-4">
+                {feature.icon}
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
+              <p className="text-gray-600 text-sm">{feature.description}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Simple, transparent pricing
-          </h2>
-          <p className="text-xl text-gray-600">
-            Start free, upgrade when you grow
-          </p>
+      <section id="pricing" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Simple, transparent pricing</h2>
+          <p className="text-xl text-gray-600">Start free, upgrade when you grow</p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <PricingCard 
-            name="Free"
-            price="$0"
-            features={['10 monitors', '5-minute checks', 'All alert channels', 'Public status page', '7-day history']}
-            cta="Start Free"
-            href="/register"
-          />
-          <PricingCard 
-            name="Starter"
-            price="$5"
-            popular
-            features={['20 monitors', '1-minute checks', 'All alert channels', 'Analytics', '30-day history']}
-            cta="Get Started"
-            href="/register"
-          />
-          <PricingCard 
-            name="Pro"
-            price="$15"
-            features={['100 monitors', '30-second checks', 'Team sharing', 'Priority support', '90-day history']}
-            cta="Get Started"
-            href="/register"
-          />
-          <PricingCard 
-            name="Business"
-            price="$49"
-            features={['Unlimited monitors', '10-second checks', 'API access', 'Custom features', 'SLA', '1-year history']}
-            cta="Get Started"
-            href="/register"
-          />
+        <div className="grid md:grid-cols-4 gap-6">
+          {[
+            {
+              name: 'Free',
+              price: '$0',
+              period: '/month',
+              badge: null,
+              features: [
+                '10 monitors',
+                '5-minute checks',
+                'All alert channels',
+                'Public status page',
+                '7-day history',
+                'Commercial use allowed',
+              ],
+              cta: 'Start Free',
+              ctaHref: '/register',
+              highlight: false,
+            },
+            {
+              name: 'Starter',
+              price: '$5',
+              period: '/month',
+              badge: 'POPULAR',
+              features: [
+                '20 monitors',
+                '1-minute checks',
+                'All alert channels',
+                'Analytics',
+                '30-day history',
+                'Commercial use allowed',
+              ],
+              cta: 'Get Started',
+              ctaHref: '/register',
+              highlight: true,
+            },
+            {
+              name: 'Pro',
+              price: '$15',
+              period: '/month',
+              badge: 'Best for growing startups',
+              features: [
+                '100 monitors',
+                '30-second checks',
+                'Team sharing',
+                'Priority support',
+                '90-day history',
+                'Commercial use allowed',
+              ],
+              cta: 'Get Started',
+              ctaHref: '/register',
+              highlight: false,
+            },
+            {
+              name: 'Business',
+              price: '$49',
+              period: '/month',
+              badge: null,
+              features: [
+                'Unlimited monitors',
+                '10-second checks',
+                'API access',
+                'Custom features',
+                'SLA',
+                '1-year history',
+              ],
+              cta: 'Get Started',
+              ctaHref: '/register',
+              highlight: false,
+            },
+          ].map((plan) => (
+            <div
+              key={plan.name}
+              className={`bg-white rounded-2xl border-2 p-6 ${
+                plan.highlight ? 'border-green-500 shadow-lg shadow-green-100' : 'border-gray-200'
+              }`}
+            >
+              {plan.badge && (
+                <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full mb-3 ${
+                  plan.badge === 'POPULAR'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-blue-50 text-blue-600 border border-blue-200'
+                }`}>
+                  {plan.badge}
+                </span>
+              )}
+              <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
+              <div className="mb-4">
+                <span className="text-3xl font-bold text-gray-900">{plan.price}</span>
+                <span className="text-gray-500">{plan.period}</span>
+              </div>
+              <ul className="space-y-2 mb-6">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+                    <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={plan.ctaHref}
+                className={`block text-center py-2.5 rounded-lg font-medium transition ${
+                  plan.highlight
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'border border-gray-300 text-gray-700 hover:border-green-500 hover:text-green-600'
+                }`}
+              >
+                {plan.cta}
+              </Link>
+            </div>
+          ))}
         </div>
+
+        <p className="text-center text-sm text-gray-500 mt-6">
+          All plans include commercial use. No hidden fees. Cancel anytime.
+        </p>
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-green-600 to-emerald-600 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Start monitoring in 60 seconds
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-12 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Start monitoring before your next incident
           </h2>
-          <p className="text-xl text-green-100 mb-8">
-            No credit card required. Free plan available.
+          <p className="text-green-100 mb-8 text-lg">
+            Takes 5 minutes to set up. You'll wonder how you managed without it.
           </p>
-          <Link 
+          <Link
             href="/register"
-            className="inline-flex items-center justify-center bg-white text-green-600 px-8 py-3 rounded-lg hover:bg-gray-50 transition text-lg font-medium"
+            className="inline-flex items-center bg-white text-green-600 px-8 py-4 rounded-xl hover:bg-gray-50 transition font-semibold text-lg gap-2"
           >
-            Get Started Free
-            <ArrowRight className="ml-2 h-5 w-5" />
+            Protect My API for Free
+            <ArrowRight className="h-5 w-5" />
           </Link>
+          <p className="text-green-200 text-sm mt-4">No credit card required · 10 monitors free forever</p>
         </div>
       </section>
 
@@ -196,9 +379,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-gray-900 mb-4">CheckAPI</h3>
-              <p className="text-gray-600 text-sm">
-                Simple, reliable API monitoring for developers and teams.
-              </p>
+              <p className="text-gray-600 text-sm">Simple, reliable API monitoring for developers and teams.</p>
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">Product</h4>
@@ -229,65 +410,6 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
-
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
-  return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-green-300 hover:shadow-lg transition">
-      <div className="mb-4">{icon}</div>
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-600">{description}</p>
-    </div>
-  );
-}
-
-function PricingCard({ 
-  name, 
-  price, 
-  features, 
-  cta, 
-  href, 
-  popular 
-}: { 
-  name: string; 
-  price: string; 
-  features: string[]; 
-  cta: string; 
-  href: string; 
-  popular?: boolean;
-}) {
-  return (
-    <div className={`bg-white p-8 rounded-xl border-2 ${popular ? 'border-green-600 shadow-xl scale-105' : 'border-gray-200'}`}>
-      {popular && (
-        <span className="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-          POPULAR
-        </span>
-      )}
-      <h3 className="text-2xl font-bold text-gray-900 mt-4">{name}</h3>
-      <div className="mt-4 mb-6">
-        <span className="text-4xl font-bold text-gray-900">{price}</span>
-        <span className="text-gray-600">/month</span>
-      </div>
-      <ul className="space-y-3 mb-8">
-        {features.map((feature, i) => (
-          <li key={i} className="flex items-center text-gray-700">
-            <CheckCircle className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
-            {feature}
-          </li>
-        ))}
-      </ul>
-      <Link 
-        href={href}
-        className={`block text-center px-6 py-3 rounded-lg font-medium transition ${
-          popular 
-            ? 'bg-green-600 text-white hover:bg-green-700' 
-            : 'border-2 border-green-600 text-green-600 hover:bg-green-50'
-        }`}
-      >
-        {cta}
-      </Link>
     </div>
   );
 }
