@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import dynamic from 'next/dynamic';
 import type { Metadata } from 'next';
+
+// dynamic import로 SSR 비활성화 (hydration 에러 방지)
+const ThemeToggle = dynamic(
+  () => import('@/components/ThemeToggle').then((mod) => mod.ThemeToggle),
+  { ssr: false }
+);
 
 export const metadata: Metadata = {
   title: 'checkapi.io | Simple API Monitoring by Axiom Technologies',
@@ -41,10 +47,7 @@ export default function HomePage() {
             <div className="flex items-center space-x-4">
               <ThemeToggle />
               <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Log in</Link>
-              <Link
-                href="/register"
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-              >
+              <Link href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
                 Get Started
               </Link>
             </div>
@@ -74,10 +77,7 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link
-              href="/register"
-              className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition font-semibold text-lg flex items-center gap-2 shadow-lg shadow-green-200 dark:shadow-green-900"
-            >
+            <Link href="/register" className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition font-semibold text-lg flex items-center gap-2 shadow-lg shadow-green-200 dark:shadow-green-900">
               Protect My API for Free
               <ArrowRight className="h-5 w-5" />
             </Link>
@@ -122,11 +122,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-end gap-1 h-24">
                   {[40,45,42,38,44,80,120,95,48,42,44,41,39,43,46,42,40,38,44,43,41,45,42,40].map((h, i) => (
-                    <div
-                      key={i}
-                      className={`flex-1 rounded-sm ${h > 70 ? 'bg-red-400' : 'bg-green-400'}`}
-                      style={{ height: `${(h / 120) * 100}%` }}
-                    />
+                    <div key={i} className={`flex-1 rounded-sm ${h > 70 ? 'bg-red-400' : 'bg-green-400'}`} style={{ height: `${(h / 120) * 100}%` }} />
                   ))}
                 </div>
                 <div className="absolute top-12 left-1/3 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg">
@@ -177,14 +173,9 @@ export default function HomePage() {
       {/* Features Section */}
       <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Reliable API Uptime Checks
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Everything you need to monitor APIs and communicate status to your users.
-          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Reliable API Uptime Checks</h2>
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Everything you need to monitor APIs and communicate status to your users.</p>
         </div>
-
         <div className="grid md:grid-cols-3 gap-8">
           {[
             { icon: <Zap className="h-6 w-6 text-green-600 dark:text-green-400" />, title: 'Instant Alerts', description: 'Check your APIs every minute. Get instant alerts when something goes wrong.' },
@@ -211,7 +202,6 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Simple, transparent pricing</h2>
           <p className="text-xl text-gray-600 dark:text-gray-400">Start free, upgrade when you grow</p>
         </div>
-
         <div className="grid md:grid-cols-4 gap-6">
           {[
             { name: 'Free', price: '$0', period: '/month', badge: null, features: ['10 monitors','5-minute checks','All alert channels','Public status page','7-day history','Commercial use allowed'], cta: 'Start Free', ctaHref: '/register', highlight: false },
@@ -219,20 +209,9 @@ export default function HomePage() {
             { name: 'Pro', price: '$15', period: '/month', badge: 'Best for growing startups', features: ['100 monitors','30-second checks','Team sharing','Priority support','90-day history','Commercial use allowed'], cta: 'Get Started', ctaHref: '/register', highlight: false },
             { name: 'Business', price: '$49', period: '/month', badge: null, features: ['Unlimited monitors','10-second checks','API access','Custom features','SLA','1-year history'], cta: 'Get Started', ctaHref: '/register', highlight: false },
           ].map((plan) => (
-            <div
-              key={plan.name}
-              className={`bg-white dark:bg-gray-900 rounded-2xl border-2 p-6 ${
-                plan.highlight
-                  ? 'border-green-500 shadow-lg shadow-green-100 dark:shadow-green-900'
-                  : 'border-gray-200 dark:border-gray-700'
-              }`}
-            >
+            <div key={plan.name} className={`bg-white dark:bg-gray-900 rounded-2xl border-2 p-6 ${plan.highlight ? 'border-green-500 shadow-lg shadow-green-100 dark:shadow-green-900' : 'border-gray-200 dark:border-gray-700'}`}>
               {plan.badge && (
-                <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full mb-3 ${
-                  plan.badge === 'POPULAR'
-                    ? 'bg-green-500 text-white'
-                    : 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800'
-                }`}>
+                <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full mb-3 ${plan.badge === 'POPULAR' ? 'bg-green-500 text-white' : 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800'}`}>
                   {plan.badge}
                 </span>
               )}
@@ -249,20 +228,12 @@ export default function HomePage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                href={plan.ctaHref}
-                className={`block text-center py-2.5 rounded-lg font-medium transition ${
-                  plan.highlight
-                    ? 'bg-green-600 text-white hover:bg-green-700'
-                    : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-green-500 hover:text-green-600 dark:hover:border-green-500 dark:hover:text-green-400'
-                }`}
-              >
+              <Link href={plan.ctaHref} className={`block text-center py-2.5 rounded-lg font-medium transition ${plan.highlight ? 'bg-green-600 text-white hover:bg-green-700' : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-green-500 hover:text-green-600 dark:hover:border-green-500 dark:hover:text-green-400'}`}>
                 {plan.cta}
               </Link>
             </div>
           ))}
         </div>
-
         <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
           All plans include commercial use. No hidden fees. Cancel anytime.
         </p>
@@ -271,16 +242,9 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-12 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Start monitoring before your next incident
-          </h2>
-          <p className="text-green-100 mb-8 text-lg">
-            Takes 5 minutes to set up. You'll wonder how you managed without it.
-          </p>
-          <Link
-            href="/register"
-            className="inline-flex items-center bg-white text-green-600 px-8 py-4 rounded-xl hover:bg-gray-50 transition font-semibold text-lg gap-2"
-          >
+          <h2 className="text-3xl font-bold text-white mb-4">Start monitoring before your next incident</h2>
+          <p className="text-green-100 mb-8 text-lg">Takes 5 minutes to set up. You'll wonder how you managed without it.</p>
+          <Link href="/register" className="inline-flex items-center bg-white text-green-600 px-8 py-4 rounded-xl hover:bg-gray-50 transition font-semibold text-lg gap-2">
             Protect My API for Free
             <ArrowRight className="h-5 w-5" />
           </Link>

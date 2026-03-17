@@ -6,7 +6,13 @@ import Link from 'next/link';
 import { Activity, Bell, BarChart3, Settings, LogOut, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { authAPI } from '@/lib/api';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import dynamic from 'next/dynamic';
+
+// ThemeToggle을 dynamic import로 처리 (hydration 에러 방지)
+const ThemeToggle = dynamic(
+  () => import('@/components/ThemeToggle').then((mod) => mod.ThemeToggle),
+  { ssr: false }
+);
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -47,7 +53,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-gray-600 bg-opacity-75 z-20 lg:hidden"
@@ -56,41 +61,20 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       )}
 
       {/* Sidebar */}
-      <div
-        className={`
-          fixed inset-y-0 left-0 z-30 w-64
-          bg-white dark:bg-gray-900
-          border-r border-gray-200 dark:border-gray-700
-          transform transition-transform duration-300 ease-in-out
-          lg:translate-x-0
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}
-      >
+      <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full">
-          {/* Logo */}
           <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
-            <Link
-              href="/"
-              className="flex items-center space-x-3 hover:opacity-80 transition cursor-pointer"
-            >
-              <img
-                src="/logo.jpg"
-                alt="CheckAPI Logo"
-                className="h-10 w-10 rounded-lg object-cover"
-              />
+            <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition cursor-pointer">
+              <img src="/logo.jpg" alt="CheckAPI Logo" className="h-10 w-10 rounded-lg object-cover" />
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 CheckAPI
               </span>
             </Link>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
               <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
             </button>
           </div>
 
-          {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href;
@@ -98,13 +82,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`
-                    flex items-center px-4 py-3 text-sm font-medium rounded-lg transition
-                    ${isActive
+                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition ${
+                    isActive
                       ? 'bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
-                    }
-                  `}
+                  }`}
                 >
                   <item.icon className="h-5 w-5 mr-3" />
                   {item.name}
@@ -113,15 +95,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             })}
           </nav>
 
-          {/* User section */}
           <div className="border-t border-gray-200 dark:border-gray-700 p-4">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                  <span className="text-green-600 dark:text-green-400 font-medium">
-                    {user?.email?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
+              <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                <span className="text-green-600 dark:text-green-400 font-medium">
+                  {user?.email?.charAt(0).toUpperCase()}
+                </span>
               </div>
               <div className="ml-3 flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
@@ -145,21 +124,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main content */}
       <div className="lg:pl-64">
-        {/* Header */}
         <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
               <Menu className="h-6 w-6 text-gray-600 dark:text-gray-400" />
             </button>
             <div className="flex-1 flex justify-end items-center gap-4">
               {user?.plan === 'free' && (
-                <Link
-                  href="/dashboard/settings"
-                  className="text-sm text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition"
-                >
+                <Link href="/dashboard/settings" className="text-sm text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">
                   Upgrade to Pro →
                 </Link>
               )}
@@ -168,7 +140,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         </header>
 
-        {/* Page content */}
         <main className="p-4 sm:p-6 lg:p-8">
           {children}
         </main>
