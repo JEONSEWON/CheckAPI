@@ -2,45 +2,35 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CheckAPI - API Health Monitor | 24/7 Uptime Tracking",
-  description: "Monitor your APIs and websites with real-time alerts. Get instant notifications via Email, Slack, Telegram, Discord when your services go down. Simple setup, powerful monitoring.",
+  title: "checkapi.io | Simple API Monitoring by Axiom Technologies",
+  description: "Professional API uptime monitoring and public status pages. A core technology by Axiom Technologies for solo founders and engineering teams. Free tier available.",
   keywords: ["API monitoring", "uptime monitoring", "website monitoring", "health check", "API alerts", "downtime alerts"],
-  authors: [{ name: "CheckAPI Team" }],
-  creator: "CheckAPI",
-  publisher: "CheckAPI",
+  authors: [{ name: "Axiom Technologies" }],
+  creator: "Axiom Technologies",
+  publisher: "Axiom Technologies",
   metadataBase: new URL("https://checkapi.io"),
-  alternates: {
-    canonical: "/",
-  },
-  verification: {
-    google: "aPu3HfP0HcYJs4r-_azPdbeT1x8q_bLvWzHqoe_xay4",
-  },
+  alternates: { canonical: "/" },
+  verification: { google: "aPu3HfP0HcYJs4r-_azPdbeT1x8q_bLvWzHqoe_xay4" },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://checkapi.io",
-    title: "CheckAPI - API Health Monitor | 24/7 Uptime Tracking",
-    description: "Monitor your APIs and websites with real-time alerts. Get instant notifications when your services go down.",
-    siteName: "CheckAPI",
-    images: [
-      {
-        url: "/android-chrome-512x512.png",
-        width: 512,
-        height: 512,
-        alt: "CheckAPI Logo",
-      },
-    ],
+    title: "checkapi.io | Simple API Monitoring by Axiom Technologies",
+    description: "Professional API uptime monitoring and public status pages. A core technology by Axiom Technologies.",
+    siteName: "CheckAPI by Axiom Technologies",
+    images: [{ url: "/android-chrome-512x512.png", width: 512, height: 512, alt: "CheckAPI Logo" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "CheckAPI - API Health Monitor | 24/7 Uptime Tracking",
-    description: "Monitor your APIs and websites with real-time alerts. Get instant notifications when your services go down.",
+    title: "checkapi.io | Simple API Monitoring by Axiom Technologies",
+    description: "Professional API uptime monitoring and public status pages. Free tier available.",
     images: ["/android-chrome-512x512.png"],
-    creator: "@checkapi_io",
+    creator: "@imwon_dev",
   },
   icons: {
     icon: [
@@ -56,14 +46,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {children}
-        <Toaster position="top-right" />
+        <Providers>
+          {children}
+          <Toaster position="top-right" />
+        </Providers>
       </body>
     </html>
   );

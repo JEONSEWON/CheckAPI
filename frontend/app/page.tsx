@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe } from 'lucide-react';
 import type { Metadata } from 'next';
 
@@ -38,7 +39,7 @@ export default function HomePage() {
               <Link href="/docs" className="text-gray-700 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <Link href="/login" className="text-gray-700 hover:text-green-600 transition">Log in</Link>
+              <ThemeToggle /><Link href="/login" className="text-gray-700 hover:text-green-600 transition">Log in</Link>
               <Link
                 href="/register"
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
