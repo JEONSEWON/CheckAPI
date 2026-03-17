@@ -18,30 +18,22 @@ export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    // Check authentication
     const token = localStorage.getItem('access_token');
     if (!token) {
       router.push('/login');
       return;
     }
-
-    // Load user and data
     loadData();
   }, []);
 
   const loadData = async () => {
     try {
-      // Get user info if not loaded
       if (!user) {
         const userResponse = await authAPI.me();
         setUser(userResponse);
       }
-
-      // Get monitors
       const monitorsResponse = await monitorsAPI.list();
       setMonitors(monitorsResponse);
-
-      // Get analytics overview
       const overviewResponse = await analyticsAPI.overview();
       setOverview(overviewResponse);
     } catch (error) {
@@ -68,10 +60,10 @@ export default function DashboardPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Welcome back, {user?.name || 'there'}!
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Here's what's happening with your monitors
           </p>
         </div>
@@ -82,37 +74,37 @@ export default function DashboardPage() {
             <StatCard
               title="Total Monitors"
               value={overview.total_monitors}
-              icon={<Activity className="h-6 w-6 text-blue-600" />}
+              icon={<Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />}
               color="blue"
             />
             <StatCard
               title="Online"
               value={overview.monitors_up}
-              icon={<CheckCircle className="h-6 w-6 text-green-600" />}
+              icon={<CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />}
               color="green"
             />
             <StatCard
               title="Offline"
               value={overview.monitors_down}
-              icon={<AlertCircle className="h-6 w-6 text-red-600" />}
+              icon={<AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400" />}
               color="red"
             />
             <StatCard
               title="Overall Uptime"
               value={`${overview.overall_uptime}%`}
-              icon={<Clock className="h-6 w-6 text-purple-600" />}
+              icon={<Clock className="h-6 w-6 text-purple-600 dark:text-purple-400" />}
               color="purple"
             />
           </div>
         )}
 
         {/* Monitors List */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Your Monitors
             </h2>
-            <button 
+            <button
               onClick={() => setIsModalOpen(true)}
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium"
             >
@@ -122,14 +114,14 @@ export default function DashboardPage() {
 
           {monitors.length === 0 ? (
             <div className="px-6 py-12 text-center">
-              <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <Activity className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                 No monitors yet
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Get started by creating your first monitor
               </p>
-              <button 
+              <button
                 onClick={() => setIsModalOpen(true)}
                 className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
               >
@@ -137,7 +129,7 @@ export default function DashboardPage() {
               </button>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {monitors.map((monitor) => (
                 <MonitorRow key={monitor.id} monitor={monitor} />
               ))}
@@ -145,7 +137,6 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Create Monitor Modal */}
         <CreateMonitorModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -158,30 +149,30 @@ export default function DashboardPage() {
 
 function StatCard({ title, value, icon, color }: any) {
   const colors = {
-    blue: 'bg-blue-50 border-blue-200',
-    green: 'bg-green-50 border-green-200',
-    red: 'bg-red-50 border-red-200',
-    purple: 'bg-purple-50 border-purple-200',
+    blue: 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800',
+    green: 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800',
+    red: 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800',
+    purple: 'bg-purple-50 dark:bg-purple-950 border-purple-200 dark:border-purple-800',
   };
 
   return (
     <div className={`${colors[color as keyof typeof colors]} rounded-lg border p-6`}>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-600">{title}</span>
+        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</span>
         {icon}
       </div>
-      <p className="text-3xl font-bold text-gray-900">{value}</p>
+      <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
     </div>
   );
 }
 
 function MonitorRow({ monitor }: any) {
   const router = useRouter();
-  
+
   const statusColors = {
-    up: 'bg-green-100 text-green-800',
-    down: 'bg-red-100 text-red-800',
-    degraded: 'bg-yellow-100 text-yellow-800',
+    up: 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300',
+    down: 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300',
+    degraded: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300',
   };
 
   const statusIcons = {
@@ -191,16 +182,16 @@ function MonitorRow({ monitor }: any) {
   };
 
   return (
-    <div 
+    <div
       onClick={() => router.push(`/dashboard/monitors/${monitor.id}`)}
-      className="px-6 py-4 hover:bg-gray-50 transition cursor-pointer"
+      className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer"
     >
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <h3 className="text-sm font-medium text-gray-900 mb-1">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-1">
             {monitor.name}
           </h3>
-          <p className="text-xs text-gray-500">{monitor.url}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{monitor.url}</p>
         </div>
         <div className="flex items-center space-x-4">
           {monitor.last_status && (
@@ -212,7 +203,7 @@ function MonitorRow({ monitor }: any) {
               <span className="capitalize">{monitor.last_status}</span>
             </span>
           )}
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
             Every {monitor.interval}s
           </span>
         </div>
