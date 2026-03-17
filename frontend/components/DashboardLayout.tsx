@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Activity, Bell, BarChart3, Settings, LogOut, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { authAPI } from '@/lib/api';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -17,7 +18,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, setUser, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // 새로고침 시 user 복원
   useEffect(() => {
     if (!user) {
       const token = localStorage.getItem('access_token');
@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
@@ -58,7 +58,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Sidebar */}
       <div
         className={`
-          fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200
+          fixed inset-y-0 left-0 z-30 w-64
+          bg-white dark:bg-gray-900
+          border-r border-gray-200 dark:border-gray-700
           transform transition-transform duration-300 ease-in-out
           lg:translate-x-0
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -66,7 +68,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+          <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
             <Link
               href="/"
               className="flex items-center space-x-3 hover:opacity-80 transition cursor-pointer"
@@ -82,9 +84,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
             </button>
           </div>
 
@@ -99,8 +101,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   className={`
                     flex items-center px-4 py-3 text-sm font-medium rounded-lg transition
                     ${isActive
-                      ? 'bg-green-50 text-green-600'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                     }
                   `}
                 >
@@ -112,29 +114,29 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </nav>
 
           {/* User section */}
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-4">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <span className="text-green-600 font-medium">
+                <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                  <span className="text-green-600 dark:text-green-400 font-medium">
                     {user?.email?.charAt(0).toUpperCase()}
                   </span>
                 </div>
               </div>
               <div className="ml-3 flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                   {user?.name || user?.email}
                 </p>
-                <p className="text-xs text-gray-500 capitalize">
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
                   {user?.plan ? `${user.plan} plan` : '...'}
                 </p>
               </div>
               <button
                 onClick={handleLogout}
-                className="p-2 rounded-lg hover:bg-gray-100 transition"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                 title="Logout"
               >
-                <LogOut className="h-5 w-5 text-gray-400" />
+                <LogOut className="h-5 w-5 text-gray-400 dark:text-gray-500" />
               </button>
             </div>
           </div>
@@ -144,23 +146,24 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-6 w-6 text-gray-600 dark:text-gray-400" />
             </button>
-            <div className="flex-1 flex justify-end">
+            <div className="flex-1 flex justify-end items-center gap-4">
               {user?.plan === 'free' && (
                 <Link
                   href="/dashboard/settings"
-                  className="text-sm text-gray-700 hover:text-green-600 transition"
+                  className="text-sm text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition"
                 >
                   Upgrade to Pro →
                 </Link>
               )}
+              <ThemeToggle />
             </div>
           </div>
         </header>
