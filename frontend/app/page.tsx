@@ -167,7 +167,7 @@ export default function HomePage() {
         </div>
         <div className="grid md:grid-cols-4 gap-6">
           {[
-            { name: 'Free', price: '$0', period: '/month', badge: null, features: ['10 monitors','5-minute checks','All alert channels','Public status page','7-day history','Commercial use allowed'], cta: 'Start Free', ctaHref: '/register', highlight: false },
+            { name: 'Free', price: '$0', period: '/month', badge: null, features: ['10 monitors','5-minute checks','All alert channels','Public status page','30-day history','Commercial use allowed'], cta: 'Start Free', ctaHref: '/register', highlight: false },
             { name: 'Starter', price: '$5', period: '/month', badge: 'POPULAR', features: ['20 monitors','1-minute checks','All alert channels','Analytics','30-day history','Commercial use allowed'], cta: 'Get Started', ctaHref: '/register', highlight: true },
             { name: 'Pro', price: '$15', period: '/month', badge: 'Best for growing startups', features: ['100 monitors','30-second checks','Team sharing','Priority support','90-day history','Commercial use allowed'], cta: 'Get Started', ctaHref: '/register', highlight: false },
             { name: 'Business', price: '$49', period: '/month', badge: null, features: ['Unlimited monitors','10-second checks','API access','Custom features','SLA','1-year history'], cta: 'Get Started', ctaHref: '/register', highlight: false },
