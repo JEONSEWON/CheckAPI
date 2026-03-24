@@ -114,10 +114,10 @@ export default function DocsPage() {
 
           {/* Getting Started */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">Getting Started</h2>
+            <h2 className="text-3xl font-bold text-white mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">Getting Started</h2>
 
             <div id="quick-start" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Quick Start</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Quick Start</h3>
               <p className="mb-4">
                 CheckAPI monitors your API endpoints 24/7 and alerts you the moment something goes wrong. You can be up and running in under 2 minutes.
               </p>
@@ -131,7 +131,7 @@ export default function DocsPage() {
             </div>
 
             <div id="create-monitor">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Create Your First Monitor</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Create Your First Monitor</h3>
               <p className="mb-4">
                 From your dashboard, click the <strong className="text-gray-800 dark:text-gray-200">+ Add Monitor</strong> button. Fill in:
               </p>
@@ -147,17 +147,17 @@ export default function DocsPage() {
 
           {/* Monitors */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">Monitors</h2>
+            <h2 className="text-3xl font-bold text-white mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">Monitors</h2>
 
             <div id="monitor-config" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Monitor Configuration</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Monitor Configuration</h3>
               <p>
                 Each monitor continuously sends HTTP requests to your endpoint and records the result — status code, response time, and response body. If a check fails, CheckAPI immediately triggers your configured alert channels.
               </p>
             </div>
 
             <div id="http-methods" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">HTTP Methods</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">HTTP Methods</h3>
               <p className="mb-4">CheckAPI supports all standard HTTP methods so you can test real API behavior, not just GET endpoints:</p>
               <div className="flex flex-wrap gap-2">
                 {['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'].map((m) => (
@@ -168,7 +168,7 @@ export default function DocsPage() {
             </div>
 
             <div id="keyword-validation" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Keyword Validation</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Keyword Validation</h3>
               <p className="mb-4">
                 A 200 OK response doesn't always mean your API is healthy. CheckAPI supports response body keyword validation — you can specify a keyword that must be <strong className="text-gray-800 dark:text-gray-200">present</strong> or <strong className="text-gray-800 dark:text-gray-200">absent</strong> in the response body.
               </p>
@@ -180,7 +180,7 @@ export default function DocsPage() {
             </div>
 
             <div id="check-intervals">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Check Intervals</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Check Intervals</h3>
               <p className="mb-4">How frequently CheckAPI checks your endpoint depends on your plan:</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
@@ -192,10 +192,10 @@ export default function DocsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                    <tr><td className="px-4 py-3">Free</td><td className="px-4 py-3">5 minutes</td><td className="px-4 py-3">10</td></tr>
-                    <tr className="bg-gray-50 dark:bg-gray-800"><td className="px-4 py-3">Starter</td><td className="px-4 py-3">1 minute</td><td className="px-4 py-3">20</td></tr>
-                    <tr><td className="px-4 py-3">Pro</td><td className="px-4 py-3">30 seconds</td><td className="px-4 py-3">100</td></tr>
-                    <tr className="bg-gray-50 dark:bg-gray-800"><td className="px-4 py-3">Business</td><td className="px-4 py-3">10 seconds</td><td className="px-4 py-3">Unlimited</td></tr>
+                    <tr><td className="px-4 py-3 dark:text-gray-200">Free</td><td className="px-4 py-3 dark:text-gray-200">5 minutes</td><td className="px-4 py-3 dark:text-gray-200">10</td></tr>
+                    <tr className="bg-gray-50 dark:bg-gray-800"><td className="px-4 py-3 dark:text-gray-200">Starter</td><td className="px-4 py-3 dark:text-gray-200">1 minute</td><td className="px-4 py-3 dark:text-gray-200">20</td></tr>
+                    <tr><td className="px-4 py-3 dark:text-gray-200">Pro</td><td className="px-4 py-3 dark:text-gray-200">30 seconds</td><td className="px-4 py-3 dark:text-gray-200">100</td></tr>
+                    <tr className="bg-gray-50 dark:bg-gray-800"><td className="px-4 py-3 dark:text-gray-200">Business</td><td className="px-4 py-3 dark:text-gray-200">10 seconds</td><td className="px-4 py-3 dark:text-gray-200">Unlimited</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -204,16 +204,16 @@ export default function DocsPage() {
 
           {/* Alert Channels */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">Alert Channels</h2>
+            <h2 className="text-3xl font-bold text-white mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">Alert Channels</h2>
             <p className="mb-8">CheckAPI supports 5 alert channels. You can add multiple channels per account and test each one before going live.</p>
 
             <div id="email" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Email</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Email</h3>
               <p>Enter your email address. CheckAPI will send an alert whenever a monitor goes down or recovers.</p>
             </div>
 
             <div id="slack" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Slack</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Slack</h3>
               <p className="mb-3">Create an Incoming Webhook in your Slack workspace and paste the URL.</p>
               <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
                 <li>Go to your Slack workspace → <strong>Apps</strong> → search "Incoming Webhooks"</li>
@@ -223,7 +223,7 @@ export default function DocsPage() {
             </div>
 
             <div id="telegram" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Telegram</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Telegram</h3>
               <p className="mb-3">You need a Bot Token and a Chat ID.</p>
               <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
                 <li>Message <strong>@BotFather</strong> on Telegram → create a new bot → copy the token</li>
@@ -233,7 +233,7 @@ export default function DocsPage() {
             </div>
 
             <div id="discord" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Discord</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Discord</h3>
               <p className="mb-3">Create a Webhook in your Discord server channel settings.</p>
               <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
                 <li>Go to your Discord server → channel settings → Integrations → Webhooks</li>
@@ -243,7 +243,7 @@ export default function DocsPage() {
             </div>
 
             <div id="webhook">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Custom Webhook</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Custom Webhook</h3>
               <p className="mb-4">CheckAPI will POST to your URL whenever a monitor status changes. The payload looks like:</p>
               <pre className="bg-gray-900 text-green-400 rounded-xl p-5 text-sm overflow-x-auto leading-relaxed">
 {`{
@@ -265,17 +265,17 @@ export default function DocsPage() {
 
           {/* Plans */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">Plans & Limits</h2>
+            <h2 className="text-3xl font-bold text-white mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">Plans & Limits</h2>
 
             <div id="free-plan" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Free Plan</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Free Plan</h3>
               <p>
                 The free plan includes <strong className="text-gray-800 dark:text-gray-200">10 monitors</strong> with 5-minute check intervals and 30-day data retention — with <strong className="text-gray-800 dark:text-gray-200">no commercial-use restrictions</strong>. Most monitoring tools restrict their free tier to personal projects only. CheckAPI doesn't.
               </p>
             </div>
 
             <div id="paid-plans" className="mb-10">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Paid Plans</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Paid Plans</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
                   <thead className="bg-gray-50 dark:bg-gray-800">
@@ -287,19 +287,19 @@ export default function DocsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                    <tr><td className="px-4 py-3">Free</td><td className="px-4 py-3">$0</td><td className="px-4 py-3">10</td><td className="px-4 py-3">5 min</td></tr>
-                    <tr className="bg-gray-50 dark:bg-gray-800"><td className="px-4 py-3">Starter</td><td className="px-4 py-3">$5/mo</td><td className="px-4 py-3">20</td><td className="px-4 py-3">1 min</td></tr>
-                    <tr><td className="px-4 py-3">Pro</td><td className="px-4 py-3">$15/mo</td><td className="px-4 py-3">100</td><td className="px-4 py-3">30 sec</td></tr>
-                    <tr className="bg-gray-50 dark:bg-gray-800"><td className="px-4 py-3">Business</td><td className="px-4 py-3">$49/mo</td><td className="px-4 py-3">Unlimited</td><td className="px-4 py-3">10 sec</td></tr>
+                    <tr><td className="px-4 py-3 dark:text-gray-200">Free</td><td className="px-4 py-3 dark:text-gray-200">$0</td><td className="px-4 py-3 dark:text-gray-200">10</td><td className="px-4 py-3 dark:text-gray-200">5 min</td></tr>
+                    <tr className="bg-gray-50 dark:bg-gray-800"><td className="px-4 py-3 dark:text-gray-200">Starter</td><td className="px-4 py-3 dark:text-gray-200">$5/mo</td><td className="px-4 py-3 dark:text-gray-200">20</td><td className="px-4 py-3 dark:text-gray-200">1 min</td></tr>
+                    <tr><td className="px-4 py-3 dark:text-gray-200">Pro</td><td className="px-4 py-3 dark:text-gray-200">$15/mo</td><td className="px-4 py-3 dark:text-gray-200">100</td><td className="px-4 py-3 dark:text-gray-200">30 sec</td></tr>
+                    <tr className="bg-gray-50 dark:bg-gray-800"><td className="px-4 py-3 dark:text-gray-200">Business</td><td className="px-4 py-3 dark:text-gray-200">$49/mo</td><td className="px-4 py-3 dark:text-gray-200">Unlimited</td><td className="px-4 py-3 dark:text-gray-200">10 sec</td></tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
             <div id="data-retention">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Data Retention</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Data Retention</h3>
               <p className="mb-4">Check history is retained for:</p>
-              <ul className="space-y-1 text-sm">
+              <ul className="space-y-1 text-sm dark:text-gray-200">
                 <li>• <strong className="text-gray-800 dark:text-gray-200">Free:</strong> 30 days</li>
                 <li>• <strong className="text-gray-800 dark:text-gray-200">Starter:</strong> 30 days</li>
                 <li>• <strong className="text-gray-800 dark:text-gray-200">Pro:</strong> 90 days</li>
