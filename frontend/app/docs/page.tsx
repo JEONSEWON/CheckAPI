@@ -270,7 +270,7 @@ export default function DocsPage() {
             <div id="free-plan" className="mb-10">
               <h3 className="text-xl font-semibold text-gray-800 mb-3">Free Plan</h3>
               <p>
-                The free plan includes <strong className="text-gray-800">10 monitors</strong> with 5-minute check intervals and 7-day data retention — with <strong className="text-gray-800">no commercial-use restrictions</strong>. Most monitoring tools restrict their free tier to personal projects only. CheckAPI doesn't.
+                The free plan includes <strong className="text-gray-800">10 monitors</strong> with 5-minute check intervals and 30-day data retention — with <strong className="text-gray-800">no commercial-use restrictions</strong>. Most monitoring tools restrict their free tier to personal projects only. CheckAPI doesn't.
               </p>
             </div>
 
@@ -300,7 +300,7 @@ export default function DocsPage() {
               <h3 className="text-xl font-semibold text-gray-800 mb-3">Data Retention</h3>
               <p className="mb-4">Check history is retained for:</p>
               <ul className="space-y-1 text-sm">
-                <li>• <strong className="text-gray-800">Free:</strong> 7 days</li>
+                <li>• <strong className="text-gray-800">Free:</strong> 30 days</li>
                 <li>• <strong className="text-gray-800">Starter:</strong> 30 days</li>
                 <li>• <strong className="text-gray-800">Pro:</strong> 90 days</li>
                 <li>• <strong className="text-gray-800">Business:</strong> 365 days</li>

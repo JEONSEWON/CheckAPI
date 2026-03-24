@@ -16,7 +16,7 @@ from app.models import Monitor, Check, User
 
 # Data retention days per plan
 RETENTION_DAYS = {
-    "free": 7,
+    "free": 30,
     "starter": 30,
     "pro": 90,
     "business": 365,

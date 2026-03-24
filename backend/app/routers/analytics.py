@@ -15,7 +15,7 @@ from app.auth import get_current_user
 
 # Max data retention days per plan (must match tasks.py RETENTION_DAYS)
 PLAN_RETENTION_DAYS = {
-    "free": 7,
+    "free": 30,
     "starter": 30,
     "pro": 90,
     "business": 365,

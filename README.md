@@ -54,7 +54,7 @@ Built for developers who are tired of paying $75/mo for basic monitoring — Che
 
 | Plan | Price | Monitors | Interval | History | Team |
 |---|---|---|---|---|---|
-| **Free** | $0/mo | 10 | 5 min | 7 days | ❌ |
+| **Free** | $0/mo | 10 | 5 min | 30 days | ❌ |
 | **Starter** | $5/mo | 20 | 1 min | 30 days | ❌ |
 | **Pro** | $15/mo | 100 | 30 sec | 90 days | ✅ (5명) |
 | **Business** | $49/mo | Unlimited | 10 sec | 1 year | ✅ (무제한) |
@@ -111,7 +111,7 @@ Status change → Alert sent
 (Email / Slack / Telegram / Discord / Webhook)
         ↓
 Results saved to PostgreSQL
-(Retained: 7 / 30 / 90 / 365 days by plan)
+(Retained: 30 / 30 / 90 / 365 days by plan)
         ↓
 Daily 9AM → SSL certificate expiry check
 Daily 3AM → Old data cleanup
