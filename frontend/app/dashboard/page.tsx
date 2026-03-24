@@ -1,3 +1,169 @@
+﻿'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/lib/store';
+import { authAPI, monitorsAPI, analyticsAPI } from '@/lib/api';
+import DashboardLayout from '@/components/DashboardLayout';
+import CreateMonitorModal from '@/components/CreateMonitorModal';
+import { Activity, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import toast from 'react-hot-toast';
+
+export default function DashboardPage() {
+  const router = useRouter();
+  const { user, setUser, isAuthenticated, setLoading } = useAuthStore();
+  const [monitors, setMonitors] = useState<any[]>([]);
+  const [overview, setOverview] = useState<any>(null);
+  const [loading, setLoadingState] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      if (!user) {
+        const userResponse = await authAPI.me();
+        setUser(userResponse);
+      }
+      const monitorsResponse = await monitorsAPI.list();
+      setMonitors(monitorsResponse);
+      const overviewResponse = await analyticsAPI.overview();
+      setOverview(overviewResponse);
+    } catch (error) {
+      toast.error('Failed to load dashboard');
+      router.push('/login');
+    } finally {
+      setLoadingState(false);
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Welcome back, {user?.name || 'there'}!
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Here's what's happening with your monitors
+          </p>
+        </div>
+
+        {/* Stats */}
+        {overview && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <StatCard
+              title="Total Monitors"
+              value={overview.total_monitors}
+              icon={<Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />}
+              color="blue"
+            />
+            <StatCard
+              title="Online"
+              value={overview.monitors_up}
+              icon={<CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />}
+              color="green"
+            />
+            <StatCard
+              title="Offline"
+              value={overview.monitors_down}
+              icon={<AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400" />}
+              color="red"
+            />
+            <StatCard
+              title="Overall Uptime"
+              value={`${overview.overall_uptime}%`}
+              icon={<Clock className="h-6 w-6 text-purple-600 dark:text-purple-400" />}
+              color="purple"
+            />
+          </div>
+        )}
+
+        {/* Monitors List */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Your Monitors
+            </h2>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium"
+            >
+              + Add Monitor
+            </button>
+          </div>
+
+          {monitors.length === 0 ? (
+            <div className="px-6 py-10">
+              <div className="max-w-lg mx-auto">
+                <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">
+                  Get started in 3 steps
+                </h3>
+                <p className="text-gray-500 text-center mb-8">
+                  You&apos;ll be monitoring your first API in under 60 seconds.
+                </p>
+                <div className="space-y-4">
+                  <div
+                    onClick={() => setIsModalOpen(true)}
+                    className="flex items-start gap-4 p-4 rounded-lg border-2 border-green-200 bg-green-50 cursor-pointer hover:border-green-400 transition"
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-sm">
+                      1
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Create your first monitor</h4>
+                      <p className="text-sm text-gray-600 mt-0.5">
+                        Enter an API URL and we&apos;ll start checking it automatically.
+                      </p>
+                    </div>
+                    <span className="ml-auto text-green-600 font-medium text-sm whitespace-nowrap">
+                      Start →
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-4 p-4 rounded-lg border border-gray-200 opacity-50">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-bold text-sm">
+                      2
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Set up alerts</h4>
+                      <p className="text-sm text-gray-600 mt-0.5">
+                        Get notified via Email, Slack, Telegram, Discord, or Webhook.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4 p-4 rounded-lg border border-gray-200 opacity-50">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-bold text-sm">
+                      3
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Relax</h4>
+                      <p className="text-sm text-gray-600 mt-0.5">
+                        We&apos;ll watch your APIs 24/7 and alert you the moment something breaks.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 'use client';
 
 import { useEffect, useState } from 'react';
