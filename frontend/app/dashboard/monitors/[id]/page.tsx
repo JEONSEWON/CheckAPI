@@ -102,9 +102,9 @@ export default function MonitorDetailPage() {
   if (!monitor) return null;
 
   const statusColors = {
-    up: { bg: 'bg-green-100', text: 'text-green-800', icon: CheckCircle },
-    down: { bg: 'bg-red-100', text: 'text-red-800', icon: AlertCircle },
-    degraded: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: AlertCircle },
+    up: { bg: 'bg-green-100 dark:bg-green-900', text: 'text-green-800 dark:text-green-300', icon: CheckCircle },
+    down: { bg: 'bg-red-100 dark:bg-red-900', text: 'text-red-800 dark:text-red-300', icon: AlertCircle },
+    degraded: { bg: 'bg-yellow-100 dark:bg-yellow-900', text: 'text-yellow-800 dark:text-yellow-300', icon: AlertCircle },
   };
 
   const status = monitor.last_status || 'unknown';
@@ -118,15 +118,15 @@ export default function MonitorDetailPage() {
           <div className="flex items-center space-x-4">
             <button
               onClick={() => router.push('/dashboard')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {monitor.name}
               </h1>
-              <p className="text-sm text-gray-500 mt-1">{monitor.url}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{monitor.url}</p>
             </div>
           </div>
 
@@ -134,7 +134,7 @@ export default function MonitorDetailPage() {
             {monitor.is_active ? (
               <button
                 onClick={handlePause}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-gray-900"
+                className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-gray-900 dark:text-white"
               >
                 <Pause className="h-4 w-4 mr-2" />
                 Pause
@@ -200,9 +200,9 @@ export default function MonitorDetailPage() {
         )}
 
         {/* Configuration */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Configuration</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Configuration</h2>
           </div>
           <div className="px-6 py-4 grid grid-cols-2 gap-4">
             <ConfigItem label="Method" value={monitor.method} />
@@ -213,13 +213,13 @@ export default function MonitorDetailPage() {
         </div>
 
         {/* Recent Checks */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Checks</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Checks</h2>
           </div>
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {checks.length === 0 ? (
-              <div className="px-6 py-12 text-center text-gray-500">
+              <div className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                 No checks yet
               </div>
             ) : (
@@ -236,12 +236,12 @@ export default function MonitorDetailPage() {
 
 function StatCard({ title, value, icon }: any) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-600">{title}</span>
+        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</span>
         {icon}
       </div>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
+      <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
     </div>
   );
 }
@@ -249,8 +249,8 @@ function StatCard({ title, value, icon }: any) {
 function ConfigItem({ label, value }: { label: string; value: any }) {
   return (
     <div>
-      <p className="text-sm text-gray-500 mb-1">{label}</p>
-      <p className="font-medium text-gray-900">{value}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{label}</p>
+      <p className="font-medium text-gray-900 dark:text-white">{value}</p>
     </div>
   );
 }
@@ -263,19 +263,19 @@ function CheckRow({ check }: any) {
   };
 
   return (
-    <div className="px-6 py-3 flex items-center justify-between hover:bg-gray-50">
+    <div className="px-6 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700">
       <div className="flex items-center space-x-4">
         <span className={`font-medium ${statusColors[check.status as keyof typeof statusColors]}`}>
           {check.status.toUpperCase()}
         </span>
         {check.status_code && (
-          <span className="text-gray-500 text-sm">Status: {check.status_code}</span>
+          <span className="text-gray-500 dark:text-gray-400 text-sm">Status: {check.status_code}</span>
         )}
         {check.response_time && (
-          <span className="text-gray-500 text-sm">{check.response_time}ms</span>
+          <span className="text-gray-500 dark:text-gray-400 text-sm">{check.response_time}ms</span>
         )}
       </div>
-      <span className="text-sm text-gray-500">
+      <span className="text-sm text-gray-500 dark:text-gray-400">
         {formatDistanceToNow(new Date(check.checked_at), { addSuffix: true })}
       </span>
     </div>
