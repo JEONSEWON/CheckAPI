@@ -164,46 +164,6 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
-          ) : monitors.length > 0 && monitors.length <= 2 ? (
-            <div className="px-6 py-6 border-b border-gray-100 dark:border-gray-700">
-              <div className="max-w-lg mx-auto">
-                <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 text-center uppercase tracking-wide">Getting started</p>
-                <div className="space-y-3">
-                  {/* Step 1 — done */}
-                  <div className="flex items-center gap-4 p-3 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950">
-                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center text-sm">
-                      ✓
-                    </div>
-                    <p className="text-sm font-medium text-green-700 dark:text-green-400">First monitor created</p>
-                  </div>
-                  {/* Step 2 — active */}
-                  <div
-                    onClick={() => window.location.href = '/dashboard/alerts'}
-                    className="flex items-start gap-4 p-3 rounded-lg border-2 border-green-200 bg-green-50 dark:bg-green-950 dark:border-green-800 cursor-pointer hover:border-green-400 transition"
-                  >
-                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-sm">
-                      2
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Set up alerts</h4>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                        Get notified via Email, Slack, Telegram, Discord, or Webhook.
-                      </p>
-                    </div>
-                    <span className="ml-auto text-green-600 font-medium text-xs whitespace-nowrap">
-                      Go →
-                    </span>
-                  </div>
-                  {/* Step 3 — inactive */}
-                  <div className="flex items-center gap-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 opacity-50">
-                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-300 text-white flex items-center justify-center font-bold text-sm">
-                      3
-                    </div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Relax — we&apos;ve got it from here</p>
-                  </div>
-                </div>
-              </div>
-            </div>
           ) : (
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {monitors.map((monitor) => (
