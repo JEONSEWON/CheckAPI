@@ -1,3 +1,4 @@
+import PublicAuthButtons from '@/components/PublicAuthButtons';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle, Calendar, Clock } from 'lucide-react';
 
@@ -24,10 +25,7 @@ export default function BlogPost2() {
               <Link href="/docs" className="text-gray-700 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <Link href="/login" className="text-gray-700 hover:text-green-600 transition">Log in</Link>
-              <Link href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                Get Started
-              </Link>
+              <PublicAuthButtons />
             </div>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import PublicAuthButtons from '@/components/PublicAuthButtons';
 import Link from 'next/link';
 
 export const metadata = {
@@ -64,10 +65,7 @@ export default function DocsPage() {
               <Link href="/docs" className="text-green-600 font-medium transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Log in</Link>
-              <Link href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                Get Started
-              </Link>
+              <PublicAuthButtons />
             </div>
           </div>
         </div>
