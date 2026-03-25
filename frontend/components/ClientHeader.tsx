@@ -31,16 +31,31 @@ function AuthButtons() {
     setIsLoggedIn(!!token);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    setIsLoggedIn(false);
+    window.location.href = '/';
+  };
+
   if (!mounted) return <div className="w-24 h-9" />;
 
   if (isLoggedIn) {
     return (
-      <a
-        href="/dashboard"
-        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium"
-      >
-        Dashboard →
-      </a>
+      <div className="flex items-center space-x-3">
+        <a
+          href="/dashboard"
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium"
+        >
+          Dashboard →
+        </a>
+        <button
+          onClick={handleLogout}
+          className="text-gray-500 dark:text-gray-400 hover:text-red-500 transition text-sm"
+        >
+          Log out
+        </button>
+      </div>
     );
   }
 
