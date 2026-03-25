@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 
 import Link from 'next/link';
 import { ArrowRight, Mail, MessageCircle, Twitter } from 'lucide-react';
@@ -41,10 +42,7 @@ export default function ContactPage() {
               <a href="/#pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
               <Link href="/docs" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
             </nav>
-            <div className="flex items-center space-x-4">
-              <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Log in</Link>
-              <Link href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">Get Started</Link>
-            </div>
+            <AuthButtons />
           </div>
         </div>
       </header>
@@ -127,6 +125,30 @@ export default function ContactPage() {
           <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600 dark:text-gray-400 dark:border-gray-800">© 2026 CheckAPI. All rights reserved.</div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function AuthButtons() {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    setIsLoggedIn(!!token);
+  }, []);
+
+  if (isLoggedIn) {
+    return (
+      <a href="/dashboard" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+        Dashboard
+      </a>
+    );
+  }
+
+  return (
+    <div className="flex items-center space-x-4">
+      <a href="/login" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Log in</a>
+      <a href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">Get Started</a>
     </div>
   );
 }
