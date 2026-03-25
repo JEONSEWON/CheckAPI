@@ -150,7 +150,7 @@ export default function MonitorDetailPage() {
             )}
             <button
               onClick={handleDelete}
-              className="flex items-center px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition"
+              className="flex items-center px-4 py-2 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900 transition"
             >
               <Trash2 className="h-4 w-4 mr-2" />
               Delete
@@ -204,7 +204,7 @@ export default function MonitorDetailPage() {
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Configuration</h2>
           </div>
-          <div className="px-6 py-4 grid grid-cols-2 gap-4">
+          <div className="px-6 py-4 grid grid-cols-2 gap-4 dark:bg-gray-800">
             <ConfigItem label="Method" value={monitor.method} />
             <ConfigItem label="Interval" value={`${monitor.interval}s`} />
             <ConfigItem label="Timeout" value={`${monitor.timeout}s`} />
