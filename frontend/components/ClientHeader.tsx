@@ -1,5 +1,4 @@
 'use client';
-
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
@@ -8,12 +7,9 @@ import { Sun, Moon } from 'lucide-react';
 function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => setMounted(true), []);
   if (!mounted) return <div className="w-9 h-9" />;
-
   const isDark = resolvedTheme === 'dark';
-
   return (
     <button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
@@ -22,6 +18,41 @@ function ThemeToggle() {
     >
       {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </button>
+  );
+}
+
+function AuthButtons() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const token = localStorage.getItem('access_token');
+    setIsLoggedIn(!!token);
+  }, []);
+
+  if (!mounted) return <div className="w-24 h-9" />;
+
+  if (isLoggedIn) {
+    return (
+      <a
+        href="/dashboard"
+        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium"
+      >
+        Dashboard →
+      </a>
+    );
+  }
+
+  return (
+    <>
+      <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">
+        Log in
+      </Link>
+      <Link href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+        Get Started
+      </Link>
+    </>
   );
 }
 
@@ -42,10 +73,7 @@ export default function ClientHeader() {
           </nav>
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Log in</Link>
-            <Link href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-              Get Started
-            </Link>
+            <AuthButtons />
           </div>
         </div>
       </div>

@@ -24,10 +24,7 @@ export default function BlogPost2() {
               <Link href="/docs" className="text-gray-700 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <Link href="/login" className="text-gray-700 hover:text-green-600 transition">Log in</Link>
-              <Link href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                Get Started
-              </Link>
+              <Link href="/login" className="text-gray-700 hover:text-green-600 transition"><AuthButtons />
             </div>
           </div>
         </div>
@@ -203,6 +200,30 @@ export default function BlogPost2() {
           </div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function AuthButtons() {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    setIsLoggedIn(!!token);
+  }, []);
+
+  if (isLoggedIn) {
+    return (
+      <a href="/dashboard" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium">
+        Dashboard →
+      </a>
+    );
+  }
+
+  return (
+    <div className="flex items-center space-x-4">
+      <a href="/login" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Log in</a>
+      <a href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium">Get Started</a>
     </div>
   );
 }
