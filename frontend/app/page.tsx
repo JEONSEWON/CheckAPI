@@ -29,12 +29,12 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+          <LiveUserCount />
         <div className="text-center">
           <div className="inline-flex items-center gap-2 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm font-medium px-4 py-2 rounded-full mb-8">
             <CheckCircle className="h-4 w-4" />
             Free for Commercial Use — No restrictions
           </div>
-          <LiveUserCount />
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
             Stop finding out your API
             <br />

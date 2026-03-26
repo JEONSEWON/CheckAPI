@@ -21,7 +21,6 @@ export default function LiveUserCount() {
     };
 
     fetchStats();
-    // 60초마다 갱신
     const interval = setInterval(fetchStats, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -29,14 +28,16 @@ export default function LiveUserCount() {
   if (count === null) return null;
 
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/60 border border-gray-700 text-sm text-gray-300 mb-4">
-      <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-      </span>
-      <span>
-        <strong className="text-white">{count.toLocaleString()}</strong> developers already monitoring their APIs
-      </span>
+    <div className="flex justify-center mb-4">
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/60 border border-gray-700 text-sm text-gray-300">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+        </span>
+        <span>
+          <strong className="text-white">{count.toLocaleString()}</strong> developers already monitoring their APIs
+        </span>
+      </div>
     </div>
   );
 }
