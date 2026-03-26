@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe } from 'lucide-react';
+import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe, AlertTriangle } from 'lucide-react';
 import ClientHeader from '@/components/ClientHeader';
 import LiveUserCount from '@/components/LiveUserCount';
 import type { Metadata } from 'next';
@@ -145,17 +145,19 @@ export default function HomePage() {
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {[
+            { icon: <Shield className="h-6 w-6 text-orange-500" />, title: 'Silent Failure Detection', description: 'Your API returns 200 OK — but the response body says "error". Most monitors miss this. CheckAPI catches it.', highlight: true },
             { icon: <Zap className="h-6 w-6 text-green-600 dark:text-green-400" />, title: 'Instant Alerts', description: 'Check your APIs every minute. Get instant alerts when something goes wrong.' },
             { icon: <Bell className="h-6 w-6 text-green-600 dark:text-green-400" />, title: 'Multi-Channel Notifications', description: 'Email, Slack, Telegram, Discord, or custom webhooks. You choose how to be notified.' },
             { icon: <BarChart3 className="h-6 w-6 text-green-600 dark:text-green-400" />, title: '24h Response Time Graphs', description: 'Track uptime, response times, and incidents. Distinguish provider lag from your own code.' },
             { icon: <Globe className="h-6 w-6 text-green-600 dark:text-green-400" />, title: 'Customizable Status Pages', description: 'Share a public status page with your users. No more "is it down?" support tickets.' },
-            { icon: <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />, title: 'Silent Failure Detection', description: 'Catches failures even when your API returns 200 OK but something is actually broken.' },
+
             { icon: <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />, title: 'Free for Commercial Use', description: 'Unlike UptimeRobot, no restrictions on how you use the free plan. Build your business.' },
           ].map((feature) => (
-            <div key={feature.title} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm hover:shadow-md transition">
-              <div className="w-10 h-10 bg-green-50 dark:bg-green-950 rounded-lg flex items-center justify-center mb-4">{feature.icon}</div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">{feature.description}</p>
+            <div key={feature.title} className={`rounded-xl border p-6 shadow-sm hover:shadow-md transition ${'highlight' in feature && (feature as any).highlight ? 'bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'}`}>
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${'highlight' in feature && (feature as any).highlight ? 'bg-orange-100 dark:bg-orange-900' : 'bg-green-50 dark:bg-green-950'}`}>{feature.icon}</div>
+              <h3 className={`font-semibold mb-2 ${'highlight' in feature && (feature as any).highlight ? 'text-orange-700 dark:text-orange-400' : 'text-gray-900 dark:text-white'}`}>{feature.title}</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+              {'highlight' in feature && (feature as any).highlight && <p className="mt-3 text-xs font-semibold text-orange-500 uppercase tracking-wide">★ Key differentiator</p>}
             </div>
           ))}
         </div>
