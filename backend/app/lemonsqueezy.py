@@ -132,9 +132,9 @@ class LemonSqueezyAPI:
 
 # Plan to Variant ID mapping (configured from LemonSqueezy)
 PLAN_VARIANTS = {
-    "starter": "1309924",  # API Health Monitor - Starter ($5/month)
-    "pro": "1309944",      # API Health Monitor - Pro ($15/month)
-    "business": "1309949"  # API Health Monitor - Business ($49/month)
+    "starter": "1451933",  # CheckAPI Starter ($5/month)
+    "pro": "1451947",      # CheckAPI Pro ($15/month)
+    "business": "1451953"  # CheckAPI Business ($49/month)
 }
 
 
