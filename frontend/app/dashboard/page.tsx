@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
-import { authAPI, monitorsAPI, analyticsAPI } from '@/lib/api';
+import { authAPI, monitorsAPI, analyticsAPI, alertChannelsAPI } from '@/lib/api';
 import DashboardLayout from '@/components/DashboardLayout';
 import CreateMonitorModal from '@/components/CreateMonitorModal';
 import { Activity, AlertCircle, CheckCircle, Clock } from 'lucide-react';
@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [overview, setOverview] = useState<any>(null);
   const [loading, setLoadingState] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [alertChannels, setAlertChannels] = useState<any[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -166,7 +167,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <>
-              {monitors.length <= 2 && (
+              {monitors.length <= 2 && alertChannels.length === 0 && (
                 <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-green-50 dark:bg-green-950">
                   <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">Getting started</p>
                   <div className="flex items-center gap-6 flex-wrap">
