@@ -240,24 +240,24 @@ export const analyticsAPI = {
 
 // Subscription API
 export const subscriptionAPI = {
-  current: () => apiRequest('/api/v1/subscriptions/current'),
+  current: () => apiRequest('/api/v1/subscription/'),
   
-  get: () => apiRequest('/api/v1/subscriptions/current'),
+  get: () => apiRequest('/api/v1/subscription/'),
   
   createCheckout: (variantId: string) =>
-    apiRequest('/api/v1/subscriptions/checkout', {
+    apiRequest('/api/v1/subscription/checkout', {
       method: 'POST',
       body: JSON.stringify({ variant_id: variantId }),
     }),
   
   checkout: (plan: string) =>
-    apiRequest('/api/v1/subscriptions/checkout', {
+    apiRequest('/api/v1/subscription/checkout', {
       method: 'POST',
       body: JSON.stringify({ variant_id: plan }),
     }),
 
   cancel: () =>
-    apiRequest('/api/v1/subscriptions/cancel', {
+    apiRequest('/api/v1/subscription/cancel', {
       method: 'POST',
     }),
 
