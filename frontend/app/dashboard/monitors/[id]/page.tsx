@@ -168,7 +168,7 @@ export default function MonitorDetailPage() {
           <span className="font-medium capitalize">{status}</span>
           {monitor.last_checked_at && (
             <span className="text-sm">
-              • checked {formatDistanceToNow(new Date(monitor.last_checked_at), { addSuffix: true })}
+              • checked {formatDistanceToNow(new Date(monitor.last_checked_at + "Z"), { addSuffix: true })}
             </span>
           )}
         </div>
@@ -276,7 +276,7 @@ function CheckRow({ check }: any) {
         )}
       </div>
       <span className="text-sm text-gray-500 dark:text-gray-400">
-        {formatDistanceToNow(new Date(check.checked_at), { addSuffix: true })}
+        {formatDistanceToNow(new Date(check.checked_at + "Z"), { addSuffix: true })}
       </span>
     </div>
   );
