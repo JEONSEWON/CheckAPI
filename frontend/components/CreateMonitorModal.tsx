@@ -19,7 +19,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
   const [keywordPresent, setKeywordPresent] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [checkResult, setCheckResult] = useState<{ status: string; response_time?: number } | null>(null);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(true);
 
   if (!isOpen) return null;
 
@@ -202,8 +202,8 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
 
                 {/* Keyword Check */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Response Keyword <span className="text-gray-400 font-normal">(optional)</span>
+                  <label className="block text-sm font-medium text-orange-600 dark:text-orange-400 mb-2">
+                    ⚡ Silent Failure Detection <span className="text-gray-400 font-normal text-xs">(optional)</span>
                   </label>
                   <input
                     type="text"
