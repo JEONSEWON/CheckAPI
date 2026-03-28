@@ -250,8 +250,8 @@ export const subscriptionAPI = {
       body: JSON.stringify({ variant_id: variantId }),
     }),
   
-  checkout: (plan: string) =>
-    apiRequest(`/api/v1/subscription/checkout?plan=${plan}`, {
+  checkout: (plan: string, billing: string = 'monthly') =>
+    apiRequest(`/api/v1/subscription/checkout?plan=${plan}&billing=${billing}`, {
       method: 'POST',
     }),
 

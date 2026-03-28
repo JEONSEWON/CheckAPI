@@ -11,6 +11,7 @@ export default function SettingsPage() {
   const user = useAuthStore((state) => state.user);
   const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
 
   useEffect(() => { loadSubscription(); }, []);
 
@@ -26,10 +27,10 @@ export default function SettingsPage() {
 
   const handleUpgrade = async (plan: string) => {
     try {
-      const response = await subscriptionAPI.checkout(plan);
+      const response = await subscriptionAPI.checkout(plan, billing);
       window.location.href = response.checkout_url;
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || 'Failed to create checkout');
+      toast.error(error.message || 'Failed to create checkout');
     }
   };
 
@@ -77,7 +78,24 @@ export default function SettingsPage() {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Upgrade Your Plan</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Upgrade Your Plan</h2>
+            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+              <button
+                onClick={() => setBilling('monthly')}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${billing === 'monthly' ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setBilling('annual')}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${billing === 'annual' ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
+              >
+                Annual
+                <span className="ml-1.5 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded-full">-20%</span>
+              </button>
+            </div>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {plans.map((plan) => (
               <PlanCard key={plan.name} plan={plan} currentPlan={user?.plan || 'free'} onUpgrade={handleUpgrade} />

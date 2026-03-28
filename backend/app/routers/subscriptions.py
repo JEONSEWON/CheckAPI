@@ -43,35 +43,38 @@ def get_subscription(
 @router.post("/checkout")
 def create_checkout(
     plan: str,
+    billing: str = "monthly",
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Create checkout session for plan upgrade
-    
     Args:
         plan: Target plan (starter, pro, business)
+        billing: Billing cycle (monthly, annual)
     """
     if plan not in ["starter", "pro", "business"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid plan. Must be one of: starter, pro, business"
         )
-    
+    if billing not in ["monthly", "annual"]:
+        billing = "monthly"
+
     # Check if user already has an active subscription
     existing_sub = db.query(Subscription).filter(
         Subscription.user_id == current_user.id,
         Subscription.status == "active"
     ).first()
-    
+
     if existing_sub and existing_sub.plan == plan:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"You are already on the {plan} plan"
         )
-    
+
     # Get variant ID for plan
-    variant_id = get_variant_id_for_plan(plan)
+    variant_id = get_variant_id_for_plan(plan, billing)
     if not variant_id:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
