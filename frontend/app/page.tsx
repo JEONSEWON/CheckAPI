@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe, AlertTriangle } from 'lucide-react';
 import ClientHeader from '@/components/ClientHeader';
+import PricingCTA from '@/components/PricingCTA';
 import LiveUserCount from '@/components/LiveUserCount';
 import type { Metadata } from 'next';
 
@@ -194,9 +195,7 @@ export default function HomePage() {
                   </li>
                 ))}
               </ul>
-              <Link href={plan.ctaHref} className={`block text-center py-2.5 rounded-lg font-medium transition ${plan.highlight ? 'bg-green-600 text-white hover:bg-green-700' : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-green-500 hover:text-green-600'}`}>
-                {plan.cta}
-              </Link>
+              <PricingCTA planName={plan.name} ctaHref={plan.ctaHref} highlight={plan.highlight} />
             </div>
           ))}
         </div>
