@@ -132,9 +132,9 @@ class LemonSqueezyAPI:
 
 # Plan to Variant ID mapping (configured from LemonSqueezy)
 PLAN_VARIANTS = {
-    "starter": "923370",          # CheckAPI Starter Monthly ($5/month)
-    "pro": "923382",              # CheckAPI Pro Monthly ($15/month)
-    "business": "923386",         # CheckAPI Business Monthly ($49/month)
+    "starter": "1454010",         # CheckAPI Starter Monthly ($5/month)
+    "pro": "1454012",             # CheckAPI Pro Monthly ($15/month)
+    "business": "1454016",        # CheckAPI Business Monthly ($49/month)
     "starter_annual": "1451933",  # CheckAPI Starter Annual ($48/year)
     "pro_annual": "1451947",      # CheckAPI Pro Annual ($144/year)
     "business_annual": "1451953", # CheckAPI Business Annual ($470/year)
