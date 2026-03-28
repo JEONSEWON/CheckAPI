@@ -172,10 +172,10 @@ export default function HomePage() {
         </div>
         <div className="grid md:grid-cols-4 gap-6">
           {[
-            { name: 'Free', price: '$0', period: '/month', badge: null, features: ['10 monitors','5-minute checks','All alert channels','Public status page','30-day history','Commercial use allowed'], cta: 'Start Free', ctaHref: '/register', highlight: false },
-            { name: 'Starter', price: '$5', period: '/month', badge: 'POPULAR', features: ['20 monitors','1-minute checks','All alert channels','Analytics','30-day history','Commercial use allowed'], cta: 'Get Started', ctaHref: '/register', highlight: true },
-            { name: 'Pro', price: '$15', period: '/month', badge: 'Best for growing startups', features: ['100 monitors','30-second checks','Team sharing','Priority support','90-day history','Commercial use allowed'], cta: 'Get Started', ctaHref: '/register', highlight: false },
-            { name: 'Business', price: '$49', period: '/month', badge: null, features: ['Unlimited monitors','10-second checks','API access','Custom features','SLA','1-year history'], cta: 'Get Started', ctaHref: '/register', highlight: false },
+            { name: 'Free', price: '$0', annualPrice: '$0', annualMonthly: '$0', period: '/month', badge: null, features: ['10 monitors','5-minute checks','All alert channels','Public status page','30-day history','Commercial use allowed'], cta: 'Start Free', ctaHref: '/register', highlight: false },
+            { name: 'Starter', price: '$5', annualPrice: '$48', annualMonthly: '$4', period: '/month', badge: 'POPULAR', features: ['20 monitors','1-minute checks','All alert channels','Analytics','30-day history','Commercial use allowed'], cta: 'Get Started', ctaHref: '/register', highlight: true },
+            { name: 'Pro', price: '$15', annualPrice: '$144', annualMonthly: '$12', period: '/month', badge: 'Best for growing startups', features: ['100 monitors','30-second checks','Team sharing','Priority support','90-day history','Commercial use allowed'], cta: 'Get Started', ctaHref: '/register', highlight: false },
+            { name: 'Business', price: '$49', annualPrice: '$470', annualMonthly: '$39', period: '/month', badge: null, features: ['Unlimited monitors','10-second checks','API access','Custom features','SLA','1-year history'], cta: 'Get Started', ctaHref: '/register', highlight: false },
           ].map((plan) => (
             <div key={plan.name} className={`bg-white dark:bg-gray-900 rounded-2xl border-2 p-6 ${plan.highlight ? 'border-green-500 shadow-lg' : 'border-gray-200 dark:border-gray-700'}`}>
               {plan.badge && (
@@ -187,6 +187,9 @@ export default function HomePage() {
               <div className="mb-4">
                 <span className="text-3xl font-bold text-gray-900 dark:text-white">{plan.price}</span>
                 <span className="text-gray-500 dark:text-gray-400">{plan.period}</span>
+                {plan.annualPrice !== '$0' && (
+                  <span className="ml-2 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">or {plan.annualPrice}/yr</span>
+                )}
               </div>
               <ul className="space-y-2 mb-6">
                 {plan.features.map((f) => (

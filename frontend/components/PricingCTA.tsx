@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { subscriptionAPI } from '@/lib/api';
+import { subscriptionAPI, authAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 const PLAN_MAP: Record<string, string> = {
@@ -15,19 +15,30 @@ interface PricingCTAProps {
   planName: string;
   ctaHref: string;
   highlight: boolean;
+  billing?: string;
 }
 
-export default function PricingCTA({ planName, ctaHref, highlight }: PricingCTAProps) {
+export default function PricingCTA({ planName, ctaHref, highlight, billing = 'monthly' }: PricingCTAProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentPlan, setCurrentPlan] = useState<string>('free');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
-    setIsLoggedIn(!!token);
+    if (token) {
+      setIsLoggedIn(true);
+      authAPI.me().then((user: any) => {
+        setCurrentPlan(user.plan || 'free');
+      }).catch(() => {});
+    }
   }, []);
 
+  const isCurrent = planName.toLowerCase() === currentPlan;
+
   const handleClick = async () => {
+    if (isCurrent) return;
+
     if (planName === 'Free') {
       router.push(isLoggedIn ? '/dashboard' : '/register');
       return;
@@ -38,10 +49,9 @@ export default function PricingCTA({ planName, ctaHref, highlight }: PricingCTAP
       return;
     }
 
-    // 로그인 상태 → 바로 결제
     setLoading(true);
     try {
-      const response = await subscriptionAPI.checkout(PLAN_MAP[planName]);
+      const response = await subscriptionAPI.checkout(PLAN_MAP[planName], billing);
       window.location.href = response.checkout_url;
     } catch (error: any) {
       toast.error('Failed to create checkout');
@@ -51,20 +61,24 @@ export default function PricingCTA({ planName, ctaHref, highlight }: PricingCTAP
   };
 
   const getLabel = () => {
+    if (isCurrent) return 'Current Plan';
     if (planName === 'Free') return isLoggedIn ? 'Go to Dashboard' : 'Start Free';
     return isLoggedIn ? 'Upgrade Now' : 'Get Started';
   };
 
   const baseClass = `w-full py-3 rounded-xl font-semibold transition text-center`;
-  const highlightClass = highlight
-    ? 'bg-green-600 text-white hover:bg-green-700'
-    : 'border-2 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white hover:border-green-500 dark:hover:border-green-500';
+
+  const getClass = () => {
+    if (isCurrent) return `${baseClass} border-2 border-green-500 text-green-600 dark:text-green-400 cursor-default`;
+    if (highlight) return `${baseClass} bg-green-600 text-white hover:bg-green-700 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`;
+    return `${baseClass} border-2 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white hover:border-green-500 dark:hover:border-green-500 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`;
+  };
 
   return (
     <button
       onClick={handleClick}
-      disabled={loading}
-      className={`${baseClass} ${highlightClass} ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      disabled={loading || isCurrent}
+      className={getClass()}
     >
       {loading ? 'Loading...' : getLabel()}
     </button>
