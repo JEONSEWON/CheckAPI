@@ -177,7 +177,7 @@ export default function HomePage() {
             { name: 'Pro', price: '$15', annualPrice: '$144', annualMonthly: '$12', period: '/month', badge: 'Best for growing startups', features: ['100 monitors','30-second checks','Team sharing','Priority support','90-day history','Commercial use allowed'], cta: 'Get Started', ctaHref: '/register', highlight: false },
             { name: 'Business', price: '$49', annualPrice: '$470', annualMonthly: '$39', period: '/month', badge: null, features: ['Unlimited monitors','10-second checks','API access','Custom features','SLA','1-year history'], cta: 'Get Started', ctaHref: '/register', highlight: false },
           ].map((plan) => (
-            <div key={plan.name} className={`bg-white dark:bg-gray-900 rounded-2xl border-2 p-6 ${plan.highlight ? 'border-green-500 shadow-lg' : 'border-gray-200 dark:border-gray-700'}`}>
+            <div key={plan.name} className={`bg-white dark:bg-gray-900 rounded-2xl border-2 p-6 flex flex-col ${plan.highlight ? 'border-green-500 shadow-lg' : 'border-gray-200 dark:border-gray-700'}`}>
               {plan.badge && (
                 <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full mb-3 ${plan.badge === 'POPULAR' ? 'bg-green-500 text-white' : 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800'}`}>
                   {plan.badge}
@@ -191,7 +191,7 @@ export default function HomePage() {
                   <span className="ml-2 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">or {plan.annualPrice}/yr</span>
                 )}
               </div>
-              <ul className="space-y-2 mb-6">
+              <ul className="space-y-2 mb-6 flex-1">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />{f}
