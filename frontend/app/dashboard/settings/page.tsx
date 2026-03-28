@@ -46,10 +46,35 @@ export default function SettingsPage() {
   };
 
   const plans = [
-    { name: 'Free', price: '$0', features: ['10 monitors','5-minute checks','All alert channels','Public status page','Keyword validation','SSL monitoring','7-day history'] },
-    { name: 'Starter', price: '$5', features: ['20 monitors','1-minute checks','All alert channels','Analytics','Keyword validation','SSL monitoring','30-day history'], popular: true },
-    { name: 'Pro', price: '$15', features: ['100 monitors','30-second checks','All alert channels','Analytics','Team sharing (5 members)','Keyword validation','SSL monitoring','90-day history'] },
-    { name: 'Business', price: '$49', features: ['Unlimited monitors','10-second checks','All alert channels','Analytics','Team sharing (unlimited)','Keyword validation','SSL monitoring','1-year history'] },
+    {
+      name: 'Free',
+      monthlyPrice: '$0',
+      annualPrice: '$0',
+      annualMonthly: '$0',
+      features: ['10 monitors','5-minute checks','All alert channels','Public status page','Keyword validation','SSL monitoring','30-day history'],
+    },
+    {
+      name: 'Starter',
+      monthlyPrice: '$5',
+      annualPrice: '$48',
+      annualMonthly: '$4',
+      features: ['20 monitors','1-minute checks','All alert channels','Analytics','Keyword validation','SSL monitoring','30-day history'],
+      popular: true,
+    },
+    {
+      name: 'Pro',
+      monthlyPrice: '$15',
+      annualPrice: '$144',
+      annualMonthly: '$12',
+      features: ['100 monitors','30-second checks','All alert channels','Analytics','Team sharing (5 members)','Keyword validation','SSL monitoring','90-day history'],
+    },
+    {
+      name: 'Business',
+      monthlyPrice: '$49',
+      annualPrice: '$470',
+      annualMonthly: '$39',
+      features: ['Unlimited monitors','10-second checks','All alert channels','Analytics','Team sharing (unlimited)','Keyword validation','SSL monitoring','1-year history'],
+    },
   ];
 
   return (
@@ -98,7 +123,7 @@ export default function SettingsPage() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {plans.map((plan) => (
-              <PlanCard key={plan.name} plan={plan} currentPlan={user?.plan || 'free'} onUpgrade={handleUpgrade} />
+              <PlanCard key={plan.name} plan={plan} currentPlan={user?.plan || 'free'} onUpgrade={handleUpgrade} billing={billing} />
             ))}
           </div>
         </div>
@@ -116,22 +141,34 @@ export default function SettingsPage() {
   );
 }
 
-function PlanCard({ plan, currentPlan, onUpgrade }: any) {
+function PlanCard({ plan, currentPlan, onUpgrade, billing }: any) {
   const isCurrent = plan.name.toLowerCase() === currentPlan;
+  const isAnnual = billing === 'annual';
+  const isFree = plan.name === 'Free';
+  const displayPrice = isAnnual && !isFree ? plan.annualMonthly : plan.monthlyPrice;
+
   return (
-    <div className={`bg-white dark:bg-gray-900 rounded-lg border-2 p-6 ${plan.popular ? 'border-green-600 shadow-lg' : 'border-gray-200 dark:border-gray-700'}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-lg border-2 p-6 ${plan.popular ? 'border-green-600 shadow-lg' : 'border-gray-200 dark:border-gray-700'}`}>
       {plan.popular && (
         <span className="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>
       )}
       <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-4">{plan.name}</h3>
-      <div className="mt-4 mb-6">
-        <span className="text-4xl font-bold text-gray-900 dark:text-white">{plan.price}</span>
-        <span className="text-gray-600 dark:text-gray-400">/month</span>
+      <div className="mt-4 mb-1">
+        <span className="text-4xl font-bold text-gray-900 dark:text-white">{displayPrice}</span>
+        <span className="text-gray-600 dark:text-gray-400">/mo</span>
       </div>
+      {isAnnual && !isFree && (
+        <div className="mb-4 flex items-center gap-2 flex-wrap">
+          <span className="text-sm text-gray-400 dark:text-gray-500 line-through">{plan.monthlyPrice}/mo</span>
+          <span className="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full font-medium">Save 20%</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400 w-full">{plan.annualPrice} billed yearly</span>
+        </div>
+      )}
+      {(!isAnnual || isFree) && <div className="mb-4" />}
       <ul className="space-y-3 mb-6">
         {plan.features.map((feature: string, i: number) => (
           <li key={i} className="flex items-center text-gray-700 dark:text-gray-300">
-            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mr-2 flex-shrink-0" />
+            <CheckCircle className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
             {feature}
           </li>
         ))}
@@ -143,7 +180,7 @@ function PlanCard({ plan, currentPlan, onUpgrade }: any) {
       ) : (
         <button
           onClick={() => onUpgrade(plan.name.toLowerCase())}
-          className={`w-full py-2 rounded-lg font-medium transition ${plan.popular ? 'bg-green-600 text-white hover:bg-green-700' : 'border-2 border-green-600 text-green-600 dark:text-green-400 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-950'}`}
+          className={`w-full py-2 rounded-lg font-medium transition ${plan.popular ? 'bg-green-600 text-white hover:bg-green-700' : 'border-2 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900'}`}
         >
           {currentPlan === 'free' ? 'Upgrade' : 'Switch Plan'}
         </button>
@@ -151,6 +188,7 @@ function PlanCard({ plan, currentPlan, onUpgrade }: any) {
     </div>
   );
 }
+
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
