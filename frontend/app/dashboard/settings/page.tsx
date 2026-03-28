@@ -153,18 +153,24 @@ function PlanCard({ plan, currentPlan, onUpgrade, billing }: any) {
         <span className="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>
       )}
       <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-4">{plan.name}</h3>
-      <div className="mt-4 mb-1">
-        <span className="text-4xl font-bold text-gray-900 dark:text-white">{displayPrice}</span>
-        <span className="text-gray-600 dark:text-gray-400">/mo</span>
-      </div>
-      {isAnnual && !isFree && (
-        <div className="mb-4 flex items-center gap-2 flex-wrap">
-          <span className="text-sm text-gray-400 dark:text-gray-500 line-through">{plan.monthlyPrice}/mo</span>
-          <span className="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full font-medium">Save 20%</span>
-          <span className="text-xs text-gray-500 dark:text-gray-400 w-full">{plan.annualPrice} billed yearly</span>
+      {isAnnual && !isFree ? (
+        <div className="mt-4 mb-4">
+          <div>
+            <span className="text-4xl font-bold text-gray-900 dark:text-white">{plan.annualPrice}</span>
+            <span className="text-gray-600 dark:text-gray-400">/year</span>
+          </div>
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <span className="text-sm text-gray-500 dark:text-gray-400">{plan.annualMonthly}/mo</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500 line-through">{plan.monthlyPrice}/mo</span>
+            <span className="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full font-medium">Save 20%</span>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-4 mb-4">
+          <span className="text-4xl font-bold text-gray-900 dark:text-white">{plan.monthlyPrice}</span>
+          <span className="text-gray-600 dark:text-gray-400">/mo</span>
         </div>
       )}
-      {(!isAnnual || isFree) && <div className="mb-4" />}
       <ul className="space-y-3 mb-6">
         {plan.features.map((feature: string, i: number) => (
           <li key={i} className="flex items-center text-gray-700 dark:text-gray-300">
