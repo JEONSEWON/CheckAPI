@@ -251,9 +251,8 @@ export const subscriptionAPI = {
     }),
   
   checkout: (plan: string) =>
-    apiRequest('/api/v1/subscription/checkout', {
+    apiRequest(`/api/v1/subscription/checkout?plan=${plan}`, {
       method: 'POST',
-      body: JSON.stringify({ variant_id: plan }),
     }),
 
   cancel: () =>
