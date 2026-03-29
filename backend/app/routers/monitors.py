@@ -107,7 +107,7 @@ def validate_interval(user: User, interval: int) -> None:
 
 @router.get("/", response_model=List[MonitorResponse])
 def list_monitors(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_flexible),
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100)
@@ -130,7 +130,7 @@ def list_monitors(
 @router.post("/", response_model=MonitorResponse, status_code=status.HTTP_201_CREATED)
 def create_monitor(
     monitor_data: MonitorCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_flexible),
     db: Session = Depends(get_db)
 ):
     """
@@ -166,7 +166,7 @@ def create_monitor(
 @router.get("/{monitor_id}", response_model=MonitorResponse)
 def get_monitor(
     monitor_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_flexible),
     db: Session = Depends(get_db)
 ):
     """
@@ -190,7 +190,7 @@ def get_monitor(
 def update_monitor(
     monitor_id: str,
     monitor_data: MonitorUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_flexible),
     db: Session = Depends(get_db)
 ):
     """
@@ -232,7 +232,7 @@ def update_monitor(
 @router.delete("/{monitor_id}", response_model=MessageResponse)
 def delete_monitor(
     monitor_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_flexible),
     db: Session = Depends(get_db)
 ):
     """
@@ -258,7 +258,7 @@ def delete_monitor(
 @router.get("/{monitor_id}/checks", response_model=CheckListResponse)
 def get_monitor_checks(
     monitor_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_flexible),
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
@@ -312,7 +312,7 @@ def get_monitor_checks(
 @router.post("/{monitor_id}/pause", response_model=MessageResponse)
 def pause_monitor(
     monitor_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_flexible),
     db: Session = Depends(get_db)
 ):
     """
@@ -340,7 +340,7 @@ def pause_monitor(
 @router.post("/{monitor_id}/resume", response_model=MessageResponse)
 def resume_monitor(
     monitor_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_flexible),
     db: Session = Depends(get_db)
 ):
     """
