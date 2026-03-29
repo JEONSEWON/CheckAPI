@@ -71,7 +71,7 @@ def create_api_key(
 
     # 키 생성: ck_live_xxxxxxxxxxxx
     raw_key = f"ck_live_{secrets.token_urlsafe(32)}"
-    prefix = raw_key[:12]
+    prefix = raw_key[:8]
 
     api_key = APIKey(
         user_id=current_user.id,
