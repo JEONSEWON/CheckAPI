@@ -121,3 +121,45 @@ def get_current_active_user(
 ) -> User:
     """Get current active user (alias for clarity)"""
     return current_user
+
+import hashlib as _hashlib
+
+def get_api_key_header(request) -> str | None:
+    return request.headers.get("X-API-Key")
+
+
+def get_user_by_api_key(api_key: str, db) -> "User | None":
+    from app.models import APIKey
+    key_hash = _hashlib.sha256(api_key.encode()).hexdigest()
+    api_key_obj = db.query(APIKey).filter(
+        APIKey.key_hash == key_hash,
+        APIKey.is_active == True
+    ).first()
+    if not api_key_obj:
+        return None
+    # last_used_at 업데이트
+    from datetime import datetime
+    api_key_obj.last_used_at = datetime.utcnow()
+    db.commit()
+    return api_key_obj.user
+
+import hashlib as _hashlib
+
+def get_api_key_header(request) -> str | None:
+    return request.headers.get("X-API-Key")
+
+
+def get_user_by_api_key(api_key: str, db) -> "User | None":
+    from app.models import APIKey
+    key_hash = _hashlib.sha256(api_key.encode()).hexdigest()
+    api_key_obj = db.query(APIKey).filter(
+        APIKey.key_hash == key_hash,
+        APIKey.is_active == True
+    ).first()
+    if not api_key_obj:
+        return None
+    # last_used_at 업데이트
+    from datetime import datetime
+    api_key_obj.last_used_at = datetime.utcnow()
+    db.commit()
+    return api_key_obj.user

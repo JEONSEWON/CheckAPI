@@ -2,7 +2,7 @@
 Monitor management routes: CRUD operations for monitors
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from typing import List
@@ -19,7 +19,38 @@ from app.schemas import (
     CheckListResponse,
     MessageResponse
 )
-from app.auth import get_current_user
+from app.auth import get_current_user, get_user_by_api_key
+
+def get_current_user_flexible(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """JWT 토큰 또는 API 키로 인증"""
+    api_key = request.headers.get("X-API-Key")
+    if api_key:
+        user = get_user_by_api_key(api_key, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid API key")
+        if user.plan != "business":
+            raise HTTPException(status_code=403, detail="API access requires Business plan")
+        return user
+    # JWT 토큰 인증
+    from app.auth import get_current_user
+    from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    token = auth[7:]
+    from app.auth import decode_token as verify_token
+    from app.models import User
+    payload = verify_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    user = db.query(User).filter(User.id == payload.get("sub")).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    return user
+
 
 router = APIRouter(prefix="/monitors", tags=["Monitors"])
 
