@@ -133,7 +133,7 @@ export default function SettingsPage() {
       monthlyPrice: '$49',
       annualPrice: '$470',
       annualMonthly: '$39',
-      features: ['Unlimited monitors', '10-second checks', 'All alert channels', 'Analytics', 'Team sharing (unlimited)', 'Keyword validation', 'SSL monitoring', '1-year history'],
+      features: ['Unlimited monitors', '10-second checks', 'All alert channels', 'Analytics', 'Team sharing (unlimited)', 'Keyword validation', 'SSL monitoring', 'REST API access', '1-year history'],
     },
   ];
 
