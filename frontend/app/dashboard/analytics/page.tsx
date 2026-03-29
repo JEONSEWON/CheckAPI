@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { analyticsAPI } from '@/lib/api';
+import { useAuthStore } from '@/lib/store';
 import { Activity, TrendingUp, AlertCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -10,6 +11,9 @@ export default function AnalyticsPage() {
   const [overview, setOverview] = useState<any>(null);
   const [incidents, setIncidents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [slaReport, setSlaReport] = useState<any>(null);
+  const [slaMonths, setSlaMonths] = useState(3);
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => { loadData(); }, []);
 
@@ -26,6 +30,17 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadSLA = async (months: number) => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app';
+      const res = await fetch(`${API_URL}/api/v1/analytics/sla?months=${months}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) setSlaReport(await res.json());
+    } catch {}
   };
 
   if (loading) {
