@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
-import { monitorsAPI, analyticsAPI } from '@/lib/api';
+import { monitorsAPI, analyticsAPI, alertChannelsAPI } from '@/lib/api';
 import {
   ArrowLeft,
   CheckCircle,
@@ -13,7 +13,10 @@ import {
   Trash2,
   Edit,
   Pause,
-  Play
+  Play,
+  Bell,
+  Plus,
+  X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
@@ -27,6 +30,8 @@ export default function MonitorDetailPage() {
   const [analytics, setAnalytics] = useState<any>(null);
   const [checks, setChecks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [allChannels, setAllChannels] = useState<any[]>([]);
+  const [linkedChannels, setLinkedChannels] = useState<any[]>([]);
 
   useEffect(() => {
     loadData();
@@ -41,6 +46,14 @@ export default function MonitorDetailPage() {
       // Get analytics
       const analyticsResponse = await analyticsAPI.monitor(monitorId, 7);
       setAnalytics(analyticsResponse);
+
+      // Get alert channels
+      const [allCh, monitorData] = await Promise.all([
+        alertChannelsAPI.list(),
+        monitorsAPI.get(monitorId),
+      ]);
+      setAllChannels(allCh);
+      setLinkedChannels(monitorData.alert_channels || []);
 
       // Get recent checks
       const checksResponse = await monitorsAPI.checks(monitorId, {
@@ -74,6 +87,26 @@ export default function MonitorDetailPage() {
       loadData();
     } catch (error) {
       toast.error('Failed to resume monitor');
+    }
+  };
+
+  const handleLinkChannel = async (channelId: string) => {
+    try {
+      await alertChannelsAPI.linkToMonitor(monitorId, channelId);
+      toast.success('Alert channel linked!');
+      loadData();
+    } catch (error) {
+      toast.error('Failed to link channel');
+    }
+  };
+
+  const handleUnlinkChannel = async (channelId: string) => {
+    try {
+      await alertChannelsAPI.unlinkFromMonitor(monitorId, channelId);
+      toast.success('Alert channel unlinked');
+      loadData();
+    } catch (error) {
+      toast.error('Failed to unlink channel');
     }
   };
 
@@ -209,6 +242,61 @@ export default function MonitorDetailPage() {
             <ConfigItem label="Interval" value={`${monitor.interval}s`} />
             <ConfigItem label="Timeout" value={`${monitor.timeout}s`} />
             <ConfigItem label="Expected Status" value={monitor.expected_status} />
+          </div>
+        </div>
+
+        {/* Alert Channels */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Bell className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Alert Channels</h2>
+            </div>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{linkedChannels.length} connected</span>
+          </div>
+          <div className="px-6 py-4 space-y-3">
+            {/* 연결된 채널 */}
+            {linkedChannels.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400">No alert channels connected yet.</p>
+            ) : (
+              linkedChannels.map((ch: any) => (
+                <div key={ch.id} className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Bell className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">{ch.type}</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {ch.config?.email || ch.config?.webhook_url || ''}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleUnlinkChannel(ch.id)}
+                    className="p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded transition text-red-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))
+            )}
+            {/* 연결 가능한 채널 */}
+            {allChannels.filter(ch => !linkedChannels.find((l: any) => l.id === ch.id)).length > 0 && (
+              <div className="pt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Add channel:</p>
+                <div className="flex flex-wrap gap-2">
+                  {allChannels
+                    .filter(ch => !linkedChannels.find((l: any) => l.id === ch.id))
+                    .map((ch: any) => (
+                      <button
+                        key={ch.id}
+                        onClick={() => handleLinkChannel(ch.id)}
+                        className="flex items-center gap-1 px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-sm hover:border-green-500 transition text-gray-700 dark:text-gray-300"
+                      >
+                        <Plus className="h-3 w-3" />
+                        {ch.type} {ch.config?.email ? `(${ch.config.email})` : ''}
+                      </button>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
