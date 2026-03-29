@@ -32,6 +32,7 @@ class User(Base):
     monitors = relationship("Monitor", back_populates="user", cascade="all, delete-orphan")
     alert_channels = relationship("AlertChannel", back_populates="user", cascade="all, delete-orphan")
     subscription = relationship("Subscription", back_populates="user", uselist=False)
+    api_keys = relationship("APIKey", back_populates="user", cascade="all, delete-orphan")
     # Team
     owned_team_members = relationship("TeamMember", foreign_keys="TeamMember.owner_id", back_populates="owner", cascade="all, delete-orphan")
     team_memberships = relationship("TeamMember", foreign_keys="TeamMember.member_id", back_populates="member")
@@ -146,3 +147,19 @@ class Subscription(Base):
     
     # Relationships
     user = relationship("User", back_populates="subscription")
+
+class APIKey(Base):
+    """API Key model - for Business plan programmatic access"""
+    __tablename__ = "api_keys"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    name = Column(String(100), nullable=False)
+    key_hash = Column(String(255), nullable=False, unique=True)
+    key_prefix = Column(String(10), nullable=False)
+    last_used_at = Column(DateTime)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    user = relationship("User", back_populates="api_keys")

@@ -33,7 +33,7 @@ app.add_middleware(
 
 
 # Include routers
-from app.routers import monitors, alert_channels, subscriptions, public, analytics, teams
+from app.routers import monitors, alert_channels, subscriptions, public, analytics, teams, api_keys
 
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(monitors.router, prefix="/api/v1")
@@ -42,6 +42,7 @@ app.include_router(subscriptions.router, prefix="/api/v1")
 app.include_router(public.router, prefix="/api/v1")
 app.include_router(analytics.router, prefix="/api/v1")
 app.include_router(teams.router, prefix="/api/v1")
+app.include_router(api_keys.router, prefix="/api/v1")
 
 
 @app.on_event("startup")
