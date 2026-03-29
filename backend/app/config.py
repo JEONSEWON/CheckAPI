@@ -32,9 +32,12 @@ class Settings(BaseSettings):
     LEMONSQUEEZY_STORE_ID: str = ""
     LEMONSQUEEZY_WEBHOOK_SECRET: str = ""
     
-    # SendGrid
+    # Email (Resend)
+    RESEND_API_KEY: str = ""
+    FROM_EMAIL: str = "noreply@checkapi.io"
+
+    # SendGrid (legacy)
     SENDGRID_API_KEY: str = ""
-    FROM_EMAIL: str = "noreply@apihealthmonitor.com"
     
     # Frontend
     FRONTEND_URL: str = "http://localhost:3000"
