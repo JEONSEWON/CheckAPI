@@ -74,10 +74,10 @@ def get_effective_owner(current_user: User, db: Session) -> User:
 
 # Plan limits
 PLAN_LIMITS = {
-    "free": {"max_monitors": 10, "min_interval": 300},  # 5 minutes
-    "starter": {"max_monitors": 20, "min_interval": 60},  # 1 minute
-    "pro": {"max_monitors": 100, "min_interval": 30},  # 30 seconds
-    "business": {"max_monitors": -1, "min_interval": 10},  # unlimited, 10 seconds
+    "free":     {"max_monitors": 10,  "min_interval": 300, "history_hours": 720},    # 30 days
+    "starter":  {"max_monitors": 20,  "min_interval": 60,  "history_hours": 720},    # 30 days
+    "pro":      {"max_monitors": 100, "min_interval": 30,  "history_hours": 2160},   # 90 days
+    "business": {"max_monitors": -1,  "min_interval": 10,  "history_hours": 8760},   # 365 days
 }
 
 
@@ -262,7 +262,7 @@ def get_monitor_checks(
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
-    hours: int = Query(24, ge=1, le=168)  # Last 24 hours by default, max 7 days
+    hours: int = Query(None, ge=1)
 ):
     """
     Get check history for a monitor
@@ -279,6 +279,11 @@ def get_monitor_checks(
             detail="Monitor not found"
         )
     
+    # Apply plan-based history limit
+    limits = PLAN_LIMITS.get(current_user.plan, PLAN_LIMITS["free"])
+    max_hours = limits["history_hours"]
+    if hours is None or hours > max_hours:
+        hours = max_hours
     # Get checks from last N hours
     since = datetime.utcnow() - timedelta(hours=hours)
     
