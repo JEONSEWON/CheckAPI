@@ -214,13 +214,13 @@ export const alertChannelsAPI = {
     }),
 
   linkToMonitor: (monitorId: string, channelId: string) =>
-    apiRequest(`/api/v1/monitors/${monitorId}/alert-channels/${channelId}`, {
+    apiRequest(`/api/v1/alert-channels/${channelId}/attach/${monitorId}`, {
       method: 'POST',
     }),
 
   unlinkFromMonitor: (monitorId: string, channelId: string) =>
-    apiRequest(`/api/v1/monitors/${monitorId}/alert-channels/${channelId}`, {
-      method: 'DELETE',
+    apiRequest(`/api/v1/alert-channels/${channelId}/detach/${monitorId}`, {
+      method: 'POST',
     }),
 };
 
