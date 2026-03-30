@@ -16,7 +16,8 @@ import {
   Play,
   Bell,
   Plus,
-  X
+  X,
+  Link
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
@@ -156,6 +157,12 @@ export default function MonitorDetailPage() {
     }
   };
 
+  const handleCopyStatusUrl = () => {
+    const url = `${window.location.origin}/status/${monitorId}`;
+    navigator.clipboard.writeText(url);
+    toast.success('Status page URL copied!');
+  };
+
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this monitor?')) return;
 
@@ -227,6 +234,13 @@ export default function MonitorDetailPage() {
                 Resume
               </button>
             )}
+            <button
+              onClick={handleCopyStatusUrl}
+              className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-gray-900 dark:text-white"
+            >
+              <Link className="h-4 w-4 mr-2" />
+              Status Page
+            </button>
             <button
               onClick={handleEdit}
               className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-gray-900 dark:text-white"
