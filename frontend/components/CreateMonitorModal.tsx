@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap } from 'lucide-react';
 import { monitorsAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -20,8 +20,43 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
   const [isLoading, setIsLoading] = useState(false);
   const [checkResult, setCheckResult] = useState<{ status: string; response_time?: number } | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(true);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   if (!isOpen) return null;
+
+  if (showUpgradeModal) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8 text-center">
+          <div className="w-14 h-14 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Zap className="h-7 w-7 text-orange-500" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Monitor limit reached</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-2">
+            You've used all <span className="font-semibold text-gray-700 dark:text-gray-300">10 monitors</span> on the Free plan.
+          </p>
+          <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
+            Upgrade to <span className="text-green-600 font-semibold">Starter</span> for 20 monitors and 1-minute checks, or <span className="text-green-600 font-semibold">Pro</span> for 100 monitors and faster intervals.
+          </p>
+          <div className="flex flex-col gap-3">
+            <a
+              href="/dashboard/settings?tab=billing"
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition font-semibold"
+            >
+              Upgrade Now
+              <ArrowRight className="h-4 w-4" />
+            </a>
+            <button
+              onClick={() => { setShowUpgradeModal(false); onClose(); }}
+              className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm"
+            >
+              Maybe later
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const generateName = (rawUrl: string) => {
     try {
@@ -72,7 +107,11 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
       toast.success('Monitor created!');
       onSuccess();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to create monitor');
+      if (error.message && error.message.includes('Monitor limit reached')) {
+        setShowUpgradeModal(true);
+      } else {
+        toast.error(error.message || 'Failed to create monitor');
+      }
     } finally {
       setIsLoading(false);
     }
