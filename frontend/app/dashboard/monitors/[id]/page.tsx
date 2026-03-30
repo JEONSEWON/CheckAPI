@@ -157,6 +157,15 @@ export default function MonitorDetailPage() {
     }
   };
 
+  const handleTestChannel = async (channelId: string) => {
+    try {
+      await alertChannelsAPI.test(channelId);
+      toast.success('Test alert sent!');
+    } catch (error) {
+      toast.error('Failed to send test alert');
+    }
+  };
+
   const handleCopyStatusUrl = () => {
     const url = `${window.location.origin}/status/${monitorId}`;
     navigator.clipboard.writeText(url);
@@ -335,12 +344,20 @@ export default function MonitorDetailPage() {
                       {ch.config?.email || ch.config?.webhook_url || ''}
                     </span>
                   </div>
-                  <button
-                    onClick={() => handleUnlinkChannel(ch.id)}
-                    className="p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded transition text-red-500"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleTestChannel(ch.id)}
+                      className="px-2 py-1 text-xs border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-400"
+                    >
+                      Test
+                    </button>
+                    <button
+                      onClick={() => handleUnlinkChannel(ch.id)}
+                      className="p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded transition text-red-500"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               ))
             )}
