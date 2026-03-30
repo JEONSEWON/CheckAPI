@@ -19,12 +19,12 @@ export default function BlogPost3() {
               </span>
             </Link>
             <nav className="hidden md:flex space-x-8">
-              <a href="/#features" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Features</a>
-              <a href="/#pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
-              <Link href="/docs" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
+              <a href="/#features" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Features</a>
+              <a href="/#pricing" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
+              <Link href="/docs" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Log in</Link>
+              <Link href="/login" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Log in</Link>
               <Link href="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
                 Get Started
               </Link>
@@ -37,7 +37,7 @@ export default function BlogPost3() {
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
+        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-300 dark:text-gray-200 mb-8">
           <Link href="/blog" className="hover:text-green-600">Blog</Link>
           <span>/</span>
           <span>Slack API Alerts</span>
@@ -47,14 +47,14 @@ export default function BlogPost3() {
           How to Set Up Slack Alerts for API Downtime in 5 Minutes
         </h1>
 
-        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-10">
+        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-300 dark:text-gray-200 mb-10">
           <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />Jan 28, 2026</span>
           <span className="flex items-center gap-1"><Clock className="h-4 w-4" />3 min read</span>
         </div>
 
-        <div className="prose prose-lg max-w-none space-y-8 text-gray-700 leading-relaxed">
+        <div className="prose prose-lg max-w-none space-y-8 text-gray-700 dark:text-gray-200 leading-relaxed">
 
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-xl text-gray-600 dark:text-gray-200 dark:text-gray-200">
             Email alerts are fine. But when your API goes down at 2am, you want a Slack ping — not an email you'll see at 9am. Here's how to set it up in under 5 minutes.
           </p>
 
@@ -92,7 +92,7 @@ export default function BlogPost3() {
             ].map((item) => (
               <div key={item.step} className="flex items-start gap-4">
                 <span className="w-7 h-7 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 mt-0.5">{item.step}</span>
-                <p className="text-gray-600 dark:text-gray-400">{item.text}</p>
+                <p className="text-gray-600 dark:text-gray-200 dark:text-gray-200">{item.text}</p>
               </div>
             ))}
           </div>
@@ -110,7 +110,7 @@ export default function BlogPost3() {
             ].map((item) => (
               <div key={item.step} className="flex items-start gap-4">
                 <span className="w-7 h-7 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 mt-0.5">{item.step}</span>
-                <p className="text-gray-600 dark:text-gray-400">{item.text}</p>
+                <p className="text-gray-600 dark:text-gray-200 dark:text-gray-200">{item.text}</p>
               </div>
             ))}
           </div>
@@ -138,7 +138,7 @@ export default function BlogPost3() {
 
           <div className="grid grid-cols-3 gap-4">
             {['📱 Telegram', '🎮 Discord', '🔗 Custom Webhook'].map((channel, i) => (
-              <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center text-gray-700 font-medium">
+              <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center text-gray-700 dark:text-gray-200 font-medium">
                 {channel}
               </div>
             ))}
@@ -162,11 +162,11 @@ export default function BlogPost3() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-gray-900 dark:text-white mb-4">CheckAPI</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Simple, reliable API monitoring for developers and teams.</p>
+              <p className="text-gray-600 dark:text-gray-200 dark:text-gray-200 text-sm">Simple, reliable API monitoring for developers and teams.</p>
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><a href="/#features" className="hover:text-green-600">Features</a></li>
                 <li><a href="/#pricing" className="hover:text-green-600">Pricing</a></li>
                 <li><Link href="/docs" className="hover:text-green-600">Documentation</Link></li>
@@ -174,7 +174,7 @@ export default function BlogPost3() {
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><Link href="/about" className="hover:text-green-600">About</Link></li>
                 <li><Link href="/blog" className="hover:text-green-600">Blog</Link></li>
                 <li><Link href="/contact" className="hover:text-green-600">Contact</Link></li>
@@ -182,13 +182,13 @@ export default function BlogPost3() {
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><Link href="/privacy" className="hover:text-green-600">Privacy</Link></li>
                 <li><Link href="/terms" className="hover:text-green-600">Terms</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600 dark:text-gray-400">
+          <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
             © 2026 CheckAPI. All rights reserved.
           </div>
         </div>

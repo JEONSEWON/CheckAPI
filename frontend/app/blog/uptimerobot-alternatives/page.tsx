@@ -20,9 +20,9 @@ export default function BlogPost1() {
               </span>
             </Link>
             <nav className="hidden md:flex space-x-8">
-              <a href="/#features" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Features</a>
-              <a href="/#pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
-              <Link href="/docs" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
+              <a href="/#features" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Features</a>
+              <a href="/#pricing" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
+              <Link href="/docs" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
               <PublicAuthButtons />
@@ -35,7 +35,7 @@ export default function BlogPost1() {
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
+        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-300 mb-8">
           <Link href="/blog" className="hover:text-green-600">Blog</Link>
           <span>/</span>
           <span>UptimeRobot Alternatives</span>
@@ -46,13 +46,13 @@ export default function BlogPost1() {
           Best Free UptimeRobot Alternatives in 2026
         </h1>
 
-        <div className="flex items-center gap-4 text-sm text-gray-500 mb-10">
+        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-300 mb-10">
           <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />Feb 20, 2026</span>
           <span className="flex items-center gap-1"><Clock className="h-4 w-4" />5 min read</span>
         </div>
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none space-y-8 text-gray-700 leading-relaxed">
+        <div className="prose prose-lg max-w-none space-y-8 text-gray-700 dark:text-gray-200 leading-relaxed">
 
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
             <p className="text-amber-800 font-medium mb-0">
@@ -93,7 +93,7 @@ export default function BlogPost1() {
               <h3 className="text-2xl font-bold text-gray-900">1. CheckAPI</h3>
               <span className="bg-green-100 text-green-700 text-sm font-bold px-3 py-1 rounded-full">Best Overall</span>
             </div>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-200 mb-6">
               CheckAPI is purpose-built for API monitoring. The free plan gives you 10 monitors with 5-minute checks — and crucially, commercial use is explicitly allowed with no restrictions.
             </p>
             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -107,7 +107,7 @@ export default function BlogPost1() {
                   {item.ok
                     ? <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
                     : <XCircle className="h-4 w-4 text-red-400 flex-shrink-0" />}
-                  <span className="text-gray-600"><span className="font-medium">{item.label}:</span> {item.value}</span>
+                  <span className="text-gray-600 dark:text-gray-200"><span className="font-medium">{item.label}:</span> {item.value}</span>
                 </div>
               ))}
             </div>
@@ -119,7 +119,7 @@ export default function BlogPost1() {
           {/* Tool 2 */}
           <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">2. Freshping</h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-200 mb-4">
               Freshping offers 50 free monitors with 1-minute checks, which is genuinely impressive. It's part of the Freshworks ecosystem, so it integrates well if you're already using their products. The downside is that alert channels beyond email require setup within the Freshworks platform.
             </p>
             <div className="grid grid-cols-2 gap-4">
@@ -133,7 +133,7 @@ export default function BlogPost1() {
                   {item.ok
                     ? <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
                     : <XCircle className="h-4 w-4 text-red-400 flex-shrink-0" />}
-                  <span className="text-gray-600"><span className="font-medium">{item.label}:</span> {item.value}</span>
+                  <span className="text-gray-600 dark:text-gray-200"><span className="font-medium">{item.label}:</span> {item.value}</span>
                 </div>
               ))}
             </div>
@@ -142,7 +142,7 @@ export default function BlogPost1() {
           {/* Tool 3 */}
           <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">3. Better Stack (Betterstack)</h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-200 mb-4">
               Better Stack has a generous free plan with beautiful UI and solid incident management. It's a strong choice if you need status pages and on-call scheduling. The free plan is limited in monitor count but the product quality is high.
             </p>
             <div className="grid grid-cols-2 gap-4">
@@ -156,7 +156,7 @@ export default function BlogPost1() {
                   {item.ok
                     ? <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
                     : <XCircle className="h-4 w-4 text-red-400 flex-shrink-0" />}
-                  <span className="text-gray-600"><span className="font-medium">{item.label}:</span> {item.value}</span>
+                  <span className="text-gray-600 dark:text-gray-200"><span className="font-medium">{item.label}:</span> {item.value}</span>
                 </div>
               ))}
             </div>
@@ -183,8 +183,8 @@ export default function BlogPost1() {
                 ].map((row, i) => (
                   <tr key={i} className={i === 0 ? 'bg-green-50' : ''}>
                     <td className="p-4 font-medium text-gray-900">{row.name}{i === 0 && <span className="ml-2 text-xs text-green-600 font-bold">← This site</span>}</td>
-                    <td className="p-4 text-gray-600">{row.monitors}</td>
-                    <td className="p-4 text-gray-600">{row.interval}</td>
+                    <td className="p-4 text-gray-600 dark:text-gray-200">{row.monitors}</td>
+                    <td className="p-4 text-gray-600 dark:text-gray-200">{row.interval}</td>
                     <td className="p-4">
                       {row.commercial
                         ? <CheckCircle className="h-5 w-5 text-green-600" />
@@ -222,11 +222,11 @@ export default function BlogPost1() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-gray-900 dark:text-white mb-4">CheckAPI</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Simple, reliable API monitoring for developers and teams.</p>
+              <p className="text-gray-600 dark:text-gray-200 dark:text-gray-200 text-sm">Simple, reliable API monitoring for developers and teams.</p>
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><a href="/#features" className="hover:text-green-600">Features</a></li>
                 <li><a href="/#pricing" className="hover:text-green-600">Pricing</a></li>
                 <li><Link href="/docs" className="hover:text-green-600">Documentation</Link></li>
@@ -234,7 +234,7 @@ export default function BlogPost1() {
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><Link href="/about" className="hover:text-green-600">About</Link></li>
                 <li><Link href="/blog" className="hover:text-green-600">Blog</Link></li>
                 <li><Link href="/contact" className="hover:text-green-600">Contact</Link></li>
@@ -242,13 +242,13 @@ export default function BlogPost1() {
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><Link href="/privacy" className="hover:text-green-600">Privacy</Link></li>
                 <li><Link href="/terms" className="hover:text-green-600">Terms</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600 dark:text-gray-400 dark:border-gray-800">
+          <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200 dark:border-gray-800">
             © 2026 CheckAPI. All rights reserved.
           </div>
         </div>

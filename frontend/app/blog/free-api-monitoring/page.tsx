@@ -20,9 +20,9 @@ export default function BlogPost2() {
               </span>
             </Link>
             <nav className="hidden md:flex space-x-8">
-              <a href="/#features" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Features</a>
-              <a href="/#pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
-              <Link href="/docs" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
+              <a href="/#features" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Features</a>
+              <a href="/#pricing" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
+              <Link href="/docs" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
               <PublicAuthButtons />
@@ -35,7 +35,7 @@ export default function BlogPost2() {
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
+        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-300 dark:text-gray-200 mb-8">
           <Link href="/blog" className="hover:text-green-600">Blog</Link>
           <span>/</span>
           <span>Free API Monitoring</span>
@@ -45,14 +45,14 @@ export default function BlogPost2() {
           How to Monitor Your API for Free (And Actually Get Alerted)
         </h1>
 
-        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-10">
+        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-300 dark:text-gray-200 mb-10">
           <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />Feb 10, 2026</span>
           <span className="flex items-center gap-1"><Clock className="h-4 w-4" />4 min read</span>
         </div>
 
-        <div className="prose prose-lg max-w-none space-y-8 text-gray-700 leading-relaxed">
+        <div className="prose prose-lg max-w-none space-y-8 text-gray-700 dark:text-gray-200 leading-relaxed">
 
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-xl text-gray-600 dark:text-gray-200 dark:text-gray-200">
             Your API went down last night. You found out at 9am when a user emailed you. Sound familiar? Here's how to make sure that never happens again — for free.
           </p>
 
@@ -72,7 +72,7 @@ export default function BlogPost2() {
               <span className="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">1</span>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">Create a free account</h3>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 ml-14">
+            <p className="text-gray-600 dark:text-gray-200 dark:text-gray-200 ml-14">
               Sign up at <Link href="/register" className="text-green-600 hover:text-green-700 font-medium">checkapi.io/register</Link>. No credit card required. Takes 30 seconds.
             </p>
           </div>
@@ -83,7 +83,7 @@ export default function BlogPost2() {
               <span className="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">2</span>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">Add your first monitor</h3>
             </div>
-            <div className="text-gray-600 dark:text-gray-400 ml-14 space-y-3">
+            <div className="text-gray-600 dark:text-gray-200 dark:text-gray-200 ml-14 space-y-3">
               <p>Click "Add Monitor" and enter:</p>
               <ul className="space-y-2">
                 {[
@@ -107,7 +107,7 @@ export default function BlogPost2() {
               <span className="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">3</span>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">Set up an alert channel</h3>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 ml-14">
+            <p className="text-gray-600 dark:text-gray-200 dark:text-gray-200 ml-14">
               Add your email for instant alerts. On the free plan, email alerts are included. You can also connect Slack, Telegram, or Discord — all supported on the free tier.
             </p>
           </div>
@@ -118,7 +118,7 @@ export default function BlogPost2() {
               <span className="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">4</span>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">Test it</h3>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 ml-14">
+            <p className="text-gray-600 dark:text-gray-200 dark:text-gray-200 ml-14">
               Use the "Test Alert" button to make sure you receive a notification. Better to find out it's misconfigured now than at 3am when your API is actually down.
             </p>
           </div>
@@ -147,7 +147,7 @@ export default function BlogPost2() {
             ].map((item, i) => (
               <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
                 <h4 className="font-bold text-gray-900 dark:text-white mb-2">💡 {item.tip}</h4>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{item.detail}</p>
+                <p className="text-gray-600 dark:text-gray-200 dark:text-gray-200 text-sm">{item.detail}</p>
               </div>
             ))}
           </div>
@@ -170,11 +170,11 @@ export default function BlogPost2() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-gray-900 dark:text-white mb-4">CheckAPI</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Simple, reliable API monitoring for developers and teams.</p>
+              <p className="text-gray-600 dark:text-gray-200 dark:text-gray-200 text-sm">Simple, reliable API monitoring for developers and teams.</p>
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><a href="/#features" className="hover:text-green-600">Features</a></li>
                 <li><a href="/#pricing" className="hover:text-green-600">Pricing</a></li>
                 <li><Link href="/docs" className="hover:text-green-600">Documentation</Link></li>
@@ -182,7 +182,7 @@ export default function BlogPost2() {
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><Link href="/about" className="hover:text-green-600">About</Link></li>
                 <li><Link href="/blog" className="hover:text-green-600">Blog</Link></li>
                 <li><Link href="/contact" className="hover:text-green-600">Contact</Link></li>
@@ -190,13 +190,13 @@ export default function BlogPost2() {
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><Link href="/privacy" className="hover:text-green-600">Privacy</Link></li>
                 <li><Link href="/terms" className="hover:text-green-600">Terms</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600 dark:text-gray-400">
+          <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
             © 2026 CheckAPI. All rights reserved.
           </div>
         </div>
