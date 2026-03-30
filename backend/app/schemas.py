@@ -79,6 +79,17 @@ class MonitorUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
+class AlertChannelBrief(BaseModel):
+    """Brief alert channel info for monitor response"""
+    id: UUID
+    type: str
+    config: Dict[str, str]
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+
 class MonitorResponse(BaseModel):
     """Monitor response"""
     id: UUID
@@ -98,6 +109,7 @@ class MonitorResponse(BaseModel):
     next_check_at: Optional[datetime]
     created_at: datetime
     updated_at: datetime
+    alert_channels: List[AlertChannelBrief] = []
     
     class Config:
         from_attributes = True
