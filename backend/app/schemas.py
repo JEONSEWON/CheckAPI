@@ -210,3 +210,35 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     timestamp: datetime
+
+
+class MaintenanceWindowCreate(BaseModel):
+    name: str = Field(..., max_length=255)
+    repeat_type: str = Field(default="once", pattern="^(once|daily|weekly|monthly)$")
+    weekday: Optional[int] = Field(None, ge=0, le=6)
+    day_of_month: Optional[int] = Field(None, ge=1, le=31)
+    start_time: str = Field(..., pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$")
+    end_time: str = Field(..., pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$")
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    timezone: str = Field(default="UTC", max_length=50)
+    monitor_ids: List[str] = []
+
+
+class MaintenanceWindowResponse(BaseModel):
+    id: UUID
+    name: str
+    repeat_type: str
+    weekday: Optional[int]
+    day_of_month: Optional[int]
+    start_time: str
+    end_time: str
+    start_date: Optional[datetime]
+    end_date: Optional[datetime]
+    timezone: str
+    is_active: bool
+    created_at: datetime
+    monitor_ids: List[str] = []
+
+    class Config:
+        from_attributes = True

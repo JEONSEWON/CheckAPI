@@ -33,6 +33,7 @@ class User(Base):
     alert_channels = relationship("AlertChannel", back_populates="user", cascade="all, delete-orphan")
     subscription = relationship("Subscription", back_populates="user", uselist=False)
     api_keys = relationship("APIKey", back_populates="user", cascade="all, delete-orphan")
+    maintenance_windows = relationship("MaintenanceWindow", back_populates="user", cascade="all, delete-orphan")
     # Team
     owned_team_members = relationship("TeamMember", foreign_keys="TeamMember.owner_id", back_populates="owner", cascade="all, delete-orphan")
     team_memberships = relationship("TeamMember", foreign_keys="TeamMember.member_id", back_populates="member")
@@ -72,6 +73,7 @@ class Monitor(Base):
     user = relationship("User", back_populates="monitors")
     checks = relationship("Check", back_populates="monitor", cascade="all, delete-orphan")
     alert_channels = relationship("AlertChannel", secondary="monitor_alert_channels", back_populates="monitors")
+    maintenance_windows = relationship("MaintenanceWindow", secondary="maintenance_window_monitors", back_populates="monitors")
 
 
 class Check(Base):
@@ -164,3 +166,35 @@ class APIKey(Base):
 
     # Relationships
     user = relationship("User", back_populates="api_keys")
+
+
+class MaintenanceWindow(Base):
+    """Maintenance Window - suppress alerts during scheduled maintenance"""
+    __tablename__ = "maintenance_windows"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    name = Column(String(255), nullable=False)
+    repeat_type = Column(String(20), default="once")  # once, daily, weekly, monthly
+    weekday = Column(Integer)  # 0=Mon ~ 6=Sun (weekly only)
+    day_of_month = Column(Integer)  # 1-31 (monthly only)
+    start_time = Column(String(5), nullable=False)  # HH:MM
+    end_time = Column(String(5), nullable=False)    # HH:MM
+    start_date = Column(DateTime)  # once only
+    end_date = Column(DateTime)    # once only
+    timezone = Column(String(50), default="UTC")
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    user = relationship("User", back_populates="maintenance_windows")
+    monitors = relationship("Monitor", secondary="maintenance_window_monitors", back_populates="maintenance_windows")
+
+
+class MaintenanceWindowMonitor(Base):
+    """Many-to-Many: MaintenanceWindow <-> Monitor"""
+    __tablename__ = "maintenance_window_monitors"
+
+    maintenance_window_id = Column(String(36), ForeignKey("maintenance_windows.id", ondelete="CASCADE"), primary_key=True)
+    monitor_id = Column(String(36), ForeignKey("monitors.id", ondelete="CASCADE"), primary_key=True)
