@@ -3,7 +3,7 @@
 import { useAuthStore } from '@/lib/store';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Activity, Bell, BarChart3, Settings, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
+import { Activity, Bell, BarChart3, Settings, LogOut, Menu, X, Sun, Moon, Wrench } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { authAPI } from '@/lib/api';
 import { useTheme } from 'next-themes';
@@ -61,6 +61,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Alert Channels', href: '/dashboard/alerts', icon: Bell },
     { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+    { name: 'Maintenance', href: '/dashboard/maintenance', icon: Wrench },
   ];
 
   return (

@@ -274,6 +274,15 @@ export const publicApi = {
 
 // Legacy aliases for backward compatibility
 export const auth = authAPI;
+
+// Maintenance Windows API
+export const maintenanceAPI = {
+  list: () => apiRequest('/api/v1/maintenance/'),
+  create: (data: any) => apiRequest('/api/v1/maintenance/', { method: 'POST', body: JSON.stringify(data) }),
+  toggle: (id: string) => apiRequest(`/api/v1/maintenance/${id}/toggle`, { method: 'PATCH' }),
+  delete: (id: string) => apiRequest(`/api/v1/maintenance/${id}`, { method: 'DELETE' }),
+};
+
 export const monitors = monitorsAPI;
 export const alertChannels = alertChannelsAPI;
 export const analytics = analyticsAPI;
