@@ -30,6 +30,9 @@ export default function MonitorDetailPage() {
   const [monitor, setMonitor] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
   const [checks, setChecks] = useState<any[]>([]);
+  const [checksTotal, setChecksTotal] = useState(0);
+  const [checksPage, setChecksPage] = useState(1);
+  const [checksLoadingMore, setChecksLoadingMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [allChannels, setAllChannels] = useState<any[]>([]);
   const [linkedChannels, setLinkedChannels] = useState<any[]>([]);
@@ -63,9 +66,10 @@ export default function MonitorDetailPage() {
       const checksResponse = await monitorsAPI.checks(monitorId, {
         page: 1,
         page_size: 20,
-        hours: 24
       });
       setChecks(checksResponse.checks);
+      setChecksTotal(checksResponse.total);
+      setChecksPage(1);
     } catch (error) {
       toast.error('Failed to load monitor');
       router.push('/dashboard');
@@ -170,6 +174,24 @@ export default function MonitorDetailPage() {
     const url = `${window.location.origin}/status/${monitorId}`;
     navigator.clipboard.writeText(url);
     toast.success('Status page URL copied!');
+  };
+
+  const handleLoadMoreChecks = async () => {
+    setChecksLoadingMore(true);
+    try {
+      const nextPage = checksPage + 1;
+      const checksResponse = await monitorsAPI.checks(monitorId, {
+        page: nextPage,
+        page_size: 20,
+      });
+      setChecks(prev => [...prev, ...checksResponse.checks]);
+      setChecksTotal(checksResponse.total);
+      setChecksPage(nextPage);
+    } catch (error) {
+      toast.error('Failed to load more checks');
+    } finally {
+      setChecksLoadingMore(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -386,8 +408,9 @@ export default function MonitorDetailPage() {
 
         {/* Recent Checks */}
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Checks</h2>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{checks.length} / {checksTotal}</span>
           </div>
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {checks.length === 0 ? (
@@ -400,6 +423,17 @@ export default function MonitorDetailPage() {
               ))
             )}
           </div>
+          {checks.length < checksTotal && (
+            <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={handleLoadMoreChecks}
+                disabled={checksLoadingMore}
+                className="w-full py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-green-500 transition disabled:opacity-50"
+              >
+                {checksLoadingMore ? 'Loading...' : `Load more (${checksTotal - checks.length} remaining)`}
+              </button>
+            </div>
+          )}
         </div>
       </div>
       {/* Edit Modal */}
