@@ -55,6 +55,7 @@ class Monitor(Base):
     # Response body validation
     keyword = Column(String(500))
     keyword_present = Column(Boolean, default=True)
+    use_regex = Column(Boolean, default=False)
     # SSL monitoring
     ssl_check = Column(Boolean, default=True)
     ssl_expiry_days = Column(Integer, default=14)

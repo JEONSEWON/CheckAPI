@@ -132,17 +132,27 @@ def check_single_monitor(monitor_id: str):
                 status = "degraded"
                 error_message = f"Expected status {monitor.expected_status}, got {response.status_code}"
 
-            # Step 2: keyword check in response body (only if status code passed)
+            # Step 2: keyword/regex check in response body (only if status code passed)
             if status == "up" and monitor.keyword:
                 try:
                     body_text = response.text
-                    keyword_found = monitor.keyword in body_text
+                    use_regex = getattr(monitor, 'use_regex', False)
+                    if use_regex:
+                        try:
+                            keyword_found = bool(re.search(monitor.keyword, body_text))
+                            pattern_label = f"Pattern '{monitor.keyword}'"
+                        except re.error as regex_err:
+                            keyword_found = False
+                            pattern_label = f"Invalid regex '{monitor.keyword}'"
+                    else:
+                        keyword_found = monitor.keyword in body_text
+                        pattern_label = f"Keyword '{monitor.keyword}'"
                     if monitor.keyword_present and not keyword_found:
                         status = "degraded"
-                        error_message = f"Keyword '{monitor.keyword}' not found in response body"
+                        error_message = f"{pattern_label} not found in response body"
                     elif not monitor.keyword_present and keyword_found:
                         status = "degraded"
-                        error_message = f"Keyword '{monitor.keyword}' found in response body (expected absent)"
+                        error_message = f"{pattern_label} found in response body (expected absent)"
                 except Exception as e:
                     print(f"Keyword check error: {e}")
             
