@@ -128,6 +128,7 @@ export default function MonitorDetailPage() {
       expected_status: monitor.expected_status,
       keyword: monitor.keyword || '',
       keyword_present: monitor.keyword_present ?? true,
+      use_regex: monitor.use_regex ?? false,
     });
     setShowEditModal(true);
   };
@@ -146,6 +147,7 @@ export default function MonitorDetailPage() {
       if (editForm.keyword) {
         payload.keyword = editForm.keyword;
         payload.keyword_present = editForm.keyword_present;
+        payload.use_regex = editForm.use_regex;
       } else {
         payload.keyword = null;
         payload.keyword_present = true;
@@ -535,15 +537,26 @@ export default function MonitorDetailPage() {
                   className="w-full px-3 py-2 border border-orange-300 dark:border-orange-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 mb-2"
                 />
                 {editForm.keyword && (
-                  <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={editForm.keyword_present}
-                      onChange={e => setEditForm({ ...editForm, keyword_present: e.target.checked })}
-                      className="rounded"
-                    />
-                    Keyword should be <strong>present</strong> (uncheck = should be absent)
-                  </label>
+                  <div className="flex items-center gap-4 mt-1">
+                    <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={editForm.use_regex ?? false}
+                        onChange={e => setEditForm({ ...editForm, use_regex: e.target.checked })}
+                        className="rounded"
+                      />
+                      Use Regex
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={editForm.keyword_present}
+                        onChange={e => setEditForm({ ...editForm, keyword_present: e.target.checked })}
+                        className="rounded"
+                      />
+                      Should be present
+                    </label>
+                  </div>
                 )}
               </div>
             </div>

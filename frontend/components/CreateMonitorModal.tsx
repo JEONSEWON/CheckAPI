@@ -17,6 +17,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
   const [expectedStatus, setExpectedStatus] = useState(200);
   const [keyword, setKeyword] = useState('');
   const [keywordPresent, setKeywordPresent] = useState(true);
+  const [useRegex, setUseRegex] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [checkResult, setCheckResult] = useState<{ status: string; response_time?: number } | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(true);
@@ -81,7 +82,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
         interval: 300, // Free plan default
         timeout: 30,
         expected_status: expectedStatus,
-        ...(keyword ? { keyword, keyword_present: keywordPresent } : {}),
+        ...(keyword ? { keyword, keyword_present: keywordPresent, use_regex: useRegex } : {}),
       });
 
       // Trigger instant check
@@ -123,6 +124,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
     setExpectedStatus(200);
     setKeyword('');
     setKeywordPresent(true);
+    setUseRegex(false);
     setCheckResult(null);
     setShowAdvanced(false);
     onClose();
@@ -252,23 +254,37 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
                     placeholder='e.g. "status":"ok"'
                   />
                   {keyword && (
-                    <div className="mt-2 flex items-center gap-3">
-                      <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="mt-2 space-y-2">
+                      <div className="flex items-center gap-3">
+                        <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                          <input
+                            type="radio"
+                            checked={keywordPresent}
+                            onChange={() => setKeywordPresent(true)}
+                          />
+                          Must be present
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                          <input
+                            type="radio"
+                            checked={!keywordPresent}
+                            onChange={() => setKeywordPresent(false)}
+                          />
+                          Must be absent
+                        </label>
+                      </div>
+                      <label className="flex items-center gap-2 text-sm text-orange-600 dark:text-orange-400 cursor-pointer">
                         <input
-                          type="radio"
-                          checked={keywordPresent}
-                          onChange={() => setKeywordPresent(true)}
+                          type="checkbox"
+                          checked={useRegex}
+                          onChange={(e) => setUseRegex(e.target.checked)}
+                          className="rounded"
                         />
-                        Must be present
+                        Use as Regex pattern
                       </label>
-                      <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                        <input
-                          type="radio"
-                          checked={!keywordPresent}
-                          onChange={() => setKeywordPresent(false)}
-                        />
-                        Must be absent
-                      </label>
+                      {useRegex && (
+                        <p className="text-xs text-gray-400 dark:text-gray-500">e.g. <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">"status":\s*"ok"</code> or <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">[1-9]\d*</code></p>
+                      )}
                     </div>
                   )}
                 </div>
