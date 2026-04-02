@@ -1,3 +1,30 @@
+## Latest Update (2026.03.30)
+
+Big shipping day.
+
+**Silent Failure Detection**
+- Now supports both **Keyword + Regex** validation on response body
+- JSON Path support is already in the works (coming soon)
+
+**New Features & Improvements**
+- Monthly/Annual billing toggle (dashboard + landing page)
+- Webhook plan upgrade handling
+- Email alerts switched to Resend
+- Significantly improved Silent Failure Detection UI
+- Better Alert Channels management
+- API Keys issuance + X-API-Key authentication (Business)
+- SLA reports for Pro & Business
+- Monitor Edit functionality
+- Maintenance Window support
+- Landing page now auto-detects current plan
+
+**Current Status**
+- 7 real users (100% organic)
+- LemonSqueezy payments fully live
+- FOUNDERS coupon coming soon
+
+
+
 # Development Progress
 
 ## 📊 Overall Progress: 100% ✅ PRODUCTION READY
