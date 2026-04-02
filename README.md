@@ -1,67 +1,92 @@
-# CheckAPI - API Health Monitor
+# CheckAPI — API Health Monitor
 
 **Monitor Your APIs 24/7 with Instant Alerts**
 
 [![Live Demo](https://img.shields.io/badge/demo-checkapi.io-green)](https://checkapi.io)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/JEONSEWON/CheckAPI/blob/main/LICENSE)
 [![Built with FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Built with Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
 
-[Live Demo](https://checkapi.io) · [Report Bug](https://github.com/JEONSEWON/api-health-monitor/issues) · [Request Feature](https://github.com/JEONSEWON/api-health-monitor/issues)
+[Live Demo](https://checkapi.io) · [Report Bug](https://github.com/JEONSEWON/CheckAPI/issues) · [Request Feature](https://github.com/JEONSEWON/CheckAPI/issues)
 
 ---
 
 ## 🚀 About CheckAPI
 
-CheckAPI is a powerful yet simple **API health monitoring service** that tracks your APIs and websites 24/7. Get **instant alerts** via multiple channels when your services go down.
+CheckAPI is a minimalist **API health monitoring service** built for solo founders and small teams. Monitor your APIs 24/7, catch silent failures before your users do, and get instant alerts across multiple channels.
 
-Built for developers who are tired of paying $75/mo for basic monitoring — CheckAPI offers a generous free tier with **no commercial restrictions**.
+Built after getting tired of enterprise tools that are too bloated and free tools with too many restrictions. CheckAPI does one thing well — **tells you when your API is broken, before anyone else finds out.**
+
+> **Free for Commercial Use** — Unlike UptimeRobot (which restricted commercial use on free plans in late 2024), CheckAPI has zero commercial restrictions on all plans.
 
 ---
 
 ## ✨ Features
 
 ### Core Monitoring
-- 🔍 **HTTP/HTTPS Monitoring** — GET, POST, PUT, DELETE, PATCH support
+
+- 🔍 **HTTP/HTTPS Monitoring** — GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS
 - 🔑 **Custom Headers & Body** — Simulate real API requests
-- ✅ **Status Code Validation** — Expected status code checking
-- 📝 **Response Body Keyword Validation** — Check if a keyword is present or absent in the response body (e.g. `"status":"ok"`)
-- 🔒 **SSL Certificate Expiry Alerts** — Get notified 14 days before your cert expires
-- ⏱️ **Response Time Tracking** — Monitor API performance in ms
+- ✅ **Status Code Validation** — Expected HTTP status code checking
+- 🧠 **Silent Failure Detection** — Your API returns 200 OK but the body says "error"? CheckAPI catches it via keyword or **Regex pattern** matching
+- ⏱️ **Response Time Tracking** — Monitor performance in milliseconds
 - 📊 **Uptime Calculation** — 24h / 7d / 30d uptime %
 
-### Alert Channels (5 Options)
-- 📧 **Email**
-- 💬 **Slack**
-- 📱 **Telegram**
-- 🎮 **Discord**
-- 🔗 **Custom Webhook**
+### Alert Channels
 
-### Analytics & Dashboard
+- 📧 Email
+- 💬 Slack
+- 📱 Telegram
+- 🎮 Discord
+- 🔗 Custom Webhook
+
+All channels support **test alerts** before going live.
+
+### Analytics & Reporting
+
 - Real-time monitor status dashboard
-- Response time charts
+- Response time graphs
 - Incident history & timeline
-- Public Status Page (shareable link)
+- SLA reports (Pro / Business)
+- CSV export of check history
 
-### Team Collaboration
-- Invite team members via email
-- Members can view and manage owner's monitors
-- Pro plan: up to 5 members / Business: unlimited
+### Public Status Pages
+
+- Shareable `/status/{monitor_id}` page — no login required
+- 90-day uptime bar chart with hover tooltips
+- 24h / 7d / 30d uptime stats
+- Average response time & recent incidents
+- "Powered by CheckAPI" backlink
+
+### Maintenance Windows
+
+- Schedule recurring maintenance windows (daily / weekly / monthly / one-time)
+- Alerts are suppressed during active windows — checks still run
+- Timezone-aware
+- Apply to specific monitors or all monitors
+
+### Business Plan
+
+- REST API access via API Keys (`X-API-Key` header)
+- Programmatic monitor management
+- 365-day check history
 
 ---
 
 ## 💰 Pricing
 
 | Plan | Price | Monitors | Interval | History | Team |
-|---|---|---|---|---|---|
-| **Free** | $0/mo | 10 | 5 min | 30 days | ❌ |
-| **Starter** | $5/mo | 20 | 1 min | 30 days | ❌ |
-| **Pro** | $15/mo | 100 | 30 sec | 90 days | ✅ (5명) |
-| **Business** | $49/mo | Unlimited | 10 sec | 1 year | ✅ (무제한) |
+|------|-------|----------|----------|---------|------|
+| **Free** | $0/mo | 10 | 5 min | 30 days | — |
+| **Starter** | $5/mo | 20 | 1 min | 30 days | Coming soon |
+| **Pro** | $15/mo | 100 | 30 sec | 90 days | Coming soon |
+| **Business** | $49/mo | Unlimited | 10 sec | 365 days | Coming soon |
 
-✅ No commercial restrictions on any plan
-✅ No credit card required for free tier
-✅ Cancel anytime
+Annual billing available at **20% discount** on all paid plans.
+
+✅ No commercial restrictions on any plan  
+✅ No credit card required for free tier  
+✅ Cancel anytime  
 
 ---
 
@@ -82,7 +107,6 @@ Built for developers who are tired of paying $75/mo for basic monitoring — Che
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **State:** Zustand
-- **HTTP:** Axios
 
 ### Deployment
 - **Backend:** Railway (FastAPI + Celery Worker + Redis + PostgreSQL)
@@ -102,12 +126,12 @@ Celery Worker checks URL periodically
         ↓
 Checks:
   1. HTTP status code
-  2. Response body keyword (if set)
+  2. Response body — keyword or regex match (Silent Failure Detection)
   3. Response time (ms)
         ↓
 Status: up / degraded / down
         ↓
-Status change → Alert sent
+Status change → Check maintenance window → Send alert if not in maintenance
 (Email / Slack / Telegram / Discord / Webhook)
         ↓
 Results saved to PostgreSQL
@@ -122,28 +146,33 @@ Daily 3AM → Old data cleanup
 ## 🚦 Quick Start
 
 ### For Users
+
 1. Sign up at [checkapi.io](https://checkapi.io)
-2. Create a monitor (URL, method, interval, expected status)
+2. Click **+ Add Monitor** — enter URL, method, interval
 3. Add an alert channel (Email, Slack, Telegram, etc.)
-4. Get notified when something goes wrong
+4. Optionally add Silent Failure Detection keyword or regex
+5. Get notified the moment something goes wrong
 
 ### For Developers
 
 #### Backend Setup
+
 ```bash
-git clone https://github.com/JEONSEWON/api-health-monitor.git
-cd api-health-monitor/backend
+git clone https://github.com/JEONSEWON/CheckAPI.git
+cd CheckAPI/backend
 
 pip install -r requirements.txt
 cp .env.example .env
-# Edit .env
+# Edit .env with your credentials
 
 uvicorn app.main:app --reload
-# In separate terminal:
+
+# In a separate terminal:
 celery -A app.celery_app worker --beat --loglevel=info
 ```
 
 #### Frontend Setup
+
 ```bash
 cd frontend
 npm install
@@ -158,7 +187,7 @@ npm run dev
 
 - **Live at:** https://checkapi.io
 - **Backend API:** https://api-health-monitor-production.up.railway.app
-- **GitHub:** https://github.com/JEONSEWON/api-health-monitor
+- **Stage:** Early users, payment system live
 
 ---
 
