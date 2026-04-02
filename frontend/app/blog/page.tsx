@@ -4,6 +4,27 @@ import { ArrowRight, Calendar, Clock } from 'lucide-react';
 
 const posts = [
   {
+    title: 'How to Set Up a Free Public Status Page for Your API',
+    excerpt: 'A public status page reduces support tickets, builds user trust, and takes 2 minutes to set up. Here\'s how to do it for free.',
+    date: 'Apr 1, 2026',
+    readTime: '4 min read',
+    slug: '/blog/public-status-page',
+  },
+  {
+    title: 'API Monitoring Checklist for Solo Founders',
+    excerpt: 'A practical checklist of what to monitor, how often, and what to do when things go wrong — written for indie hackers and solo founders running production APIs.',
+    date: 'Mar 25, 2026',
+    readTime: '4 min read',
+    slug: '/blog/api-monitoring-checklist',
+  },
+  {
+    title: 'What is a Silent API Failure? (And How to Detect It)',
+    excerpt: 'Your API returns 200 OK — but the response body is empty, broken, or contains an error message. This is a silent failure, and most monitoring tools miss it entirely.',
+    date: 'Mar 15, 2026',
+    readTime: '5 min read',
+    slug: '/blog/silent-api-failures',
+  },
+  {
     title: 'Best Free UptimeRobot Alternatives in 2026',
     excerpt: 'UptimeRobot recently restricted commercial use on free plans. Here are the best alternatives that still offer genuinely free monitoring — no strings attached.',
     date: 'Feb 20, 2026',
@@ -12,7 +33,7 @@ const posts = [
   },
   {
     title: 'How to Monitor Your API for Free (And Actually Get Alerted)',
-    excerpt: 'Free API monitoring sounds great until you realize most tools either limit you to 1 monitor or charge for alerts. Here\'s how to do it properly without paying a cent.',
+    excerpt: "Free API monitoring sounds great until you realize most tools either limit you to 1 monitor or charge for alerts. Here's how to do it properly without paying a cent.",
     date: 'Feb 10, 2026',
     readTime: '4 min read',
     slug: '/blog/free-api-monitoring',
@@ -79,60 +100,6 @@ export default function BlogPage() {
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">{post.excerpt}</p>
               <Link href={post.slug} className="inline-flex items-center text-green-600 font-medium hover:text-green-700 transition">
                 Read more <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
-            </article>
-            {/* New posts */}
-            <article className="border-b border-gray-200 dark:border-gray-700 pb-10">
-              <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-200 dark:text-gray-400 mb-3">
-                <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />Mar 15, 2026</span>
-                <span className="flex items-center gap-1"><Clock className="h-4 w-4" />5 min read</span>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                <Link href="/blog/silent-api-failures" className="hover:text-green-600 transition">
-                  What is a Silent API Failure? (And How to Detect It)
-                </Link>
-              </h2>
-              <p className="text-gray-600 dark:text-gray-200 dark:text-gray-400 mb-4">
-                Your API returns 200 OK — but the response body is empty, broken, or contains an error message. This is a silent failure, and most monitoring tools miss it entirely.
-              </p>
-              <Link href="/blog/silent-api-failures" className="text-green-600 hover:text-green-700 font-medium flex items-center gap-1">
-                Read more <ArrowRight className="h-4 w-4" />
-              </Link>
-            </article>
-
-            <article className="border-b border-gray-200 dark:border-gray-700 pb-10">
-              <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-200 dark:text-gray-400 mb-3">
-                <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />Mar 25, 2026</span>
-                <span className="flex items-center gap-1"><Clock className="h-4 w-4" />4 min read</span>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                <Link href="/blog/api-monitoring-checklist" className="hover:text-green-600 transition">
-                  API Monitoring Checklist for Solo Founders
-                </Link>
-              </h2>
-              <p className="text-gray-600 dark:text-gray-200 dark:text-gray-400 mb-4">
-                A practical checklist of what to monitor, how often, and what to do when things go wrong — written for indie hackers and solo founders running production APIs.
-              </p>
-              <Link href="/blog/api-monitoring-checklist" className="text-green-600 hover:text-green-700 font-medium flex items-center gap-1">
-                Read more <ArrowRight className="h-4 w-4" />
-              </Link>
-            </article>
-
-            <article className="border-b border-gray-200 dark:border-gray-700 pb-10">
-              <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-200 dark:text-gray-400 mb-3">
-                <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />Apr 1, 2026</span>
-                <span className="flex items-center gap-1"><Clock className="h-4 w-4" />4 min read</span>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                <Link href="/blog/public-status-page" className="hover:text-green-600 transition">
-                  How to Set Up a Free Public Status Page for Your API
-                </Link>
-              </h2>
-              <p className="text-gray-600 dark:text-gray-200 dark:text-gray-400 mb-4">
-                A public status page reduces support tickets, builds user trust, and takes 2 minutes to set up. Here&apos;s how to do it for free.
-              </p>
-              <Link href="/blog/public-status-page" className="text-green-600 hover:text-green-700 font-medium flex items-center gap-1">
-                Read more <ArrowRight className="h-4 w-4" />
               </Link>
             </article>
           ))}
