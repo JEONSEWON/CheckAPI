@@ -272,7 +272,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
             )}
 
             {/* Advanced toggle — HTTP only */}
-            {monitorType === 'http' && <>
+            {monitorType === 'http' && (
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
@@ -366,7 +366,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
               </div>
             )}
 
-            {monitorType === 'http' && </>}
+            )}
 
             {/* Submit */}
             <button
