@@ -195,6 +195,8 @@ export default function HomePage() {
         }
 
         .bar-chart-bar { border-radius: 3px 3px 0 0; transition: all 0.3s; }
+        .footer-link { font-size: 13px; color: #475569; text-decoration: none; transition: color 0.2s; }
+        .footer-link:hover { color: #00e5b4; }
       `}</style>
 
       <ClientHeader />
@@ -467,9 +469,7 @@ export default function HomePage() {
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {col.links.map(([label, href]) => (
                   <li key={label}>
-                    <Link href={href} style={{ fontSize: '13px', color: '#475569', textDecoration: 'none', transition: 'color 0.2s' }}
-                      onMouseEnter={e => (e.currentTarget.style.color = '#00e5b4')}
-                      onMouseLeave={e => (e.currentTarget.style.color = '#475569')}>
+                    <Link href={href} className="footer-link">
                       {label}
                     </Link>
                   </li>
