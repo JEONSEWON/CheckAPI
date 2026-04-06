@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap, Activity } from 'lucide-react';
+import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap } from 'lucide-react';
 import { monitorsAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -25,7 +25,6 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
   const [monitorType, setMonitorType] = useState<'http' | 'heartbeat'>('http');
   const [heartbeatInterval, setHeartbeatInterval] = useState(60);
   const [heartbeatGrace, setHeartbeatGrace] = useState(5);
-  const [createdHeartbeatToken, setCreatedHeartbeatToken] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -77,22 +76,37 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
     e.preventDefault();
     setIsLoading(true);
     setCheckResult(null);
-
     try {
+      if (monitorType === 'heartbeat') {
+        const monitor = await monitorsAPI.create({
+          name: url || 'Heartbeat Monitor',
+          url: 'heartbeat',
+          method: 'GET',
+          interval: heartbeatInterval * 60,
+          timeout: 30,
+          expected_status: 200,
+          monitor_type: 'heartbeat',
+          heartbeat_interval: heartbeatInterval,
+          heartbeat_grace: heartbeatGrace,
+        } as any);
+        toast.success('Heartbeat monitor created!');
+        onSuccess();
+        handleClose();
+        return;
+      }
+
       const monitor = await monitorsAPI.create({
         name: generateName(url),
         url,
         method,
-        interval: 300, // Free plan default
+        interval: 300,
         timeout: 30,
         expected_status: expectedStatus,
         ...(keyword ? { keyword, keyword_present: keywordPresent, use_regex: useRegex } : {}),
       });
 
-      // Trigger instant check
       try {
         await monitorsAPI.checkNow(monitor.id);
-        // Poll for result (wait up to 8 seconds)
         let result = null;
         for (let i = 0; i < 8; i++) {
           await new Promise(r => setTimeout(r, 1000));
@@ -106,7 +120,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
           setCheckResult({ status: result.status, response_time: result.response_time });
         }
       } catch {
-        // 즉시 체크 실패해도 모니터는 생성됨
+        // instant check failure is OK
       }
 
       toast.success('Monitor created!');
@@ -130,41 +144,27 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
     setKeywordPresent(true);
     setUseRegex(false);
     setCheckResult(null);
-    setShowAdvanced(false);
+    setShowAdvanced(true);
     setMonitorType('http');
     setHeartbeatInterval(60);
     setHeartbeatGrace(5);
-    setCreatedHeartbeatToken(null);
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-        onClick={handleClose}
-      />
-
-      {/* Modal */}
+      <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={handleClose} />
       <div className="flex min-h-full items-center justify-center p-4">
         <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Add Monitor
-            </h2>
-            <button
-              onClick={handleClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
-            >
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Add Monitor</h2>
+            <button onClick={handleClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
               <X className="h-5 w-5 dark:text-gray-400" />
             </button>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
-
             {/* Monitor Type Tabs */}
             <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-900 rounded-lg">
               {[
@@ -187,7 +187,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
               ))}
             </div>
 
-            {/* Heartbeat UI */}
+            {/* ── HEARTBEAT UI ── */}
             {monitorType === 'heartbeat' && (
               <div className="space-y-4">
                 <div>
@@ -198,16 +198,14 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
                     value={url}
                     onChange={e => setUrl(e.target.value)}
                     placeholder="e.g. Daily Backup Job"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Expected every (min)</label>
                     <input
-                      type="number"
-                      min={1}
-                      max={10080}
+                      type="number" min={1} max={10080}
                       value={heartbeatInterval}
                       onChange={e => setHeartbeatInterval(Number(e.target.value))}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700"
@@ -216,9 +214,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Grace period (min)</label>
                     <input
-                      type="number"
-                      min={1}
-                      max={1440}
+                      type="number" min={1} max={1440}
                       value={heartbeatGrace}
                       onChange={e => setHeartbeatGrace(Number(e.target.value))}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700"
@@ -226,146 +222,116 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
                   </div>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-3 text-sm text-blue-700 dark:text-blue-300">
-                  Alert fires if no ping received within <strong>{heartbeatInterval + heartbeatGrace} minutes</strong> ({heartbeatInterval}m interval + {heartbeatGrace}m grace).
+                  Alert fires if no ping received within <strong>{heartbeatInterval + heartbeatGrace} minutes</strong> ({heartbeatInterval}m + {heartbeatGrace}m grace).
                 </div>
               </div>
             )}
 
-            {/* URL — only for HTTP */}
-            {monitorType === 'http' && <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                API URL *
-              </label>
-              <input
-                type="url"
-                required
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                placeholder="https://api.example.com/health"
-              />
-            </div>}
-
-            {/* Check Result */}
-            {monitorType === 'http' && checkResult && (
-              <div className={`flex items-center gap-3 p-3 rounded-lg ${
-                checkResult.status === 'up'
-                  ? 'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800'
-                  : 'bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800'
-              }`}>
-                {checkResult.status === 'up' ? (
-                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-                )}
-                <div>
-                  <p className={`font-semibold text-sm ${checkResult.status === 'up' ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
-                    {checkResult.status === 'up' ? '✅ Your API is up and running!' : '❌ Your API returned an error'}
-                  </p>
-                  {checkResult.response_time && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                      Response time: {checkResult.response_time}ms
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Advanced toggle — HTTP only */}
+            {/* ── HTTP UI ── */}
             {monitorType === 'http' && (
-            <button
-              type="button"
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 transition"
-            >
-              {showAdvanced ? '▲ Hide advanced options' : '▼ Advanced options'}
-            </button>
-
-            {showAdvanced && (
-              <div className="space-y-4 pt-2 border-t border-gray-100 dark:border-gray-700">
-                {/* Method */}
+              <>
+                {/* URL */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    HTTP Method
-                  </label>
-                  <select
-                    value={method}
-                    onChange={(e) => setMethod(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                  >
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="PUT">PUT</option>
-                    <option value="DELETE">DELETE</option>
-                    <option value="HEAD">HEAD</option>
-                  </select>
-                </div>
-
-                {/* Expected Status */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Expected Status Code
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">API URL *</label>
                   <input
-                    type="number"
-                    min={100}
-                    max={599}
-                    value={expectedStatus}
-                    onChange={(e) => setExpectedStatus(Number(e.target.value))}
+                    type="url" required value={url}
+                    onChange={(e) => setUrl(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                    placeholder="https://api.example.com/health"
                   />
                 </div>
 
-                {/* Keyword Check */}
-                <div>
-                  <label className="block text-sm font-medium text-orange-600 dark:text-orange-400 mb-2">
-                    ⚡ Silent Failure Detection <span className="text-gray-400 font-normal text-xs">(optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                    placeholder='e.g. "status":"ok"'
-                  />
-                  {keyword && (
-                    <div className="mt-2 space-y-2">
-                      <div className="flex items-center gap-3">
-                        <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                          <input
-                            type="radio"
-                            checked={keywordPresent}
-                            onChange={() => setKeywordPresent(true)}
-                          />
-                          Must be present
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                          <input
-                            type="radio"
-                            checked={!keywordPresent}
-                            onChange={() => setKeywordPresent(false)}
-                          />
-                          Must be absent
-                        </label>
-                      </div>
-                      <label className="flex items-center gap-2 text-sm text-orange-600 dark:text-orange-400 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={useRegex}
-                          onChange={(e) => setUseRegex(e.target.checked)}
-                          className="rounded"
-                        />
-                        Use as Regex pattern
-                      </label>
-                      {useRegex && (
-                        <p className="text-xs text-gray-400 dark:text-gray-500">e.g. <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">"status":\s*"ok"</code> or <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">[1-9]\d*</code></p>
+                {/* Check Result */}
+                {checkResult && (
+                  <div className={`flex items-center gap-3 p-3 rounded-lg ${
+                    checkResult.status === 'up'
+                      ? 'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800'
+                      : 'bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800'
+                  }`}>
+                    {checkResult.status === 'up'
+                      ? <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                      : <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    }
+                    <div>
+                      <p className={`font-semibold text-sm ${checkResult.status === 'up' ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
+                        {checkResult.status === 'up' ? '✅ Your API is up and running!' : '❌ Your API returned an error'}
+                      </p>
+                      {checkResult.response_time && (
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Response time: {checkResult.response_time}ms</p>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-            )}
+                  </div>
+                )}
 
+                {/* Advanced options */}
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 transition"
+                >
+                  {showAdvanced ? '▲ Hide advanced options' : '▼ Advanced options'}
+                </button>
+
+                {showAdvanced && (
+                  <div className="space-y-4 pt-2 border-t border-gray-100 dark:border-gray-700">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">HTTP Method</label>
+                      <select
+                        value={method} onChange={(e) => setMethod(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                      >
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="HEAD">HEAD</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Expected Status Code</label>
+                      <input
+                        type="number" min={100} max={599} value={expectedStatus}
+                        onChange={(e) => setExpectedStatus(Number(e.target.value))}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-orange-600 dark:text-orange-400 mb-2">
+                        ⚡ Silent Failure Detection <span className="text-gray-400 font-normal text-xs">(optional)</span>
+                      </label>
+                      <input
+                        type="text" value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                        placeholder='e.g. "status":"ok"'
+                      />
+                      {keyword && (
+                        <div className="mt-2 space-y-2">
+                          <div className="flex items-center gap-3">
+                            <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                              <input type="radio" checked={keywordPresent} onChange={() => setKeywordPresent(true)} />
+                              Must be present
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                              <input type="radio" checked={!keywordPresent} onChange={() => setKeywordPresent(false)} />
+                              Must be absent
+                            </label>
+                          </div>
+                          <label className="flex items-center gap-2 text-sm text-orange-600 dark:text-orange-400 cursor-pointer">
+                            <input type="checkbox" checked={useRegex} onChange={(e) => setUseRegex(e.target.checked)} className="rounded" />
+                            Use as Regex pattern
+                          </label>
+                          {useRegex && (
+                            <p className="text-xs text-gray-400 dark:text-gray-500">
+                              e.g. <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">"status":\s*"ok"</code> or <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">[1-9]\d*</code>
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
 
             {/* Submit */}
@@ -377,7 +343,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
               {isLoading ? (
                 <>
                   <Loader2 className="animate-spin h-4 w-4 mr-2" />
-                  Checking your API...
+                  {monitorType === 'heartbeat' ? 'Creating...' : 'Checking your API...'}
                 </>
               ) : (
                 monitorType === 'heartbeat' ? 'Create Heartbeat Monitor' : 'Start Monitoring'
