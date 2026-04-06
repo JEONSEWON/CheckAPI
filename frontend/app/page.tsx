@@ -408,7 +408,7 @@ export default function HomePage() {
         {/* Other features grid */}
         <div className="feature-grid">
           {[
-            { icon: <Zap style={{ width: '20px', height: '20px' }} />, title: 'Instant Alerts', desc: 'Check every minute. Email, Slack, Telegram, Discord, Webhook — all on the free plan.' },
+            { icon: <Zap style={{ width: '20px', height: '20px' }} />, title: 'Instant Alerts', desc: 'Free plan checks every 5 minutes. Upgrade to Starter for 1-minute checks, Pro for 30-second. Email, Slack, Telegram, Discord, Webhook — all plans.' },
             { icon: <BarChart3 style={{ width: '20px', height: '20px' }} />, title: 'Response Time Analytics', desc: 'Track uptime, response times, incidents. SLA reports for Pro & Business.' },
             { icon: <Globe style={{ width: '20px', height: '20px' }} />, title: 'Public Status Pages', desc: 'Shareable status page per monitor. 90-day uptime chart. No login required.' },
             { icon: <Lock style={{ width: '20px', height: '20px' }} />, title: 'Maintenance Windows', desc: 'Schedule recurring windows. Alerts suppressed, checks still run.' },
