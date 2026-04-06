@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
 import { monitorsAPI, analyticsAPI, alertChannelsAPI } from '@/lib/api';
 import AssertionsPanel from '@/components/AssertionsPanel';
+import RegexTestPanel from '@/components/RegexTestPanel';
 import {
   ArrowLeft,
   CheckCircle,
@@ -411,6 +412,12 @@ export default function MonitorDetailPage() {
 
         {/* Assertions */}
         <AssertionsPanel monitorId={monitorId} />
+
+        {/* Regex Live Tester */}
+        <RegexTestPanel
+          initialPattern={monitor.keyword || ''}
+          initialPresent={monitor.keyword_present ?? true}
+        />
 
         {/* Recent Checks */}
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
