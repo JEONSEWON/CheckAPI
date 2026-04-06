@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
 import { monitorsAPI, analyticsAPI, alertChannelsAPI } from '@/lib/api';
+import AssertionsPanel from '@/components/AssertionsPanel';
 import {
   ArrowLeft,
   CheckCircle,
@@ -407,6 +408,9 @@ export default function MonitorDetailPage() {
             )}
           </div>
         </div>
+
+        {/* Assertions */}
+        <AssertionsPanel monitorId={monitorId} />
 
         {/* Recent Checks */}
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">

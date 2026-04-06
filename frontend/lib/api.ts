@@ -283,6 +283,22 @@ export const maintenanceAPI = {
   delete: (id: string) => apiRequest(`/api/v1/maintenance/${id}`, { method: 'DELETE' }),
 };
 
+
+// Assertions API
+export const assertionsAPI = {
+  list: (monitorId: string) => apiRequest(`/api/v1/monitors/${monitorId}/assertions`),
+  save: (monitorId: string, assertions: any[]) =>
+    apiRequest(`/api/v1/monitors/${monitorId}/assertions`, {
+      method: 'POST',
+      body: JSON.stringify(assertions),
+    }),
+  test: (monitorId: string, responseBody: string, assertions: any[]) =>
+    apiRequest(`/api/v1/monitors/${monitorId}/assertions/test`, {
+      method: 'POST',
+      body: JSON.stringify({ response_body: responseBody, assertions }),
+    }),
+};
+
 export const monitors = monitorsAPI;
 export const alertChannels = alertChannelsAPI;
 export const analytics = analyticsAPI;
