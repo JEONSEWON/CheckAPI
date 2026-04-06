@@ -451,7 +451,7 @@ export default function HomePage() {
         <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '40px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-              <img src="/logo.png" alt="CheckAPI" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
+              <img src="/logo.png" alt="CheckAPI" style={{ width: '56px', height: '56px', borderRadius: '12px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(0,229,180,0.6))' }} />
               <span style={{ fontSize: '16px', fontWeight: 700, color: '#00e5b4' }}>CheckAPI</span>
             </div>
             <p style={{ fontSize: '12px', color: '#334155', marginBottom: '4px' }}>by Axiom Technologies</p>
