@@ -77,9 +77,7 @@ export default function ClientHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-              CheckAPI
-            </span>
+            <img src="/logo.jpg" alt="CheckAPI" className="h-9 w-9 rounded-lg object-cover" />
           </div>
           <nav className="hidden md:flex space-x-8">
             <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Features</a>

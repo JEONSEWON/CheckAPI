@@ -75,8 +75,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
             <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition">
-              <img src="/logo.jpg" alt="CheckAPI Logo" className="h-10 w-10 rounded-lg object-cover" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">CheckAPI</span>
+              <img src="/logo.jpg" alt="CheckAPI" className="h-10 w-10 rounded-lg object-cover" />
             </Link>
             <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
               <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
