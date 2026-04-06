@@ -74,6 +74,7 @@ class Monitor(Base):
     checks = relationship("Check", back_populates="monitor", cascade="all, delete-orphan")
     alert_channels = relationship("AlertChannel", secondary="monitor_alert_channels", back_populates="monitors")
     maintenance_windows = relationship("MaintenanceWindow", secondary="maintenance_window_monitors", back_populates="monitors")
+    assertions = relationship("MonitorAssertion", back_populates="monitor", cascade="all, delete-orphan", order_by="MonitorAssertion.order")
 
 
 class Check(Base):
@@ -198,3 +199,22 @@ class MaintenanceWindowMonitor(Base):
 
     maintenance_window_id = Column(String(36), ForeignKey("maintenance_windows.id", ondelete="CASCADE"), primary_key=True)
     monitor_id = Column(String(36), ForeignKey("monitors.id", ondelete="CASCADE"), primary_key=True)
+
+
+class MonitorAssertion(Base):
+    """Assertion model - response validation rules per monitor"""
+    __tablename__ = "monitor_assertions"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    monitor_id = Column(String(36), ForeignKey("monitors.id", ondelete="CASCADE"), nullable=False)
+    assertion_type = Column(String(20), nullable=False, default="jsonpath")  # keyword, jsonpath
+    path = Column(Text, nullable=True)           # JSON Path e.g. $.data.status
+    operator = Column(String(20), nullable=False) # ==, !=, >, >=, <, <=, contains, not_contains, is_null, is_not_null, exists
+    value = Column(JSON, nullable=True)           # expected value (string/number/bool/null)
+    logic = Column(String(3), default="AND")      # AND / OR
+    order = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    monitor = relationship("Monitor", back_populates="assertions")

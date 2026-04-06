@@ -242,3 +242,32 @@ class MaintenanceWindowResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AssertionCreate(BaseModel):
+    assertion_type: str = Field(default="jsonpath", pattern="^(keyword|jsonpath)$")
+    path: Optional[str] = None
+    operator: str = Field(..., pattern="^(==|!=|>|>=|<|<=|contains|not_contains|is_null|is_not_null|exists)$")
+    value: Optional[Any] = None
+    logic: str = Field(default="AND", pattern="^(AND|OR)$")
+    order: int = Field(default=0, ge=0)
+    is_active: bool = True
+
+
+class AssertionResponse(BaseModel):
+    id: UUID
+    assertion_type: str
+    path: Optional[str]
+    operator: str
+    value: Optional[Any]
+    logic: str
+    order: int
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+
+class AssertionTestRequest(BaseModel):
+    response_body: str
+    assertions: List[AssertionCreate]

@@ -132,6 +132,33 @@ def check_single_monitor(monitor_id: str):
                 status = "degraded"
                 error_message = f"Expected status {monitor.expected_status}, got {response.status_code}"
 
+            # Step 2: assertions check (keyword/regex/jsonpath)
+            if status == "up":
+                try:
+                    from app.models import MonitorAssertion
+                    from app.routers.assertions import run_assertions
+                    assertions = db.query(MonitorAssertion).filter(
+                        MonitorAssertion.monitor_id == monitor.id,
+                        MonitorAssertion.is_active == True
+                    ).order_by(MonitorAssertion.order).all()
+
+                    if assertions:
+                        result = run_assertions(response.text, assertions)
+                        if not result["passed"]:
+                            status = "degraded"
+                            failed = [r for r in result["results"] if not r["passed"]]
+                            if failed:
+                                f = failed[0]
+                                error_message = f"Assertion failed: {f['path']} {f['operator']} {f['expected']} (got: {f['actual']})"
+                            else:
+                                error_message = "Assertion failed"
+                    elif monitor.keyword:
+                        # Legacy keyword/regex fallback
+                        pass
+                except Exception as e:
+                    print(f"Assertion check error: {e}")
+
+            # Step 2b: legacy keyword/regex check (only if no assertions defined)
             # Step 2: keyword/regex check in response body (only if status code passed)
             if status == "up" and monitor.keyword:
                 try:
