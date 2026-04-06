@@ -137,6 +137,7 @@ export const monitorsAPI = {
     name: string;
     url: string;
     method?: string;
+    monitor_type?: string;
     interval?: number;
     timeout?: number;
     expected_status?: number;

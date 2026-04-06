@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap } from 'lucide-react';
+import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap, Activity } from 'lucide-react';
 import { monitorsAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -22,6 +22,10 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
   const [checkResult, setCheckResult] = useState<{ status: string; response_time?: number } | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [monitorType, setMonitorType] = useState<'http' | 'heartbeat'>('http');
+  const [heartbeatInterval, setHeartbeatInterval] = useState(60);
+  const [heartbeatGrace, setHeartbeatGrace] = useState(5);
+  const [createdHeartbeatToken, setCreatedHeartbeatToken] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -127,6 +131,10 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
     setUseRegex(false);
     setCheckResult(null);
     setShowAdvanced(false);
+    setMonitorType('http');
+    setHeartbeatInterval(60);
+    setHeartbeatGrace(5);
+    setCreatedHeartbeatToken(null);
     onClose();
   };
 
@@ -157,8 +165,74 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
-            {/* URL */}
-            <div>
+            {/* Monitor Type Tabs */}
+            <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-900 rounded-lg">
+              {[
+                { type: 'http', label: '🌐 HTTP Monitor', desc: 'Check URL uptime' },
+                { type: 'heartbeat', label: '💓 Heartbeat / Cron', desc: 'Cron job monitoring' },
+              ].map((t) => (
+                <button
+                  key={t.type}
+                  type="button"
+                  onClick={() => setMonitorType(t.type as 'http' | 'heartbeat')}
+                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition text-left ${
+                    monitorType === t.type
+                      ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
+                >
+                  <div>{t.label}</div>
+                  <div className="text-xs font-normal opacity-60">{t.desc}</div>
+                </button>
+              ))}
+            </div>
+
+            {/* Heartbeat UI */}
+            {monitorType === 'heartbeat' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Monitor Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={url}
+                    onChange={e => setUrl(e.target.value)}
+                    placeholder="e.g. Daily Backup Job"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Expected every (min)</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={10080}
+                      value={heartbeatInterval}
+                      onChange={e => setHeartbeatInterval(Number(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Grace period (min)</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={1440}
+                      value={heartbeatGrace}
+                      onChange={e => setHeartbeatGrace(Number(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                    />
+                  </div>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-3 text-sm text-blue-700 dark:text-blue-300">
+                  Alert fires if no ping received within <strong>{heartbeatInterval + heartbeatGrace} minutes</strong> ({heartbeatInterval}m interval + {heartbeatGrace}m grace).
+                </div>
+              </div>
+            )}
+
+            {/* URL — only for HTTP */}
+            {monitorType === 'http' && <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 API URL *
               </label>
@@ -170,10 +244,10 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                 placeholder="https://api.example.com/health"
               />
-            </div>
+            </div>}
 
             {/* Check Result */}
-            {checkResult && (
+            {monitorType === 'http' && checkResult && (
               <div className={`flex items-center gap-3 p-3 rounded-lg ${
                 checkResult.status === 'up'
                   ? 'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800'
@@ -197,7 +271,8 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
               </div>
             )}
 
-            {/* Advanced toggle */}
+            {/* Advanced toggle — HTTP only */}
+            {monitorType === 'http' && <>
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
@@ -291,6 +366,8 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
               </div>
             )}
 
+            {monitorType === 'http' && </>}
+
             {/* Submit */}
             <button
               type="submit"
@@ -303,7 +380,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
                   Checking your API...
                 </>
               ) : (
-                'Start Monitoring'
+                monitorType === 'heartbeat' ? 'Create Heartbeat Monitor' : 'Start Monitoring'
               )}
             </button>
           </form>
