@@ -11,6 +11,7 @@ from app.database import init_db
 from app.routers import auth
 from app.routers import maintenance
 from app.routers import assertions
+from app.routers import heartbeat
 from app.schemas import HealthResponse
 
 settings = get_settings()
@@ -47,6 +48,7 @@ app.include_router(teams.router, prefix="/api/v1")
 app.include_router(api_keys.router, prefix="/api/v1")
 app.include_router(maintenance.router)
 app.include_router(assertions.router)
+app.include_router(heartbeat.router)
 
 
 @app.on_event("startup")

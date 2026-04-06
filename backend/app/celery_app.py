@@ -40,6 +40,10 @@ celery_app.conf.beat_schedule = {
         "task": "app.tasks.cleanup_old_checks",
         "schedule": crontab(hour=3, minute=0),  # 3 AM daily
     },
+    "check-heartbeat-monitors": {
+        "task": "app.tasks.check_heartbeat_monitors",
+        "schedule": 60.0,  # Every 60 seconds
+    },
     "check-ssl-certificates": {
         "task": "app.tasks.check_ssl_certificates",
         "schedule": crontab(hour=9, minute=0),  # 9 AM daily

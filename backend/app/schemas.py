@@ -60,6 +60,9 @@ class MonitorCreate(BaseModel):
     headers: Optional[Dict[str, str]] = None
     body: Optional[str] = None
     expected_status: int = Field(default=200, ge=100, le=599)
+    monitor_type: str = Field(default="http", pattern="^(http|heartbeat)$")
+    heartbeat_interval: Optional[int] = Field(None, ge=1, le=10080)  # 1 min to 1 week
+    heartbeat_grace: Optional[int] = Field(None, ge=1, le=1440)
     keyword: Optional[str] = Field(None, max_length=500)
     keyword_present: bool = Field(default=True)
     use_regex: bool = Field(default=False)
@@ -75,6 +78,8 @@ class MonitorUpdate(BaseModel):
     headers: Optional[Dict[str, str]] = None
     body: Optional[str] = None
     expected_status: Optional[int] = Field(None, ge=100, le=599)
+    heartbeat_interval: Optional[int] = Field(None, ge=1, le=10080)
+    heartbeat_grace: Optional[int] = Field(None, ge=1, le=1440)
     keyword: Optional[str] = Field(None, max_length=500)
     keyword_present: Optional[bool] = None
     use_regex: Optional[bool] = None
@@ -103,6 +108,11 @@ class MonitorResponse(BaseModel):
     headers: Optional[Dict[str, str]]
     body: Optional[str]
     expected_status: int
+    monitor_type: str = "http"
+    heartbeat_token: Optional[str] = None
+    heartbeat_interval: Optional[int] = None
+    heartbeat_grace: Optional[int] = None
+    last_ping_at: Optional[datetime] = None
     keyword: Optional[str]
     keyword_present: bool
     use_regex: bool = False

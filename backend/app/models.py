@@ -53,6 +53,15 @@ class Monitor(Base):
     headers = Column(JSON)  # custom headers
     body = Column(Text)  # for POST/PUT requests
     expected_status = Column(Integer, default=200)
+    # Monitor type
+    monitor_type = Column(String(20), default="http")  # http, heartbeat
+
+    # Heartbeat fields (null for http monitors)
+    heartbeat_token = Column(String(64), unique=True, nullable=True)
+    heartbeat_interval = Column(Integer, nullable=True)  # expected ping interval in minutes
+    heartbeat_grace = Column(Integer, nullable=True, default=5)  # grace period in minutes
+    last_ping_at = Column(DateTime, nullable=True)
+
     # Response body validation
     keyword = Column(String(500))
     keyword_present = Column(Boolean, default=True)

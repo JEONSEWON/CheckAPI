@@ -443,6 +443,62 @@ def check_ssl_certificates():
         db.close()
 
 
+
+
+@celery_app.task(name="app.tasks.check_heartbeat_monitors")
+def check_heartbeat_monitors():
+    """
+    Check heartbeat monitors for missing pings.
+    Runs every minute.
+    """
+    from datetime import timedelta
+    db = SessionLocal()
+    try:
+        from app.models import Monitor
+        monitors = db.query(Monitor).filter(
+            Monitor.monitor_type == "heartbeat",
+            Monitor.is_active == True,
+        ).all()
+
+        alerted = 0
+        for monitor in monitors:
+            if not monitor.last_ping_at:
+                continue  # Never pinged yet — stay pending
+
+            interval = monitor.heartbeat_interval or 5
+            grace = monitor.heartbeat_grace or 5
+            threshold_minutes = interval + grace
+
+            now = datetime.utcnow()
+            elapsed = (now - monitor.last_ping_at).total_seconds() / 60
+
+            if elapsed > threshold_minutes:
+                if monitor.last_status != "down":
+                    previous_status = monitor.last_status
+                    monitor.last_status = "down"
+                    monitor.last_checked_at = now
+                    monitor.updated_at = now
+
+                    # Record failed check
+                    from app.models import Check
+                    check = Check(
+                        monitor_id=str(monitor.id),
+                        status="down",
+                        status_code=None,
+                        response_time=None,
+                        error_message=f"No ping received in {elapsed:.0f}m (expected every {interval}m + {grace}m grace)",
+                        checked_at=now,
+                    )
+                    db.add(check)
+                    db.commit()
+
+                    send_alerts.delay(str(monitor.id), "down", previous_status or "pending")
+                    alerted += 1
+
+        return {"checked": len(monitors), "alerted": alerted}
+    finally:
+        db.close()
+
 @celery_app.task(name="app.tasks.cleanup_old_checks")
 def cleanup_old_checks():
     """
