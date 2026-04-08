@@ -237,6 +237,8 @@ export const analyticsAPI = {
   
   incidents: (days: number = 7) =>
     apiRequest(`/api/v1/analytics/incidents?days=${days}`),
+  percentiles: (monitorId: string, hours: number = 24) =>
+    apiRequest(`/api/v1/analytics/monitors/${monitorId}/percentiles?hours=${hours}`),
 };
 
 // Subscription API

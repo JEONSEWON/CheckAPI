@@ -143,7 +143,7 @@ def check_single_monitor(monitor_id: str):
                     ).order_by(MonitorAssertion.order).all()
 
                     if assertions:
-                        result = run_assertions(response.text, assertions)
+                        result = run_assertions(response.text, assertions, dict(response.headers))
                         if not result["passed"]:
                             status = "degraded"
                             failed = [r for r in result["results"] if not r["passed"]]

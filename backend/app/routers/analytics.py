@@ -407,3 +407,52 @@ def get_sla_report(
         "generated_at": datetime.utcnow().isoformat() + "Z",
         "monitors": report,
     }
+
+
+@router.get("/monitors/{monitor_id}/percentiles")
+def get_response_time_percentiles(
+    monitor_id: str,
+    hours: int = Query(24, ge=1, le=720),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get response time percentiles (p50, p95, p99) for a monitor"""
+    from app.models import Check, Monitor
+    from datetime import timedelta
+    import statistics
+
+    monitor = db.query(Monitor).filter(
+        Monitor.id == monitor_id,
+        Monitor.user_id == current_user.id
+    ).first()
+    if not monitor:
+        raise HTTPException(status_code=404, detail="Monitor not found")
+
+    since = datetime.utcnow() - timedelta(hours=hours)
+    checks = db.query(Check).filter(
+        Check.monitor_id == monitor_id,
+        Check.checked_at >= since,
+        Check.response_time.isnot(None),
+        Check.status == "up"
+    ).all()
+
+    if not checks:
+        return {"p50": None, "p95": None, "p99": None, "sample_size": 0}
+
+    times = sorted([c.response_time for c in checks])
+    n = len(times)
+
+    def percentile(data, p):
+        idx = int(len(data) * p / 100)
+        return data[min(idx, len(data) - 1)]
+
+    return {
+        "p50": percentile(times, 50),
+        "p95": percentile(times, 95),
+        "p99": percentile(times, 99),
+        "min": times[0],
+        "max": times[-1],
+        "avg": round(sum(times) / n),
+        "sample_size": n,
+        "hours": hours,
+    }

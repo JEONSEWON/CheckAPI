@@ -255,7 +255,7 @@ class MaintenanceWindowResponse(BaseModel):
 
 
 class AssertionCreate(BaseModel):
-    assertion_type: str = Field(default="jsonpath", pattern="^(keyword|jsonpath)$")
+    assertion_type: str = Field(default="jsonpath", pattern="^(keyword|jsonpath|header)$")
     path: Optional[str] = None
     operator: str = Field(..., pattern="^(==|!=|>|>=|<|<=|contains|not_contains|is_null|is_not_null|exists)$")
     value: Optional[Any] = None
@@ -281,3 +281,4 @@ class AssertionResponse(BaseModel):
 class AssertionTestRequest(BaseModel):
     response_body: str
     assertions: List[AssertionCreate]
+    response_headers: Optional[dict] = None

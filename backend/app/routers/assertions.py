@@ -60,7 +60,7 @@ def evaluate_assertion(actual_values: list, operator: str, expected) -> bool:
     return False
 
 
-def run_assertions(response_body: str, assertions: list) -> dict:
+def run_assertions(response_body: str, assertions: list, response_headers: dict = None) -> dict:
     """Run all assertions against response body. Returns result dict."""
     if not assertions:
         return {"passed": True, "results": [], "error": None}
@@ -212,5 +212,5 @@ def test_assertions(
         raise HTTPException(status_code=404, detail="Monitor not found")
 
     assertions_dicts = [a.dict() for a in req.assertions]
-    result = run_assertions(req.response_body, req.assertions)
+    result = run_assertions(req.response_body, req.assertions, req.response_headers)
     return result
