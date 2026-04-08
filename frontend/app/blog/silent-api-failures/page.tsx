@@ -18,7 +18,7 @@ export default function BlogPostSilentFailure() {
             </Link>
             <nav className="hidden md:flex space-x-8">
               <a href="/#features" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Features</a>
-              <a href="/#pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
+              <a href="/pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
               <Link href="/docs" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4"><PublicAuthButtons /></div>

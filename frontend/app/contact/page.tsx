@@ -39,7 +39,7 @@ export default function ContactPage() {
             </Link>
             <nav className="hidden md:flex space-x-8">
               <a href="/#features" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Features</a>
-              <a href="/#pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
+              <a href="/pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
               <Link href="/docs" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
             </nav>
             <AuthButtons />
@@ -118,7 +118,7 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid md:grid-cols-4 gap-8">
             <div><h3 className="font-bold text-gray-900 dark:text-white mb-4">CheckAPI</h3><p className="text-gray-600 dark:text-gray-400 text-sm">Simple, reliable API monitoring for developers and teams.</p></div>
-            <div><h4 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h4><ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400"><li><a href="/#features" className="hover:text-green-600">Features</a></li><li><a href="/#pricing" className="hover:text-green-600">Pricing</a></li><li><Link href="/docs" className="hover:text-green-600">Documentation</Link></li></ul></div>
+            <div><h4 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h4><ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400"><li><a href="/#features" className="hover:text-green-600">Features</a></li><li><a href="/pricing" className="hover:text-green-600">Pricing</a></li><li><Link href="/docs" className="hover:text-green-600">Documentation</Link></li></ul></div>
             <div><h4 className="font-semibold text-gray-900 dark:text-white mb-4">Company</h4><ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400"><li><Link href="/about" className="hover:text-green-600">About</Link></li><li><Link href="/blog" className="hover:text-green-600">Blog</Link></li><li><Link href="/contact" className="hover:text-green-600">Contact</Link></li></ul></div>
             <div><h4 className="font-semibold text-gray-900 dark:text-white mb-4">Legal</h4><ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400"><li><Link href="/privacy" className="hover:text-green-600">Privacy</Link></li><li><Link href="/terms" className="hover:text-green-600">Terms</Link></li></ul></div>
           </div>

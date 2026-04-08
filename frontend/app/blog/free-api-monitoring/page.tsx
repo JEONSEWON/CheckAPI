@@ -21,7 +21,7 @@ export default function BlogPost2() {
             </Link>
             <nav className="hidden md:flex space-x-8">
               <a href="/#features" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Features</a>
-              <a href="/#pricing" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
+              <a href="/pricing" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Pricing</a>
               <Link href="/docs" className="text-gray-700 dark:text-gray-200 dark:text-gray-300 hover:text-green-600 transition">Docs</Link>
             </nav>
             <div className="flex items-center space-x-4">
@@ -176,7 +176,7 @@ export default function BlogPost2() {
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:text-gray-200">
                 <li><a href="/#features" className="hover:text-green-600">Features</a></li>
-                <li><a href="/#pricing" className="hover:text-green-600">Pricing</a></li>
+                <li><a href="/pricing" className="hover:text-green-600">Pricing</a></li>
                 <li><Link href="/docs" className="hover:text-green-600">Documentation</Link></li>
               </ul>
             </div>
