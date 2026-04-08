@@ -119,9 +119,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <Menu className="h-6 w-6 text-gray-600 dark:text-gray-400" />
             </button>
             <div className="flex-1 flex justify-end items-center gap-4">
+              <Link href="/pricing" className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition">
+                Pricing
+              </Link>
               {user?.plan === 'free' && (
-                <Link href="/dashboard/settings" className="text-sm text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">
-                  Upgrade to Pro →
+                <Link href="/dashboard/settings" className="text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-700 transition">
+                  Upgrade →
                 </Link>
               )}
               <ThemeToggle />
