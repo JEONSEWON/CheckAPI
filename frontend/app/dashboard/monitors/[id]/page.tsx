@@ -31,6 +31,7 @@ export default function MonitorDetailPage() {
 
   const [monitor, setMonitor] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
+  const [percentiles, setPercentiles] = useState<any>(null);
   const [checks, setChecks] = useState<any[]>([]);
   const [checksTotal, setChecksTotal] = useState(0);
   const [checksPage, setChecksPage] = useState(1);
@@ -56,6 +57,12 @@ export default function MonitorDetailPage() {
       // Get analytics
       const analyticsResponse = await analyticsAPI.monitor(monitorId, 7);
       setAnalytics(analyticsResponse);
+
+      // Load percentiles
+      try {
+        const percResponse = await analyticsAPI.percentiles(monitorId, 24);
+        setPercentiles(percResponse);
+      } catch {}
 
       // Get alert channels
       const [allCh, monitorData] = await Promise.all([
