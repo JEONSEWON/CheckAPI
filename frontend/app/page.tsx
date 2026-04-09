@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe, Code2, Terminal, Lock } from 'lucide-react';
+import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe, Code2, Terminal, Lock, Activity } from 'lucide-react';
 import ClientHeader from '@/components/ClientHeader';
 import PricingSection from '@/components/PricingSection';
 import LiveUserCount from '@/components/LiveUserCount';
