@@ -384,7 +384,7 @@ export default function HomePage() {
               Your API returns 200 OK — but the response body contains an error, null data, or broken content. CheckAPI validates the body with <strong style={{ color: '#00e5b4' }}>Regex patterns</strong>, not just status codes.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {['Keyword match (present / absent)', 'Regex pattern matching', 'JSON field assertion (coming soon)'].map((f, i) => (
+              {['Keyword match (present / absent)', 'Regex pattern matching', 'JSON Path assertions (up to 10)', 'Header assertion (Content-Type, etc.)'].map((f, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: i === 2 ? '#334155' : '#94a3b8' }}>
                   <CheckCircle style={{ width: '14px', height: '14px', color: i === 2 ? '#334155' : '#00e5b4', flexShrink: 0 }} />
                   {f}
@@ -411,6 +411,7 @@ export default function HomePage() {
             { icon: <Zap style={{ width: '20px', height: '20px' }} />, title: 'Instant Alerts', desc: 'Free plan checks every 5 minutes. Upgrade to Starter for 1-minute checks, Pro for 30-second. Email, Slack, Telegram, Discord, Webhook — all plans.' },
             { icon: <BarChart3 style={{ width: '20px', height: '20px' }} />, title: 'Response Time Analytics', desc: 'Track uptime, response times, incidents. SLA reports for Pro & Business.' },
             { icon: <Globe style={{ width: '20px', height: '20px' }} />, title: 'Public Status Pages', desc: 'Shareable status page per monitor. 90-day uptime chart. No login required.' },
+            { icon: <Activity style={{ width: '20px', height: '20px' }} />, title: 'Heartbeat / Cron Monitoring', desc: 'Monitor cron jobs and scheduled tasks. Get alerted if your job doesn\'t run on time.' },
             { icon: <Lock style={{ width: '20px', height: '20px' }} />, title: 'Maintenance Windows', desc: 'Schedule recurring windows. Alerts suppressed, checks still run.' },
             { icon: <Terminal style={{ width: '20px', height: '20px' }} />, title: 'REST API Access', desc: 'Business plan: full API access via API keys for programmatic monitor management.' },
             { icon: <CheckCircle style={{ width: '20px', height: '20px' }} />, title: 'Free for Commercial Use', desc: 'Unlike UptimeRobot, zero commercial restrictions on the free plan. Build your business.' },
