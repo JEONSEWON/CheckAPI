@@ -15,7 +15,7 @@ from app.models import Monitor, Check, User
 router = APIRouter(prefix="/public", tags=["Public"])
 
 
-def calculate_uptime(monitor_id: UUID, hours: int, db: Session) -> float:
+def calculate_uptime(monitor_id: str, hours: int, db: Session) -> float:
     """Calculate uptime percentage for a monitor"""
     since = datetime.utcnow() - timedelta(hours=hours)
     
@@ -35,7 +35,7 @@ def calculate_uptime(monitor_id: UUID, hours: int, db: Session) -> float:
     return round((up_count / total_count) * 100, 2)
 
 
-def get_average_response_time(monitor_id: UUID, hours: int, db: Session) -> int:
+def get_average_response_time(monitor_id: str, hours: int, db: Session) -> int:
     """Get average response time for a monitor (in milliseconds)"""
     since = datetime.utcnow() - timedelta(hours=hours)
     
@@ -48,7 +48,7 @@ def get_average_response_time(monitor_id: UUID, hours: int, db: Session) -> int:
     return int(avg) if avg else 0
 
 
-def get_incidents(monitor_id: UUID, hours: int, db: Session) -> List[Dict[str, Any]]:
+def get_incidents(monitor_id: str, hours: int, db: Session) -> List[Dict[str, Any]]:
     """Get recent incidents (status changes to down/degraded)"""
     since = datetime.utcnow() - timedelta(hours=hours)
     
@@ -117,7 +117,7 @@ def get_public_stats(db: Session = Depends(get_db)):
     }
 
 @router.get("/status/{monitor_id}")
-def get_public_status(monitor_id: UUID, db: Session = Depends(get_db)):
+def get_public_status(monitor_id: str, db: Session = Depends(get_db)):
     """
     Get public status page data for a monitor
     No authentication required - anyone can view
@@ -195,7 +195,7 @@ def get_public_status(monitor_id: UUID, db: Session = Depends(get_db)):
 
 
 @router.get("/status/{monitor_id}/badge")
-def get_status_badge(monitor_id: UUID, db: Session = Depends(get_db)):
+def get_status_badge(monitor_id: str, db: Session = Depends(get_db)):
     """
     Get status badge data (for embedding in README, etc.)
     Returns simple data for badge generation
@@ -230,7 +230,7 @@ def get_status_badge(monitor_id: UUID, db: Session = Depends(get_db)):
 
 @router.get("/status/{monitor_id}/history")
 def get_check_history(
-    monitor_id: UUID,
+    monitor_id: str,
     hours: int = 24,
     db: Session = Depends(get_db)
 ):
