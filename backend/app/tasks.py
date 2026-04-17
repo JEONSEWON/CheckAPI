@@ -321,9 +321,13 @@ def send_alerts(monitor_id: str, new_status: str, old_status: str):
         
         if not monitor:
             return
-        
+
+        if is_in_maintenance(monitor, db):
+            print(f"🔕 ALERT SUPPRESSED (maintenance window): {monitor.name} {old_status} -> {new_status}")
+            return
+
         print(f"🚨 ALERT: {monitor.name} changed from {old_status} to {new_status}")
-        
+
         # Get alert channels for this monitor
         alert_channels = monitor.alert_channels
         
