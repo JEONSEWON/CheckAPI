@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv LAUNCH_CONTENT.md LAUNCH_CONTENT_v1_backup.md LAUNCH_PLAN.md MARKETING.md PRE_LAUNCH_CHECKLIST.md PROGRESS.md docs/)",
+      "Bash(mv page_features.txt settings_backup.txt docs/)"
+    ]
+  }
+}
