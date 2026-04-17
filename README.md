@@ -1,6 +1,6 @@
 # CheckAPI — API Health Monitor
 
-**Monitor Your APIs 24/7 with Instant Alerts**
+**APIs that never lie to you.**
 
 [![Live Demo](https://img.shields.io/badge/demo-checkapi.io-green)](https://checkapi.io)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/JEONSEWON/CheckAPI/blob/main/LICENSE)
@@ -15,9 +15,7 @@
 
 CheckAPI is a minimalist **API health monitoring service** built for solo founders and small teams. Monitor your APIs 24/7, catch silent failures before your users do, and get instant alerts across multiple channels.
 
-Built after getting tired of enterprise tools that are too bloated and free tools with too many restrictions. CheckAPI does one thing well — **tells you when your API is broken, before anyone else finds out.**
-
-> **Free for Commercial Use** — Unlike UptimeRobot (which restricted commercial use on free plans in late 2024), CheckAPI has zero commercial restrictions on all plans.
+> **Free for Commercial Use** — Unlike UptimeRobot (which restricted commercial use in late 2024), CheckAPI has zero commercial restrictions on all plans.
 
 ---
 
@@ -26,11 +24,44 @@ Built after getting tired of enterprise tools that are too bloated and free tool
 ### Core Monitoring
 
 - 🔍 **HTTP/HTTPS Monitoring** — GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS
+- 💓 **Heartbeat / Cron Job Monitoring** — Monitor scheduled tasks. Get alerted if your job doesn't run on time.
 - 🔑 **Custom Headers & Body** — Simulate real API requests
 - ✅ **Status Code Validation** — Expected HTTP status code checking
-- 🧠 **Silent Failure Detection** — Your API returns 200 OK but the body says "error"? CheckAPI catches it via keyword or **Regex pattern** matching
 - ⏱️ **Response Time Tracking** — Monitor performance in milliseconds
-- 📊 **Uptime Calculation** — 24h / 7d / 30d uptime %
+- 📊 **Response Time Percentiles** — p50 / p95 / p99 per monitor
+
+### Silent Failure Detection
+
+A 200 OK response doesn't always mean your API is healthy. CheckAPI goes deeper:
+
+- 🔤 **Keyword Validation** — Check if a keyword is present or absent in the response body
+- 🧠 **Regex Pattern Matching** — Validate response body with precision using regular expressions
+
+```
+# Status field must be "ok" or "healthy"
+regex: "status":\s*"(ok|healthy)"
+
+# Balance must be positive
+regex: "balance":\s*[1-9]\d*
+
+# Error field must be null
+regex: "error":\s*null
+```
+
+- 🗂️ **JSON Path Assertions** — Up to 10 assertions per monitor with AND/OR logic
+
+```
+$.data.status == "ok"
+$.data.balance > 0
+$.error is null
+$.items[*].active exists
+```
+
+Supported operators: `==`, `!=`, `>`, `>=`, `<`, `<=`, `contains`, `not_contains`, `is_null`, `is_not_null`, `exists`
+
+- 🏷️ **Header Assertion** — Validate response headers (e.g. `Content-Type`, `X-Status`)
+- 🔴 **Regex Live Tester** — Test patterns against real response bodies directly in the dashboard
+- 🧪 **JSON Path Live Tester** — Paste sample JSON and verify assertions instantly
 
 ### Alert Channels
 
@@ -40,29 +71,29 @@ Built after getting tired of enterprise tools that are too bloated and free tool
 - 🎮 Discord
 - 🔗 Custom Webhook
 
-All channels support **test alerts** before going live.
+All channels support **test alerts** before going live. Attach multiple channels per monitor.
 
 ### Analytics & Reporting
 
 - Real-time monitor status dashboard
-- Response time graphs
+- Response time graphs (24h)
+- Response time percentiles (p50 / p95 / p99)
 - Incident history & timeline
 - SLA reports (Pro / Business)
-- CSV export of check history
+- Check history with pagination (30 / 90 / 365 days by plan)
 
 ### Public Status Pages
 
-- Shareable `/status/{monitor_id}` page — no login required
+- Shareable `/status/{monitor_id}` — no login required
 - 90-day uptime bar chart with hover tooltips
 - 24h / 7d / 30d uptime stats
 - Average response time & recent incidents
-- "Powered by CheckAPI" backlink
 
 ### Maintenance Windows
 
-- Schedule recurring maintenance windows (daily / weekly / monthly / one-time)
-- Alerts are suppressed during active windows — checks still run
-- Timezone-aware
+- Schedule recurring windows (daily / weekly / monthly / one-time)
+- Alerts suppressed during active windows — checks still run
+- Timezone-aware (Asia/Seoul, UTC, US timezones, etc.)
 - Apply to specific monitors or all monitors
 
 ### Business Plan
@@ -84,9 +115,9 @@ All channels support **test alerts** before going live.
 
 Annual billing available at **20% discount** on all paid plans.
 
-✅ No commercial restrictions on any plan  
-✅ No credit card required for free tier  
-✅ Cancel anytime  
+✅ No commercial restrictions on any plan
+✅ No credit card required for free tier
+✅ Cancel anytime
 
 ---
 
@@ -109,7 +140,7 @@ Annual billing available at **20% discount** on all paid plans.
 - **State:** Zustand
 
 ### Deployment
-- **Backend:** Railway (FastAPI + Celery Worker + Redis + PostgreSQL)
+- **Backend:** Railway US West (FastAPI + Celery Worker + Redis + PostgreSQL)
 - **Frontend:** Vercel
 - **DNS:** Cloudflare
 - **Domain:** checkapi.io
@@ -126,17 +157,18 @@ Celery Worker checks URL periodically
         ↓
 Checks:
   1. HTTP status code
-  2. Response body — keyword or regex match (Silent Failure Detection)
+  2. Response body — keyword / regex / JSON Path / header assertion
   3. Response time (ms)
         ↓
 Status: up / degraded / down
         ↓
-Status change → Check maintenance window → Send alert if not in maintenance
+Check maintenance window → Send alert if not in maintenance
 (Email / Slack / Telegram / Discord / Webhook)
         ↓
 Results saved to PostgreSQL
 (Retained: 30 / 30 / 90 / 365 days by plan)
         ↓
+Heartbeat monitors: Celery checks last_ping_at every minute
 Daily 9AM → SSL certificate expiry check
 Daily 3AM → Old data cleanup
 ```
@@ -148,36 +180,42 @@ Daily 3AM → Old data cleanup
 ### For Users
 
 1. Sign up at [checkapi.io](https://checkapi.io)
-2. Click **+ Add Monitor** — enter URL, method, interval
+2. Click **+ Add Monitor** — choose HTTP or Heartbeat/Cron
 3. Add an alert channel (Email, Slack, Telegram, etc.)
-4. Optionally add Silent Failure Detection keyword or regex
+4. Optionally add Silent Failure Detection (keyword, regex, JSON Path, or header assertion)
 5. Get notified the moment something goes wrong
 
-### For Developers
+### Heartbeat / Cron Job Example
 
-#### Backend Setup
+```bash
+# Add to your cron job
+0 3 * * * /scripts/backup.sh && curl https://checkapi.io/api/v1/heartbeat/YOUR_TOKEN
+```
+
+```python
+# Or in your Python script
+import requests
+run_backup()
+requests.get("https://checkapi.io/api/v1/heartbeat/YOUR_TOKEN")
+```
+
+### For Developers
 
 ```bash
 git clone https://github.com/JEONSEWON/CheckAPI.git
 cd CheckAPI/backend
-
 pip install -r requirements.txt
 cp .env.example .env
-# Edit .env with your credentials
-
 uvicorn app.main:app --reload
 
 # In a separate terminal:
 celery -A app.celery_app worker --beat --loglevel=info
 ```
 
-#### Frontend Setup
-
 ```bash
 cd frontend
 npm install
 cp .env.local.example .env.local
-# Edit .env.local
 npm run dev
 ```
 
