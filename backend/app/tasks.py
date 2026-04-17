@@ -9,6 +9,7 @@ import requests
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 
 from app.celery_app import celery_app
 from app.database import SessionLocal, init_db
@@ -71,7 +72,7 @@ def check_monitors():
         # Find monitors that need checking
         monitors = db.query(Monitor).filter(
             Monitor.is_active == True,
-            Monitor.next_check_at <= now
+            or_(Monitor.next_check_at == None, Monitor.next_check_at <= now)
         ).all()
         
         print(f"[{now}] Found {len(monitors)} monitors to check")
