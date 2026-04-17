@@ -192,6 +192,7 @@ export default function AssertionsPanel({ monitorId }: AssertionsPanelProps) {
               >
                 <option value="jsonpath">JSON Path</option>
                 <option value="keyword">Keyword</option>
+                <option value="header">Header</option>
               </select>
 
               {/* Path */}
@@ -199,7 +200,11 @@ export default function AssertionsPanel({ monitorId }: AssertionsPanelProps) {
                 type="text"
                 value={a.path || ''}
                 onChange={e => updateAssertion(i, 'path', e.target.value)}
-                placeholder={a.assertion_type === 'jsonpath' ? '$.data.status' : 'keyword'}
+                placeholder={
+                  a.assertion_type === 'jsonpath' ? '$.data.status' :
+                  a.assertion_type === 'header' ? 'Content-Type' :
+                  'keyword'
+                }
                 className="col-span-3 px-2 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-green-500 font-mono"
               />
 

@@ -110,6 +110,16 @@ def run_assertions(response_body: str, assertions: list, response_headers: dict 
                     passed = path in response_body if path else False
                 actual_display = "present" if path in response_body else "absent"
 
+            elif atype == "header":
+                headers = response_headers or {}
+                # Case-insensitive header lookup
+                header_val = next(
+                    (v for k, v in headers.items() if k.lower() == (path or '').lower()),
+                    None
+                )
+                actual_display = header_val
+                passed = evaluate_assertion([header_val] if header_val is not None else [], operator, value)
+
             elif atype == "jsonpath":
                 if response_json is None:
                     passed = False
