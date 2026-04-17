@@ -5,7 +5,8 @@
       "Bash(mv page_features.txt settings_backup.txt docs/)",
       "Bash(where claude *)",
       "Bash(claude --version)",
-      "Bash(npm list *)"
+      "Bash(npm list *)",
+      "Bash(claude update *)"
     ]
   }
 }
