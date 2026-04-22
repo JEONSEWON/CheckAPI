@@ -4,6 +4,20 @@ import { ArrowRight, Calendar, Clock } from 'lucide-react';
 
 const posts = [
   {
+    title: 'JSON Path Assertions: Validate Nested API Responses',
+    excerpt: 'Go beyond status codes. Use JSON Path assertions to validate specific fields inside your API response — catch null data, wrong values, and broken logic automatically.',
+    date: 'Apr 22, 2026',
+    readTime: '5 min read',
+    slug: '/blog/json-path-assertions',
+  },
+  {
+    title: 'How to Use Regex to Monitor API Response Bodies',
+    excerpt: 'HTTP status codes only tell half the story. A 200 OK means the request completed — not that the response is correct. Here is how regex pattern matching closes that gap.',
+    date: 'Apr 15, 2026',
+    readTime: '6 min read',
+    slug: '/blog/regex-api-monitoring',
+  },
+  {
     title: 'How to Set Up a Free Public Status Page for Your API',
     excerpt: 'A public status page reduces support tickets, builds user trust, and takes 2 minutes to set up. Here\'s how to do it for free.',
     date: 'Apr 1, 2026',

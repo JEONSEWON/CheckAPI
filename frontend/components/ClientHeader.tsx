@@ -64,6 +64,7 @@ export default function ClientHeader() {
             <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Features</a>
             <a href="/pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Pricing</a>
             <Link href="/docs" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Docs</Link>
+            <Link href="/blog" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Blog</Link>
           </nav>
           <div className="flex items-center space-x-4">
             <AuthButtons />

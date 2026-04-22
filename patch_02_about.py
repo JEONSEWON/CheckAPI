@@ -1,4 +1,8 @@
-import PublicAuthButtons from '@/components/PublicAuthButtons';
+import os
+
+path = r"C:\home\jeon\api-health-monitor\frontend\app\about\page.tsx"
+
+new_content = '''import PublicAuthButtons from '@/components/PublicAuthButtons';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle, Zap, Shield, Heart, Code2, Globe } from 'lucide-react';
 
@@ -184,3 +188,9 @@ export default function AboutPage() {
     </div>
   );
 }
+'''
+
+with open(path, 'w', encoding='utf-8') as f:
+    f.write(new_content)
+
+print("✅ about/page.tsx patched — false claims removed, solo founder story added")

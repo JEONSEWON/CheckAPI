@@ -1,4 +1,6 @@
-import PublicAuthButtons from '@/components/PublicAuthButtons';
+path = r"C:\home\jeon\api-health-monitor\frontend\app\docs\page.tsx"
+
+new_content = r'''import PublicAuthButtons from '@/components/PublicAuthButtons';
 import Link from 'next/link';
 
 export const metadata = {
@@ -658,3 +660,9 @@ requests.get("https://checkapi.io/heartbeat/<your-token>")`}</pre>
     </div>
   );
 }
+'''
+
+with open(path, 'w', encoding='utf-8') as f:
+    f.write(new_content)
+
+print("✅ docs/page.tsx fully rewritten — all features documented")
