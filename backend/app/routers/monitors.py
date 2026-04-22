@@ -20,7 +20,7 @@ from app.schemas import (
     CheckListResponse,
     MessageResponse
 )
-from app.auth import get_current_user, get_user_by_api_key
+from app.auth import get_current_user, _get_user_by_api_key as get_user_by_api_key
 
 def get_current_user_flexible(
     request: Request,
