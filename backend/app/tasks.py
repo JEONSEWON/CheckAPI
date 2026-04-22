@@ -2,6 +2,7 @@
 Celery tasks for monitoring and alerts
 """
 
+import re
 import time
 import ssl
 import socket
