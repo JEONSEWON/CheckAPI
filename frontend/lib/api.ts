@@ -141,6 +141,12 @@ export const monitorsAPI = {
     interval?: number;
     timeout?: number;
     expected_status?: number;
+    keyword?: string;
+    keyword_present?: boolean;
+    use_regex?: boolean;
+    alert_threshold?: number;
+    heartbeat_interval?: number;
+    heartbeat_grace?: number;
   }) =>
     apiRequest('/api/v1/monitors/', {
       method: 'POST',
