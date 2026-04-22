@@ -77,6 +77,90 @@ def send_email_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_
     except Exception as e:
         print(f"❌ Email error: {str(e)}")
         return False
+def send_welcome_email(user_email: str, user_name: str) -> bool:
+    """Send welcome email to new user after signup"""
+    resend_api_key = settings.RESEND_API_KEY
+    if not resend_api_key:
+        print("⚠️  Resend API key not configured")
+        return False
+
+    name = user_name or user_email.split("@")[0]
+    dashboard_url = f"{settings.FRONTEND_URL}/dashboard"
+
+    try:
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f9fafb;">
+            <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="background: #16a34a; padding: 32px 24px; text-align: center;">
+                    <h1 style="color: white; margin: 0; font-size: 24px;">Welcome to CheckAPI</h1>
+                    <p style="color: #bbf7d0; margin: 8px 0 0; font-size: 15px;">Your API monitoring starts now</p>
+                </div>
+                <div style="padding: 32px 24px;">
+                    <p style="color: #374151; font-size: 16px; margin-top: 0;">Hey {name} 👋</p>
+                    <p style="color: #6b7280; line-height: 1.6;">
+                        Thanks for signing up. CheckAPI monitors your APIs and alerts you the moment something goes wrong —
+                        including silent failures where your endpoint returns 200 OK but the response is broken.
+                    </p>
+
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px; margin: 24px 0;">
+                        <p style="color: #15803d; font-weight: bold; margin: 0 0 12px;">Get started in 30 seconds:</p>
+                        <ol style="color: #374151; line-height: 2; margin: 0; padding-left: 20px;">
+                            <li>Paste your API URL</li>
+                            <li>Set expected status code (usually 200)</li>
+                            <li>Optionally add a keyword to detect silent failures</li>
+                        </ol>
+                    </div>
+
+                    <div style="text-align: center; margin: 32px 0;">
+                        <a href="{dashboard_url}"
+                           style="background: #16a34a; color: white; padding: 14px 36px; border-radius: 8px;
+                                  text-decoration: none; font-weight: bold; font-size: 16px; display: inline-block;">
+                            Add Your First Monitor →
+                        </a>
+                    </div>
+
+                    <p style="color: #9ca3af; font-size: 13px; text-align: center; margin: 0;">
+                        Free plan includes 10 monitors, all 5 alert channels, and no commercial restrictions.
+                    </p>
+                </div>
+                <div style="background: #f9fafb; padding: 16px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+                    <p style="font-size: 12px; color: #9ca3af; margin: 0;">
+                        <a href="https://checkapi.io" style="color: #16a34a;">CheckAPI</a> · Built by Sewon Jeon
+                    </p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        response = requests.post(
+            "https://api.resend.com/emails",
+            json={
+                "from": "Sewon at CheckAPI <sewon@checkapi.io>",
+                "to": [user_email],
+                "subject": "Welcome to CheckAPI — add your first monitor",
+                "html": html_content,
+            },
+            headers={
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json"
+            },
+            timeout=10
+        )
+
+        if response.status_code == 200:
+            print(f"✉️  Welcome email sent to {user_email}")
+            return True
+        else:
+            print(f"❌ Welcome email failed: {response.status_code} - {response.text}")
+            return False
+
+    except Exception as e:
+        print(f"❌ Welcome email error: {str(e)}")
+        return False
+
+
 def send_team_invite_email(invited_email: str, inviter_name: str, invite_url: str) -> bool:
     """
     Send team invitation email using Resend

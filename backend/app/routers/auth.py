@@ -45,6 +45,13 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
+    # Send welcome email (non-blocking — failure doesn't affect registration)
+    try:
+        from app.alerts import send_welcome_email
+        send_welcome_email(new_user.email, new_user.name or "")
+    except Exception as e:
+        print(f"⚠️  Welcome email error (non-fatal): {e}")
+
     # Auto-login: return tokens immediately
     access_token = create_access_token(data={"sub": str(new_user.id)})
     refresh_token = create_refresh_token(data={"sub": str(new_user.id)})
