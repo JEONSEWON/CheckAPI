@@ -158,20 +158,17 @@ def cancel_subscription(
     try:
         lemon = LemonSqueezyAPI()
         lemon.cancel_subscription(subscription.lemonsqueezy_subscription_id)
-        
-        # Update local subscription
-        subscription.status = "canceled"
-        db.commit()
-        
-        # Downgrade user to free plan and enforce monitor limit
-        user = db.query(User).filter(User.id == current_user.id).first()
-        user.plan = "free"
-        db.commit()
-        deactivated = enforce_monitor_limit(user, db)
 
-        msg = "Subscription canceled successfully."
-        if deactivated > 0:
-            msg += f" {deactivated} monitor(s) were paused to stay within the free plan limit (10 monitors)."
+        # Mark as canceling — user keeps plan access until period ends
+        subscription.status = "canceling"
+        db.commit()
+
+        period_end = subscription.current_period_end
+        if period_end:
+            end_str = period_end.strftime("%B %d, %Y")
+            msg = f"Subscription will cancel on {end_str}. You'll keep full access until then."
+        else:
+            msg = "Subscription cancellation requested. You'll keep access until the current period ends."
         return {"message": msg}
         
     except Exception as e:
@@ -311,21 +308,32 @@ async def lemonsqueezy_webhook(request: Request, db: Session = Depends(get_db)):
             db.commit()
             print(f"✅ Subscription updated for user {user.email}")
     
-    elif event_name in ["subscription_cancelled", "subscription_expired"]:
-        # Cancel/expire subscription
+    elif event_name == "subscription_cancelled":
+        # LemonSqueezy fires this immediately on cancel — user still has access until period ends
         subscription = db.query(Subscription).filter(
             Subscription.lemonsqueezy_subscription_id == lemonsqueezy_subscription_id
         ).first()
-        
+
         if subscription:
-            subscription.status = "canceled" if event_name == "subscription_cancelled" else "expired"
+            subscription.status = "canceling"
+            subscription.current_period_end = datetime.fromisoformat(ends_at.replace("Z", "+00:00")) if ends_at else subscription.current_period_end
             db.commit()
-            
-            # Downgrade user to free and enforce monitor limit
+            print(f"✅ Subscription canceling for user {user.email}, access until {subscription.current_period_end}")
+
+    elif event_name == "subscription_expired":
+        # Period actually ended — now downgrade
+        subscription = db.query(Subscription).filter(
+            Subscription.lemonsqueezy_subscription_id == lemonsqueezy_subscription_id
+        ).first()
+
+        if subscription:
+            subscription.status = "expired"
+            db.commit()
+
             user.plan = "free"
             db.commit()
             enforce_monitor_limit(user, db)
-            print(f"✅ Subscription {event_name} for user {user.email}")
+            print(f"✅ Subscription expired for user {user.email}, downgraded to free")
     
     elif event_name == "subscription_resumed":
         # Resume subscription

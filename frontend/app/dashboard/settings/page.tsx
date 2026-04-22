@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { useAuthStore } from '@/lib/store';
 import { subscriptionAPI, getAccessToken } from '@/lib/api';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
@@ -12,6 +12,7 @@ export default function SettingsPage() {
   const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [apiKeys, setApiKeys] = useState<any[]>([]);
   const [newKeyName, setNewKeyName] = useState('');
   const [createdKey, setCreatedKey] = useState<string | null>(null);
@@ -95,10 +96,10 @@ export default function SettingsPage() {
   };
 
   const handleCancel = async () => {
-    if (!confirm('Are you sure you want to cancel your subscription?')) return;
     try {
-      await subscriptionAPI.cancel();
-      toast.success('Subscription cancelled');
+      const res = await subscriptionAPI.cancel();
+      toast.success(res.message || 'Subscription cancelled');
+      setShowCancelModal(false);
       loadSubscription();
     } catch (error) {
       toast.error('Failed to cancel subscription');
@@ -149,20 +150,65 @@ export default function SettingsPage() {
         {/* Current Plan */}
         <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current Plan</h2>
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1">
               <p className="text-2xl font-bold text-gray-900 dark:text-white capitalize">{user?.plan}</p>
-              {subscription && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Status: {subscription.status}</p>
+              {subscription?.status === 'canceling' && subscription?.current_period_end && (
+                <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+                  <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                  <span>
+                    Cancels on {new Date(subscription.current_period_end).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} — full access until then
+                  </span>
+                </div>
+              )}
+              {subscription?.status === 'active' && subscription?.current_period_end && (
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Renews {new Date(subscription.current_period_end).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </p>
               )}
             </div>
-            {user?.plan !== 'free' && (
-              <button onClick={handleCancel} className="text-sm text-red-600 dark:text-red-400 hover:text-red-700">
+            {user?.plan !== 'free' && subscription?.status === 'active' && (
+              <button
+                onClick={() => setShowCancelModal(true)}
+                className="flex-shrink-0 px-4 py-2 border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 rounded-lg text-sm hover:bg-red-50 dark:hover:bg-red-950 transition"
+              >
                 Cancel Subscription
               </button>
             )}
           </div>
         </div>
+
+        {/* Cancel Confirmation Modal */}
+        {showCancelModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                </div>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Cancel Subscription?</h2>
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
+                <p>Your subscription will be cancelled, but you'll keep full access to your current plan until the billing period ends.</p>
+                <p>After that, your account will downgrade to the <strong className="text-gray-900 dark:text-white">Free plan</strong> (10 monitors, 5-minute checks). Excess monitors will be paused automatically.</p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowCancelModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                >
+                  Keep Subscription
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition"
+                >
+                  Yes, Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Upgrade Plan */}
         <div>
@@ -268,10 +314,13 @@ export default function SettingsPage() {
   );
 }
 
+const PLAN_RANK: Record<string, number> = { free: 0, starter: 1, pro: 2, business: 3 };
+
 function PlanCard({ plan, currentPlan, onUpgrade, billing }: any) {
   const isCurrent = plan.name.toLowerCase() === currentPlan;
   const isAnnual = billing === 'annual';
   const isFree = plan.name === 'Free';
+  const isDowngrade = PLAN_RANK[plan.name.toLowerCase()] < PLAN_RANK[currentPlan];
 
   return (
     <div className={`bg-white dark:bg-gray-800 rounded-lg border-2 p-6 ${plan.popular ? 'border-green-600 shadow-lg' : 'border-gray-200 dark:border-gray-700'}`}>
@@ -309,12 +358,16 @@ function PlanCard({ plan, currentPlan, onUpgrade, billing }: any) {
         <button disabled className="w-full py-2 border-2 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 rounded-lg font-medium">
           Current Plan
         </button>
+      ) : isDowngrade ? (
+        <div className="text-xs text-center text-gray-400 dark:text-gray-500 py-2">
+          To downgrade, cancel your current plan and subscribe to this one after the billing period ends.
+        </div>
       ) : (
         <button
           onClick={() => onUpgrade(plan.name.toLowerCase())}
           className={`w-full py-2 rounded-lg font-medium transition ${plan.popular ? 'bg-green-600 text-white hover:bg-green-700' : 'border-2 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900'}`}
         >
-          {currentPlan === 'free' ? 'Upgrade' : 'Switch Plan'}
+          {currentPlan === 'free' ? 'Upgrade' : 'Upgrade to ' + plan.name}
         </button>
       )}
     </div>
