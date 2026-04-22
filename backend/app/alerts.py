@@ -77,6 +77,76 @@ def send_email_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_
     except Exception as e:
         print(f"❌ Email error: {str(e)}")
         return False
+def send_team_invite_email(invited_email: str, inviter_name: str, invite_url: str) -> bool:
+    """
+    Send team invitation email using Resend
+    """
+    resend_api_key = settings.RESEND_API_KEY
+    if not resend_api_key:
+        print("⚠️  Resend API key not configured")
+        return False
+
+    try:
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: #16a34a; color: white; padding: 16px 24px; border-radius: 8px 8px 0 0;">
+                <h2 style="margin: 0;">👥 You've been invited to a team</h2>
+            </div>
+            <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
+                <p style="color: #374151; font-size: 16px; margin-top: 0;">
+                    <strong>{inviter_name}</strong> has invited you to join their team on CheckAPI.
+                </p>
+                <p style="color: #6b7280;">
+                    Click the button below to accept the invitation and start collaborating.
+                </p>
+                <div style="text-align: center; margin: 32px 0;">
+                    <a href="{invite_url}"
+                       style="background: #16a34a; color: white; padding: 12px 32px; border-radius: 6px;
+                              text-decoration: none; font-weight: bold; font-size: 15px;">
+                        Accept Invitation
+                    </a>
+                </div>
+                <p style="color: #9ca3af; font-size: 13px;">
+                    Or copy this link: <a href="{invite_url}" style="color: #16a34a;">{invite_url}</a>
+                </p>
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+                <p style="font-size: 12px; color: #9ca3af; margin: 0;">
+                    Sent by <a href="https://checkapi.io" style="color: #16a34a;">CheckAPI</a> ·
+                    If you weren't expecting this, you can ignore this email.
+                </p>
+            </div>
+        </body>
+        </html>
+        """
+
+        response = requests.post(
+            "https://api.resend.com/emails",
+            json={
+                "from": "CheckAPI <noreply@checkapi.io>",
+                "to": [invited_email],
+                "subject": f"👥 {inviter_name} invited you to join their CheckAPI team",
+                "html": html_content,
+            },
+            headers={
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json"
+            },
+            timeout=10
+        )
+
+        if response.status_code == 200:
+            print(f"✉️  Team invite email sent to {invited_email}")
+            return True
+        else:
+            print(f"❌ Team invite email failed: {response.status_code} - {response.text}")
+            return False
+
+    except Exception as e:
+        print(f"❌ Team invite email error: {str(e)}")
+        return False
+
+
 def send_slack_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_url: str,
                      new_status: str, old_status: str) -> bool:
     """

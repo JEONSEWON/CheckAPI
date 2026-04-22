@@ -107,13 +107,11 @@ def invite_member(
 
     # Send invite email
     try:
-        from app.alerts import send_email_alert
-        send_email_alert(
-            {"email": email},
-            f"Team Invitation from {current_user.name or current_user.email}",
-            f"https://checkapi.io/invite?token={token}",
-            f"invited to join CheckAPI team",
-            "pending"
+        from app.alerts import send_team_invite_email
+        send_team_invite_email(
+            invited_email=email,
+            inviter_name=current_user.name or current_user.email,
+            invite_url=f"https://checkapi.io/invite?token={token}",
         )
     except Exception as e:
         print(f"[TEAM] invite email error: {e}")
