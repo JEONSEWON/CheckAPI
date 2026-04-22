@@ -3,30 +3,9 @@
 import { useAuthStore } from '@/lib/store';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Activity, Bell, BarChart3, Settings, LogOut, Menu, X, Sun, Moon, Wrench } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Activity, Bell, BarChart3, Settings, LogOut, Menu, X, Wrench } from 'lucide-react';
+import { useState } from 'react';
 import { authAPI } from '@/lib/api';
-import { useTheme } from 'next-themes';
-
-function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return <div className="w-9 h-9" />;
-
-  const isDark = resolvedTheme === 'dark';
-
-  return (
-    <button
-      onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="p-2 rounded-lg text-gray-600 hover:text-green-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-green-400 dark:hover:bg-gray-800 transition"
-      aria-label="Toggle dark mode"
-    >
-      {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-    </button>
-  );
-}
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -127,7 +106,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   Upgrade →
                 </Link>
               )}
-              <ThemeToggle />
             </div>
           </div>
         </header>
