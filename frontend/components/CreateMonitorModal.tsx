@@ -25,6 +25,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
   const [monitorType, setMonitorType] = useState<'http' | 'heartbeat'>('http');
   const [heartbeatInterval, setHeartbeatInterval] = useState(60);
   const [heartbeatGrace, setHeartbeatGrace] = useState(5);
+  const [alertThreshold, setAlertThreshold] = useState(1);
 
   if (!isOpen) return null;
 
@@ -103,6 +104,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
         timeout: 30,
         expected_status: expectedStatus,
         ...(keyword ? { keyword, keyword_present: keywordPresent, use_regex: useRegex } : {}),
+        alert_threshold: alertThreshold,
       });
 
       try {
@@ -328,6 +330,24 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
                           )}
                         </div>
                       )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Alert after how many failures?
+                      </label>
+                      <select
+                        value={alertThreshold}
+                        onChange={(e) => setAlertThreshold(Number(e.target.value))}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                      >
+                        <option value={1}>1 failure (immediately)</option>
+                        <option value={2}>2 consecutive failures</option>
+                        <option value={3}>3 consecutive failures</option>
+                        <option value={5}>5 consecutive failures</option>
+                      </select>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                        Prevents alert spam from brief flickers. Recovery always notifies immediately.
+                      </p>
                     </div>
                   </div>
                 )}

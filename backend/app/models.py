@@ -71,6 +71,10 @@ class Monitor(Base):
     ssl_expiry_days = Column(Integer, default=14)
     ssl_expires_at = Column(DateTime)
     ssl_last_checked = Column(DateTime)
+    # Alert threshold — N consecutive failures before alerting (default 1 = alert immediately)
+    alert_threshold = Column(Integer, default=1)
+    consecutive_failures = Column(Integer, default=0)
+
     is_active = Column(Boolean, default=True)
     last_status = Column(String(20))  # up, down, degraded
     last_checked_at = Column(DateTime)

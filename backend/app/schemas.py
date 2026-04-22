@@ -66,6 +66,7 @@ class MonitorCreate(BaseModel):
     keyword: Optional[str] = Field(None, max_length=500)
     keyword_present: bool = Field(default=True)
     use_regex: bool = Field(default=False)
+    alert_threshold: int = Field(default=1, ge=1, le=10)
 
 
 class MonitorUpdate(BaseModel):
@@ -83,6 +84,7 @@ class MonitorUpdate(BaseModel):
     keyword: Optional[str] = Field(None, max_length=500)
     keyword_present: Optional[bool] = None
     use_regex: Optional[bool] = None
+    alert_threshold: Optional[int] = Field(None, ge=1, le=10)
     is_active: Optional[bool] = None
 
 
@@ -116,6 +118,8 @@ class MonitorResponse(BaseModel):
     keyword: Optional[str]
     keyword_present: bool
     use_regex: bool = False
+    alert_threshold: int = 1
+    consecutive_failures: int = 0
     is_active: bool
     last_status: Optional[str]
     last_checked_at: Optional[datetime]

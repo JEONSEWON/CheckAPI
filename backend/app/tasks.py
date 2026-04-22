@@ -227,19 +227,31 @@ def check_single_monitor(monitor_id: str):
         
         # Save check
         db.add(check)
-        
+
         # Update monitor
         previous_status = monitor.last_status
         monitor.last_status = status
         monitor.last_checked_at = datetime.utcnow()
         monitor.next_check_at = datetime.utcnow() + timedelta(seconds=monitor.interval)
-        
+
+        # Track consecutive failures for alert threshold
+        threshold = monitor.alert_threshold or 1
+        if status in ("down", "degraded"):
+            monitor.consecutive_failures = (monitor.consecutive_failures or 0) + 1
+        else:
+            monitor.consecutive_failures = 0
+
         db.commit()
-        
-        # Send alerts if status changed
-        if previous_status and previous_status != status:
-            print(f"Status changed: {previous_status} -> {status}")
+
+        # Alert logic:
+        # - Recovery (any → up): always alert immediately
+        # - Failure (up → down/degraded): alert only when consecutive_failures hits threshold exactly
+        if status == "up" and previous_status and previous_status != "up":
+            print(f"Recovery: {previous_status} -> up")
             send_alerts.delay(str(monitor.id), status, previous_status)
+        elif status != "up" and monitor.consecutive_failures == threshold:
+            print(f"Threshold reached ({threshold}): {previous_status} -> {status}")
+            send_alerts.delay(str(monitor.id), status, previous_status or status)
         
         print(f"✓ Check completed: {monitor.name} - {status}")
         
