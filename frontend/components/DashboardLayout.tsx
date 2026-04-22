@@ -4,7 +4,7 @@ import { useAuthStore } from '@/lib/store';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Activity, Bell, BarChart3, Settings, LogOut, Menu, X, Wrench } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { authAPI } from '@/lib/api';
 
 interface DashboardLayoutProps {
