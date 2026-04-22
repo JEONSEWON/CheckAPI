@@ -9,7 +9,7 @@ import hmac
 import hashlib
 
 from app.database import get_db
-from app.models import User, Subscription
+from app.models import User, Subscription, Monitor
 from app.schemas import SubscriptionResponse, MessageResponse
 from app.auth import get_current_user
 from app.lemonsqueezy import LemonSqueezyAPI, get_variant_id_for_plan
@@ -17,6 +17,33 @@ from app.config import get_settings
 
 settings = get_settings()
 router = APIRouter(prefix="/subscription", tags=["Subscription"])
+
+FREE_MONITOR_LIMIT = 10
+
+
+def enforce_monitor_limit(user: User, db: Session) -> int:
+    """
+    Deactivate excess monitors when a user is downgraded to free plan.
+    Keeps the 10 most recently created monitors active, deactivates the rest.
+    Returns the number of monitors deactivated.
+    """
+    active_monitors = (
+        db.query(Monitor)
+        .filter(Monitor.user_id == user.id, Monitor.is_active == True)
+        .order_by(Monitor.created_at.asc())
+        .all()
+    )
+
+    excess = len(active_monitors) - FREE_MONITOR_LIMIT
+    if excess <= 0:
+        return 0
+
+    for monitor in active_monitors[:excess]:
+        monitor.is_active = False
+
+    db.commit()
+    print(f"⬇️  Deactivated {excess} excess monitors for {user.email} (free plan limit)")
+    return excess
 
 
 @router.get("/", response_model=SubscriptionResponse)
@@ -136,12 +163,16 @@ def cancel_subscription(
         subscription.status = "canceled"
         db.commit()
         
-        # Downgrade user to free plan
+        # Downgrade user to free plan and enforce monitor limit
         user = db.query(User).filter(User.id == current_user.id).first()
         user.plan = "free"
         db.commit()
-        
-        return {"message": "Subscription canceled successfully. You will retain access until the end of your billing period."}
+        deactivated = enforce_monitor_limit(user, db)
+
+        msg = "Subscription canceled successfully."
+        if deactivated > 0:
+            msg += f" {deactivated} monitor(s) were paused to stay within the free plan limit (10 monitors)."
+        return {"message": msg}
         
     except Exception as e:
         print(f"Cancel error: {e}")
@@ -290,9 +321,10 @@ async def lemonsqueezy_webhook(request: Request, db: Session = Depends(get_db)):
             subscription.status = "canceled" if event_name == "subscription_cancelled" else "expired"
             db.commit()
             
-            # Downgrade user to free
+            # Downgrade user to free and enforce monitor limit
             user.plan = "free"
             db.commit()
+            enforce_monitor_limit(user, db)
             print(f"✅ Subscription {event_name} for user {user.email}")
     
     elif event_name == "subscription_resumed":
