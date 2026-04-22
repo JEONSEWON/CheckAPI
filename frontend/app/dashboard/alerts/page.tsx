@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import CreateAlertChannelModal from '@/components/CreateAlertChannelModal';
 import { alertChannelsAPI } from '@/lib/api';
-import { Bell, Mail, MessageSquare, Hash, Webhook, Plus, Trash2 } from 'lucide-react';
+import { Bell, Mail, MessageSquare, Hash, Webhook, Plus, Trash2, FlaskConical } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AlertChannelsPage() {
   const [channels, setChannels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [testingId, setTestingId] = useState<string | null>(null);
 
   useEffect(() => { loadChannels(); }, []);
 
@@ -22,6 +23,18 @@ export default function AlertChannelsPage() {
       toast.error('Failed to load alert channels');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTest = async (id: string) => {
+    setTestingId(id);
+    try {
+      await alertChannelsAPI.test(id);
+      toast.success('Test alert sent! Check your channel.');
+    } catch (error) {
+      toast.error('Failed to send test alert');
+    } finally {
+      setTestingId(null);
     }
   };
 
@@ -110,6 +123,14 @@ export default function AlertChannelsPage() {
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${channel.is_active ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300'}`}>
                           {channel.is_active ? 'Active' : 'Inactive'}
                         </span>
+                        <button
+                          onClick={() => handleTest(channel.id)}
+                          disabled={testingId === channel.id}
+                          className="p-2 hover:bg-blue-50 dark:hover:bg-blue-950 rounded-lg transition text-blue-600 dark:text-blue-400 disabled:opacity-50"
+                          title="Send test alert"
+                        >
+                          <FlaskConical className={`h-4 w-4 ${testingId === channel.id ? 'animate-pulse' : ''}`} />
+                        </button>
                         <button
                           onClick={() => handleDelete(channel.id)}
                           className="p-2 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition text-red-600 dark:text-red-400"
