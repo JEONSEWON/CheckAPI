@@ -2,11 +2,12 @@
 Authentication utilities: JWT, password hashing, etc.
 """
 
+import hashlib
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
@@ -19,8 +20,8 @@ settings = get_settings()
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# JWT bearer
-bearer_scheme = HTTPBearer()
+# auto_error=False so we can fall back to API key auth when no Bearer token is present
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def hash_password(password: str) -> str:
@@ -69,97 +70,70 @@ def decode_token(token: str) -> dict:
         )
 
 
+def _get_user_by_api_key(api_key: str, db: Session) -> Optional[User]:
+    from app.models import APIKey
+    key_hash = hashlib.sha256(api_key.encode()).hexdigest()
+    api_key_obj = db.query(APIKey).filter(
+        APIKey.key_hash == key_hash,
+        APIKey.is_active == True
+    ).first()
+    if not api_key_obj:
+        return None
+    api_key_obj.last_used_at = datetime.utcnow()
+    db.commit()
+    return api_key_obj.user
+
+
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    request: Request,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db)
 ) -> User:
     """
-    Dependency to get current authenticated user
-    
-    Usage:
-        @app.get("/me")
-        def get_me(current_user: User = Depends(get_current_user)):
-            return current_user
+    Accepts either:
+      - Authorization: Bearer <jwt>  (all plans)
+      - X-API-Key: ck_live_xxx       (Business plan)
     """
-    token = credentials.credentials
-    payload = decode_token(token)
-    
-    # Check token type
+    # 1. API key takes priority if header is present
+    api_key = request.headers.get("X-API-Key")
+    if api_key:
+        user = _get_user_by_api_key(api_key, db)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid API key",
+            )
+        if not user.is_active:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user")
+        return user
+
+    # 2. Fall back to JWT Bearer
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    payload = decode_token(credentials.credentials)
+
     if payload.get("type") != "access":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token type"
-        )
-    
-    # Get user ID from token
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token type")
+
     user_id: str = payload.get("sub")
-    if user_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials"
-        )
-    
-    # Get user from database
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
+
     user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found"
-        )
-    
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Inactive user"
-        )
-    
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user")
+
     return user
 
 
 def get_current_active_user(
     current_user: User = Depends(get_current_user)
 ) -> User:
-    """Get current active user (alias for clarity)"""
     return current_user
-
-import hashlib as _hashlib
-
-def get_api_key_header(request) -> str | None:
-    return request.headers.get("X-API-Key")
-
-
-def get_user_by_api_key(api_key: str, db) -> "User | None":
-    from app.models import APIKey
-    key_hash = _hashlib.sha256(api_key.encode()).hexdigest()
-    api_key_obj = db.query(APIKey).filter(
-        APIKey.key_hash == key_hash,
-        APIKey.is_active == True
-    ).first()
-    if not api_key_obj:
-        return None
-    # last_used_at 업데이트
-    from datetime import datetime
-    api_key_obj.last_used_at = datetime.utcnow()
-    db.commit()
-    return api_key_obj.user
-
-import hashlib as _hashlib
-
-def get_api_key_header(request) -> str | None:
-    return request.headers.get("X-API-Key")
-
-
-def get_user_by_api_key(api_key: str, db) -> "User | None":
-    from app.models import APIKey
-    key_hash = _hashlib.sha256(api_key.encode()).hexdigest()
-    api_key_obj = db.query(APIKey).filter(
-        APIKey.key_hash == key_hash,
-        APIKey.is_active == True
-    ).first()
-    if not api_key_obj:
-        return None
-    # last_used_at 업데이트
-    from datetime import datetime
-    api_key_obj.last_used_at = datetime.utcnow()
-    db.commit()
-    return api_key_obj.user
