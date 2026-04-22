@@ -137,7 +137,7 @@ def send_welcome_email(user_email: str, user_name: str) -> bool:
         response = requests.post(
             "https://api.resend.com/emails",
             json={
-                "from": "Axiom Technologies for CheckAPI <sewon@checkapi.io>",
+                "from": "Axiom Technologies for CheckAPI <axiomtech@checkapi.io>",
                 "to": [user_email],
                 "subject": "Welcome to CheckAPI — add your first monitor",
                 "html": html_content,
