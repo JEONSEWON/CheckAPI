@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { analyticsAPI } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
-import { Activity, TrendingUp, AlertCircle, Clock } from 'lucide-react';
+import { Activity, TrendingUp, AlertCircle, Clock, Shield, ChevronDown, ChevronUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AnalyticsPage() {
@@ -13,9 +13,16 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [slaReport, setSlaReport] = useState<any>(null);
   const [slaMonths, setSlaMonths] = useState(3);
+  const [slaLoading, setSlaLoading] = useState(false);
   const user = useAuthStore((state) => state.user);
 
+  const isPro = user?.plan === 'pro' || user?.plan === 'business';
+
   useEffect(() => { loadData(); }, []);
+
+  useEffect(() => {
+    if (isPro) loadSLA(slaMonths);
+  }, [isPro, slaMonths]);
 
   const loadData = async () => {
     try {
@@ -33,6 +40,7 @@ export default function AnalyticsPage() {
   };
 
   const loadSLA = async (months: number) => {
+    setSlaLoading(true);
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app';
@@ -40,7 +48,10 @@ export default function AnalyticsPage() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setSlaReport(await res.json());
-    } catch {}
+    } catch {
+    } finally {
+      setSlaLoading(false);
+    }
   };
 
   if (loading) {
@@ -99,8 +110,146 @@ export default function AnalyticsPage() {
             </div>
           )}
         </div>
+
+        {/* SLA Report */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">SLA Report</h2>
+              <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 rounded-full">
+                Pro / Business
+              </span>
+            </div>
+            {isPro && (
+              <div className="flex items-center gap-1">
+                {[1, 3, 6, 12].map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setSlaMonths(m)}
+                    className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${
+                      slaMonths === m
+                        ? 'bg-purple-600 text-white'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {m}M
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {!isPro ? (
+            <div className="px-6 py-12 text-center">
+              <Shield className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Pro / Business Plan Required</h3>
+              <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
+                Upgrade to access detailed SLA reports with monthly uptime, downtime, and incident tracking per monitor.
+              </p>
+            </div>
+          ) : slaLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            </div>
+          ) : slaReport && slaReport.monitors.length > 0 ? (
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              {slaReport.monitors.map((monitor: any) => (
+                <SLAMonitorRow key={monitor.monitor_id} monitor={monitor} />
+              ))}
+            </div>
+          ) : (
+            <div className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+              No monitor data available for this period.
+            </div>
+          )}
+        </div>
       </div>
     </DashboardLayout>
+  );
+}
+
+function SLAMonitorRow({ monitor }: any) {
+  const [expanded, setExpanded] = useState(false);
+  const uptime = monitor.overall_uptime;
+  const uptimeColor =
+    uptime === null
+      ? 'text-gray-400 dark:text-gray-500'
+      : uptime >= 99.9
+      ? 'text-green-600 dark:text-green-400'
+      : uptime >= 99
+      ? 'text-yellow-600 dark:text-yellow-400'
+      : 'text-red-600 dark:text-red-400';
+
+  return (
+    <div>
+      <button
+        className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+        onClick={() => setExpanded(!expanded)}
+      >
+        <div>
+          <p className="font-medium text-gray-900 dark:text-white">{monitor.monitor_name}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{monitor.monitor_url}</p>
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="text-right">
+            <p className={`text-xl font-bold ${uptimeColor}`}>
+              {uptime !== null ? `${uptime}%` : 'N/A'}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Overall Uptime</p>
+          </div>
+          {expanded
+            ? <ChevronUp className="h-4 w-4 text-gray-400" />
+            : <ChevronDown className="h-4 w-4 text-gray-400" />
+          }
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="px-6 pb-5 overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                <th className="pb-2 font-medium">Month</th>
+                <th className="pb-2 font-medium text-right">Uptime</th>
+                <th className="pb-2 font-medium text-right">Downtime</th>
+                <th className="pb-2 font-medium text-right">Incidents</th>
+                <th className="pb-2 font-medium text-right">Avg Response</th>
+                <th className="pb-2 font-medium text-right">Total Checks</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              {monitor.monthly.map((m: any) => {
+                const color =
+                  m.uptime_percentage === null
+                    ? 'text-gray-400'
+                    : m.uptime_percentage >= 99.9
+                    ? 'text-green-600 dark:text-green-400'
+                    : m.uptime_percentage >= 99
+                    ? 'text-yellow-600 dark:text-yellow-400'
+                    : 'text-red-600 dark:text-red-400';
+                return (
+                  <tr key={m.month}>
+                    <td className="py-2.5 text-gray-700 dark:text-gray-300">{m.month}</td>
+                    <td className={`py-2.5 text-right font-semibold ${color}`}>
+                      {m.uptime_percentage !== null ? `${m.uptime_percentage}%` : 'No data'}
+                    </td>
+                    <td className="py-2.5 text-right text-gray-600 dark:text-gray-400">
+                      {m.downtime_minutes > 0 ? `${m.downtime_minutes}m` : '—'}
+                    </td>
+                    <td className="py-2.5 text-right text-gray-600 dark:text-gray-400">{m.incidents}</td>
+                    <td className="py-2.5 text-right text-gray-600 dark:text-gray-400">
+                      {m.avg_response_time > 0 ? `${m.avg_response_time}ms` : '—'}
+                    </td>
+                    <td className="py-2.5 text-right text-gray-600 dark:text-gray-400">{m.total_checks}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 }
 
