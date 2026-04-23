@@ -315,24 +315,59 @@ def is_in_maintenance(monitor, db) -> bool:
     return False
 
 
+class AlertDeliveryError(Exception):
+    pass
+
+
+@celery_app.task(
+    name="app.tasks.send_channel_alert",
+    bind=True,
+    autoretry_for=(AlertDeliveryError,),
+    retry_backoff=True,
+    retry_backoff_max=300,
+    max_retries=4,
+    default_retry_delay=60,
+    ignore_result=True,
+)
+def send_channel_alert(self, channel_type: str, channel_config: dict,
+                       monitor_name: str, monitor_url: str,
+                       new_status: str, old_status: str, monitor_id: str):
+    """Send a single alert channel with exponential backoff retry (max 4 retries)."""
+    from app.alerts import (
+        send_email_alert, send_slack_alert, send_telegram_alert,
+        send_discord_alert, send_webhook_alert,
+    )
+
+    if channel_type == "email":
+        success = send_email_alert(channel_config, monitor_name, monitor_url, new_status, old_status)
+    elif channel_type == "slack":
+        success = send_slack_alert(channel_config, monitor_name, monitor_url, new_status, old_status)
+    elif channel_type == "telegram":
+        success = send_telegram_alert(channel_config, monitor_name, monitor_url, new_status, old_status)
+    elif channel_type == "discord":
+        success = send_discord_alert(channel_config, monitor_name, monitor_url, new_status, old_status)
+    elif channel_type == "webhook":
+        success = send_webhook_alert(channel_config, monitor_name, monitor_url, new_status, old_status, monitor_id)
+    else:
+        return
+
+    if not success:
+        attempt = self.request.retries + 1
+        print(f"⚠️  {channel_type} alert failed (attempt {attempt}/5), will retry")
+        raise AlertDeliveryError(f"{channel_type} delivery failed")
+
+
 @celery_app.task(name="app.tasks.send_alerts")
 def send_alerts(monitor_id: str, new_status: str, old_status: str):
     """
-    Send alerts when monitor status changes
+    Send alerts when monitor status changes.
+    Dispatches each channel as a separate retryable task.
     """
-    from app.alerts import (
-        send_email_alert,
-        send_slack_alert,
-        send_telegram_alert,
-        send_discord_alert,
-        send_webhook_alert
-    )
-    
     db = SessionLocal()
-    
+
     try:
         monitor = db.query(Monitor).filter(Monitor.id == monitor_id).first()
-        
+
         if not monitor:
             return
 
@@ -342,63 +377,30 @@ def send_alerts(monitor_id: str, new_status: str, old_status: str):
 
         print(f"🚨 ALERT: {monitor.name} changed from {old_status} to {new_status}")
 
-        # Get alert channels for this monitor
         alert_channels = monitor.alert_channels
-        
-        sent_count = 0
-        
+        dispatched = 0
+
         for channel in alert_channels:
             if not channel.is_active:
                 continue
-            
-            try:
-                success = False
-                
-                if channel.type == "email":
-                    success = send_email_alert(
-                        channel.config, monitor.name, monitor.url,
-                        new_status, old_status
-                    )
-                
-                elif channel.type == "slack":
-                    success = send_slack_alert(
-                        channel.config, monitor.name, monitor.url,
-                        new_status, old_status
-                    )
-                
-                elif channel.type == "telegram":
-                    success = send_telegram_alert(
-                        channel.config, monitor.name, monitor.url,
-                        new_status, old_status
-                    )
-                
-                elif channel.type == "discord":
-                    success = send_discord_alert(
-                        channel.config, monitor.name, monitor.url,
-                        new_status, old_status
-                    )
-                
-                elif channel.type == "webhook":
-                    success = send_webhook_alert(
-                        channel.config, monitor.name, monitor.url,
-                        new_status, old_status, str(monitor.id)
-                    )
-                
-                if success:
-                    sent_count += 1
-                    
-            except Exception as e:
-                print(f"❌ Failed to send {channel.type} alert: {str(e)}")
-        
-        print(f"✅ Sent {sent_count}/{len(alert_channels)} alerts")
-        
+            send_channel_alert.delay(
+                channel.type,
+                channel.config,
+                monitor.name,
+                monitor.url,
+                new_status,
+                old_status,
+                str(monitor.id),
+            )
+            dispatched += 1
+
+        print(f"📤 Dispatched {dispatched} alert tasks for {monitor.name}")
+
         return {
             "monitor_id": str(monitor.id),
-            "alert_sent": sent_count > 0,
-            "channels": len(alert_channels),
-            "sent": sent_count
+            "dispatched": dispatched,
         }
-        
+
     finally:
         db.close()
 
