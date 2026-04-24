@@ -1,24 +1,24 @@
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe, Code2, Terminal, Lock, Activity } from 'lucide-react';
+import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe, Code2, Terminal, Lock, Activity, X } from 'lucide-react';
 import ClientHeader from '@/components/ClientHeader';
 import PricingSection from '@/components/PricingSection';
 import LiveUserCount from '@/components/LiveUserCount';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'CheckAPI — APIs that never lie to you.',
-  description: 'Silent Failure Detection with Regex + JSON Path. Free forever for commercial use. Know when your API breaks before your users do.',
+  title: 'CheckAPI — API monitoring actually free for business.',
+  description: 'Silent Failure Detection with Regex + JSON Path. Zero commercial restrictions on every plan. Unlike UptimeRobot, free forever.',
   openGraph: {
-    title: 'CheckAPI — APIs that never lie to you.',
-    description: 'Silent Failure Detection with Regex. Free forever for commercial use.',
+    title: 'CheckAPI — API monitoring actually free for business.',
+    description: 'Silent Failure Detection with Regex + JSON Path. Free forever for commercial use.',
     url: 'https://checkapi.io',
     siteName: 'CheckAPI',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CheckAPI — APIs that never lie to you.',
-    description: 'Silent Failure Detection with Regex. Free forever for commercial use.',
+    title: 'CheckAPI — API monitoring actually free for business.',
+    description: 'Silent Failure Detection with Regex + JSON Path. Free forever for commercial use.',
     creator: '@imwon_dev',
   },
 };
@@ -197,16 +197,28 @@ export default function HomePage() {
         .bar-chart-bar { border-radius: 3px 3px 0 0; transition: all 0.3s; }
         .footer-link { font-size: 13px; color: #475569; text-decoration: none; transition: color 0.2s; }
         .footer-link:hover { color: #00e5b4; }
+
+        .compare-table { width: 100%; border-collapse: collapse; }
+        .compare-table th { font-size: 13px; font-weight: 700; padding: 14px 20px; text-align: left; }
+        .compare-table td { font-size: 14px; padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .how-step-line {
+          position: absolute;
+          left: 19px;
+          top: 40px;
+          bottom: -40px;
+          width: 2px;
+          background: linear-gradient(to bottom, rgba(0,229,180,0.4), rgba(0,229,180,0.05));
+        }
       `}</style>
 
       <ClientHeader />
 
       {/* ── HERO ── */}
       <section className="grid-bg relative overflow-hidden" style={{ paddingTop: '100px', paddingBottom: '80px', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-        {/* Radial glow */}
         <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(0,229,180,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        {/* Floating tags */}
         <div className="float-1 floating-tag" style={{ top: '18%', left: '8%' }}>API regex&gt;</div>
         <div className="float-2 floating-tag" style={{ top: '40%', left: '4%' }}>API &lt;&lt;&gt;&gt;</div>
         <div className="float-3 floating-tag" style={{ top: '65%', left: '9%' }}>Regex</div>
@@ -216,32 +228,35 @@ export default function HomePage() {
 
         <div className="max-w-4xl mx-auto px-4 text-center" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
           <LiveUserCount />
-          <div className="section-label" style={{ margin: '16px auto 28px' }}>
-            <CheckCircle style={{ width: '12px', height: '12px' }} />
-            Free for Commercial Use — No restrictions
+
+          {/* "Free for Commercial Use" — prominent badge */}
+          <div style={{ margin: '16px auto 28px', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,229,180,0.12)', border: '1px solid rgba(0,229,180,0.35)', color: '#00e5b4', padding: '8px 18px', borderRadius: '999px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.02em' }}>
+              <CheckCircle style={{ width: '14px', height: '14px' }} />
+              Free for Commercial Use — Zero restrictions, every plan, forever
+            </div>
           </div>
 
-          <h1 style={{ fontSize: 'clamp(42px, 7vw, 76px)', fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.04em', marginBottom: '24px', color: '#f8fafc' }}>
-            APIs that never<br />
-            <span className="teal glow-text">lie to you.</span>
+          <h1 style={{ fontSize: 'clamp(38px, 6.5vw, 72px)', fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.04em', marginBottom: '24px', color: '#f8fafc' }}>
+            API monitoring that&apos;s<br />
+            <span className="teal glow-text">actually free for business.</span>
           </h1>
 
-          <p style={{ fontSize: '18px', color: '#64748b', maxWidth: '520px', margin: '0 auto 40px', lineHeight: 1.7 }}>
-            JSON Path + Regex + Silent Failure Detection.<br />
-            Free forever for commercial use.
+          <p style={{ fontSize: '18px', color: '#94a3b8', maxWidth: '560px', margin: '0 auto 12px', lineHeight: 1.7 }}>
+            Unlike UptimeRobot <span style={{ color: '#64748b', fontSize: '15px' }}>(restricted commercial use Oct 2024)</span>, CheckAPI has zero commercial restrictions — JSON Path, Regex, Silent Failure Detection included.
           </p>
 
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', margin: '32px 0 20px' }}>
             <Link href="/register" className="btn-primary">
               Start monitoring free
               <ArrowRight style={{ width: '16px', height: '16px' }} />
             </Link>
-            <a href="#features" className="btn-ghost">
+            <a href="#how-it-works" className="btn-ghost">
               See how it works →
             </a>
           </div>
 
-          <p style={{ fontSize: '13px', color: '#334155' }}>No credit card required · 5-minute setup · 10 monitors free</p>
+          <p style={{ fontSize: '13px', color: '#475569' }}>No credit card required · 5-minute setup · 10 monitors free</p>
 
           {/* Dashboard mockup */}
           <div className="glass-card" style={{ marginTop: '64px', overflow: 'hidden', maxWidth: '820px', margin: '64px auto 0' }}>
@@ -249,10 +264,9 @@ export default function HomePage() {
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444' }} />
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b' }} />
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981' }} />
-              <span style={{ marginLeft: '12px', fontSize: '12px', color: '#334155', fontFamily: "'DM Mono', monospace" }}>checkapi.io/dashboard</span>
+              <span style={{ marginLeft: '12px', fontSize: '12px', color: '#475569', fontFamily: "'DM Mono', monospace" }}>checkapi.io/dashboard</span>
             </div>
             <div style={{ padding: '28px' }}>
-              {/* Stats */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '24px' }}>
                 {[
                   { label: 'Total Monitors', value: '8' },
@@ -266,11 +280,10 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              {/* Chart */}
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '20px', marginBottom: '16px', position: 'relative' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                   <span style={{ fontSize: '13px', fontWeight: 600, color: '#94a3b8' }}>Response Time — Last 24h</span>
-                  <span style={{ fontSize: '11px', color: '#334155' }}>Updated 30s ago</span>
+                  <span style={{ fontSize: '11px', color: '#475569' }}>Updated 30s ago</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '64px' }}>
                   {[40,45,42,38,44,80,120,95,48,42,44,41,39,43,46,42,40,38,44,43,41,45,42,40].map((h, i) => (
@@ -281,7 +294,6 @@ export default function HomePage() {
                   ⚡ Latency spike — Slack alert sent in 1s
                 </div>
               </div>
-              {/* Monitor list */}
               {[
                 { name: 'Production API', url: 'api.yourapp.com', uptime: '99.9%' },
                 { name: 'Staging Environment', url: 'staging-api.yourapp.com', uptime: '99.8%' },
@@ -292,7 +304,7 @@ export default function HomePage() {
                     <div className="monitor-dot pulse-dot" />
                     <div>
                       <p style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>{m.name}</p>
-                      <p style={{ fontSize: '11px', color: '#334155', fontFamily: "'DM Mono', monospace" }}>{m.url}</p>
+                      <p style={{ fontSize: '11px', color: '#475569', fontFamily: "'DM Mono', monospace" }}>{m.url}</p>
                     </div>
                   </div>
                   <span className="stat-pill">{m.uptime} uptime</span>
@@ -303,8 +315,69 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── COMPETITOR COMPARISON BANNER ── */}
+      <section style={{ padding: '0 24px 80px', maxWidth: '860px', margin: '0 auto' }}>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', overflow: 'hidden' }}>
+          {/* Banner header */}
+          <div style={{ background: 'rgba(0,229,180,0.06)', borderBottom: '1px solid rgba(0,229,180,0.12)', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#00e5b4' }}>Why teams switch from UptimeRobot</span>
+              <span style={{ fontSize: '11px', background: 'rgba(248,113,113,0.15)', color: '#f87171', border: '1px solid rgba(248,113,113,0.3)', padding: '2px 8px', borderRadius: '999px' }}>UptimeRobot restricted commercial use in Oct 2024</span>
+            </div>
+            <Link href="/register" style={{ fontSize: '12px', color: '#00e5b4', textDecoration: 'none', fontWeight: 600 }}>Switch now →</Link>
+          </div>
+
+          <table className="compare-table">
+            <thead>
+              <tr>
+                <th style={{ color: '#64748b', width: '40%' }}></th>
+                <th style={{ color: '#94a3b8' }}>UptimeRobot</th>
+                <th style={{ color: '#00e5b4' }}>CheckAPI</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { feature: 'Commercial use on free plan', ur: null, ca: true },
+                { feature: 'Check interval (free)', ur: '5 min', ca: '5 min' },
+                { feature: 'Response body validation', ur: null, ca: true },
+                { feature: 'Regex / JSON Path assertions', ur: null, ca: true },
+                { feature: 'Silent failure detection', ur: null, ca: true },
+                { feature: 'Webhook alerts on free plan', ur: null, ca: true },
+                { feature: 'Public status page', ur: true, ca: true },
+              ].map((row) => (
+                <tr key={row.feature}>
+                  <td style={{ color: '#94a3b8', fontSize: '14px' }}>{row.feature}</td>
+                  <td>
+                    {row.ur === null ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#f87171', fontSize: '13px', fontWeight: 600 }}>
+                        <X style={{ width: '14px', height: '14px' }} /> No
+                      </span>
+                    ) : row.ur === true ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#94a3b8', fontSize: '13px' }}>
+                        <CheckCircle style={{ width: '14px', height: '14px' }} /> Yes
+                      </span>
+                    ) : (
+                      <span style={{ color: '#64748b', fontSize: '13px', fontFamily: "'DM Mono', monospace" }}>{row.ur}</span>
+                    )}
+                  </td>
+                  <td>
+                    {row.ca === true ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#00e5b4', fontSize: '13px', fontWeight: 600 }}>
+                        <CheckCircle style={{ width: '14px', height: '14px' }} /> Yes
+                      </span>
+                    ) : (
+                      <span style={{ color: '#00e5b4', fontSize: '13px', fontFamily: "'DM Mono', monospace" }}>{row.ca}</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       {/* ── PAIN POINT ── */}
-      <section style={{ padding: '100px 24px', maxWidth: '1100px', margin: '0 auto' }}>
+      <section style={{ padding: '20px 24px 100px', maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
           <div className="section-label" style={{ margin: '0 auto 20px' }}>The Problem</div>
           <h2 style={{ fontSize: 'clamp(30px, 4vw, 48px)', fontWeight: 800, letterSpacing: '-0.03em', color: '#f8fafc', marginBottom: '16px' }}>
@@ -316,7 +389,6 @@ export default function HomePage() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-          {/* Before */}
           <div className="glass-card" style={{ padding: '28px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f87171', boxShadow: '0 0 8px #f87171' }} />
@@ -339,7 +411,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* After */}
           <div className="glass-card-bright" style={{ padding: '28px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
               <div className="pulse-dot" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00e5b4' }} />
@@ -362,7 +433,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── KILL FEATURES ── */}
+      {/* ── FEATURES ── */}
       <section id="features" style={{ padding: '60px 24px 100px', maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
           <div className="section-label" style={{ margin: '0 auto 20px' }}>Features</div>
@@ -371,7 +442,7 @@ export default function HomePage() {
           </h2>
         </div>
 
-        {/* Regex hero feature */}
+        {/* Silent Failure Detection hero feature */}
         <div className="glass-card-bright" style={{ padding: '40px', marginBottom: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'center' }}>
           <div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,229,180,0.1)', border: '1px solid rgba(0,229,180,0.25)', color: '#00e5b4', padding: '6px 14px', borderRadius: '999px', fontSize: '12px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '20px' }}>
@@ -384,9 +455,9 @@ export default function HomePage() {
               Your API returns 200 OK — but the response body contains an error, null data, or broken content. CheckAPI validates the body with <strong style={{ color: '#00e5b4' }}>Regex patterns</strong>, not just status codes.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {['Keyword match (present / absent)', 'Regex pattern matching', 'JSON Path assertions (up to 10)', 'Header assertion (Content-Type, etc.)'].map((f, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: i === 2 ? '#334155' : '#94a3b8' }}>
-                  <CheckCircle style={{ width: '14px', height: '14px', color: i === 2 ? '#334155' : '#00e5b4', flexShrink: 0 }} />
+              {['Keyword match (present / absent)', 'Regex pattern matching', 'JSON Path assertions (up to 10)', 'Header assertion (Content-Type, etc.)'].map((f) => (
+                <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: '#94a3b8' }}>
+                  <CheckCircle style={{ width: '14px', height: '14px', color: '#00e5b4', flexShrink: 0 }} />
                   {f}
                 </div>
               ))}
@@ -410,11 +481,11 @@ export default function HomePage() {
           {[
             { icon: <Zap style={{ width: '20px', height: '20px' }} />, title: 'Instant Alerts', desc: 'Free plan checks every 5 minutes. Upgrade to Starter for 1-minute checks, Pro for 30-second. Email, Slack, Telegram, Discord, Webhook — all plans.' },
             { icon: <BarChart3 style={{ width: '20px', height: '20px' }} />, title: 'Response Time Analytics', desc: 'Track uptime, response times, incidents. SLA reports for Pro & Business.' },
-            { icon: <Globe style={{ width: '20px', height: '20px' }} />, title: 'Public Status Pages', desc: 'Shareable status page per monitor. 90-day uptime chart. No login required.' },
+            { icon: <Globe style={{ width: '20px', height: '20px' }} />, title: 'Public Status Pages', desc: 'Shareable status page per monitor. 90-day uptime chart. Custom domain on Pro+.' },
             { icon: <Activity style={{ width: '20px', height: '20px' }} />, title: 'Heartbeat / Cron Monitoring', desc: 'Monitor cron jobs and scheduled tasks. Get alerted if your job doesn\'t run on time.' },
             { icon: <Lock style={{ width: '20px', height: '20px' }} />, title: 'Maintenance Windows', desc: 'Schedule recurring windows. Alerts suppressed, checks still run.' },
             { icon: <Terminal style={{ width: '20px', height: '20px' }} />, title: 'REST API Access', desc: 'Business plan: full API access via API keys for programmatic monitor management.' },
-            { icon: <CheckCircle style={{ width: '20px', height: '20px' }} />, title: 'Free for Commercial Use', desc: 'Unlike UptimeRobot, zero commercial restrictions on the free plan. Build your business.' },
+            { icon: <CheckCircle style={{ width: '20px', height: '20px' }} />, title: 'Free for Commercial Use', desc: 'Zero commercial restrictions on the free plan — forever. Unlike UptimeRobot, build your business without limits.' },
           ].map((f) => (
             <div key={f.title} className="glass-card" style={{ padding: '24px' }}>
               <div style={{ width: '40px', height: '40px', background: 'rgba(0,229,180,0.08)', border: '1px solid rgba(0,229,180,0.15)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00e5b4', marginBottom: '14px' }}>
@@ -424,6 +495,88 @@ export default function HomePage() {
               <p style={{ fontSize: '13px', color: '#475569', lineHeight: 1.6 }}>{f.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section id="how-it-works" style={{ padding: '60px 24px 100px', maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+          <div className="section-label" style={{ margin: '0 auto 20px' }}>How It Works</div>
+          <h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, letterSpacing: '-0.03em', color: '#f8fafc' }}>
+            Up and running in 5 minutes.
+          </h2>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+          {[
+            {
+              step: '01',
+              title: 'Add your API endpoint',
+              desc: 'Paste your URL, pick GET / POST / PUT, set the check interval (5 min on free). Works with any HTTP/HTTPS endpoint — REST, GraphQL, webhooks.',
+              detail: (
+                <div className="code-block" style={{ marginTop: '16px', fontSize: '13px' }}>
+                  <span className="val-ok">URL:</span> <span className="val-str">https://api.yourapp.com/health</span><br />
+                  <span className="val-ok">Method:</span> <span className="val-str">GET</span><br />
+                  <span className="val-ok">Interval:</span> <span className="val-str">5 minutes</span><br />
+                  <span className="val-ok">Expected status:</span> <span className="val-str">200</span>
+                </div>
+              ),
+            },
+            {
+              step: '02',
+              title: 'Define detection rules',
+              desc: 'Go beyond status codes. Set keyword, regex, or JSON Path assertions to catch silent failures — when your API returns 200 OK but the data is broken.',
+              detail: (
+                <div className="code-block" style={{ marginTop: '16px', fontSize: '13px' }}>
+                  <span className="comment"># JSON Path assertion</span><br />
+                  <span className="val-ok">$.data.status</span> <span style={{ color: '#94a3b8' }}>==</span> <span className="val-str">"healthy"</span><br /><br />
+                  <span className="comment"># Regex assertion</span><br />
+                  <span className="val-ok">body</span> <span style={{ color: '#94a3b8' }}>matches</span> <span className="val-str">"error":\s*null</span>
+                </div>
+              ),
+            },
+            {
+              step: '03',
+              title: 'Connect your alert channels',
+              desc: 'Email, Slack, Telegram, Discord, or custom webhook — all available on every plan, including free. Get notified the moment something breaks.',
+              detail: (
+                <div style={{ display: 'flex', gap: '10px', marginTop: '16px', flexWrap: 'wrap' }}>
+                  {['📧 Email', '💬 Slack', '✈️ Telegram', '🎮 Discord', '🔗 Webhook'].map((ch) => (
+                    <span key={ch} style={{ background: 'rgba(0,229,180,0.08)', border: '1px solid rgba(0,229,180,0.2)', color: '#00e5b4', padding: '6px 14px', borderRadius: '999px', fontSize: '13px', fontWeight: 500 }}>{ch}</span>
+                  ))}
+                </div>
+              ),
+            },
+            {
+              step: '04',
+              title: 'Monitor and share status',
+              desc: 'Your dashboard shows real-time uptime, response times, and incidents. Share a public status page with your users — no login required.',
+              detail: null,
+            },
+          ].map((item, idx) => (
+            <div key={item.step} style={{ display: 'flex', gap: '24px', position: 'relative', paddingBottom: idx < 3 ? '48px' : '0' }}>
+              {/* Step indicator */}
+              <div style={{ flexShrink: 0, position: 'relative' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(0,229,180,0.1)', border: '2px solid rgba(0,229,180,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Mono', monospace", fontSize: '13px', fontWeight: 700, color: '#00e5b4' }}>
+                  {item.step}
+                </div>
+                {idx < 3 && <div className="how-step-line" />}
+              </div>
+              {/* Content */}
+              <div style={{ flex: 1, paddingTop: '8px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#f8fafc', marginBottom: '8px' }}>{item.title}</h3>
+                <p style={{ color: '#64748b', fontSize: '15px', lineHeight: 1.7 }}>{item.desc}</p>
+                {item.detail}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: '56px' }}>
+          <Link href="/register" className="btn-primary">
+            Start for free — no credit card
+            <ArrowRight style={{ width: '16px', height: '16px' }} />
+          </Link>
         </div>
       </section>
 
@@ -443,7 +596,7 @@ export default function HomePage() {
             Protect My API for Free
             <ArrowRight style={{ width: '16px', height: '16px' }} />
           </Link>
-          <p style={{ fontSize: '12px', color: '#334155', marginTop: '16px' }}>No credit card required · 10 monitors free forever</p>
+          <p style={{ fontSize: '12px', color: '#475569', marginTop: '16px' }}>No credit card required · 10 monitors free forever</p>
         </div>
       </section>
 
@@ -455,7 +608,7 @@ export default function HomePage() {
               <img src="/logo.png" alt="CheckAPI" style={{ width: '56px', height: '56px', borderRadius: '12px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(0,229,180,0.6))' }} />
               <span style={{ fontSize: '16px', fontWeight: 700, color: '#00e5b4' }}>CheckAPI</span>
             </div>
-            <p style={{ fontSize: '12px', color: '#334155', marginBottom: '4px' }}>by Axiom Technologies</p>
+            <p style={{ fontSize: '12px', color: '#475569', marginBottom: '4px' }}>by Axiom Technologies</p>
             <p style={{ fontSize: '13px', color: '#475569', lineHeight: 1.6, maxWidth: '240px' }}>
               Silent Failure Detection for APIs. Free forever for commercial use.
             </p>
@@ -480,8 +633,8 @@ export default function HomePage() {
           ))}
         </div>
         <div style={{ maxWidth: '1100px', margin: '40px auto 0', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '12px', color: '#334155' }}>© 2026 Axiom Technologies. All rights reserved.</span>
-          <span style={{ fontSize: '12px', color: '#334155' }}>Built by a solo dev from Seoul 🇰🇷</span>
+          <span style={{ fontSize: '12px', color: '#475569' }}>© 2026 Axiom Technologies. All rights reserved.</span>
+          <span style={{ fontSize: '12px', color: '#475569' }}>Built by a solo dev from Seoul 🇰🇷</span>
         </div>
       </footer>
     </div>
