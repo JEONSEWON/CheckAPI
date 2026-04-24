@@ -320,8 +320,9 @@ export default function HomePage() {
         <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', overflow: 'hidden' }}>
           {/* Banner header */}
           <div style={{ background: 'rgba(0,229,180,0.06)', borderBottom: '1px solid rgba(0,229,180,0.12)', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '13px', fontWeight: 700, color: '#00e5b4' }}>Why teams switch from UptimeRobot</span>
+              <span style={{ fontSize: '11px', color: '#64748b' }}>Free plan comparison</span>
               <span style={{ fontSize: '11px', background: 'rgba(248,113,113,0.15)', color: '#f87171', border: '1px solid rgba(248,113,113,0.3)', padding: '2px 8px', borderRadius: '999px' }}>UptimeRobot restricted commercial use in Oct 2024</span>
             </div>
             <Link href="/register" style={{ fontSize: '12px', color: '#00e5b4', textDecoration: 'none', fontWeight: 600 }}>Switch now →</Link>
@@ -331,8 +332,8 @@ export default function HomePage() {
             <thead>
               <tr>
                 <th style={{ color: '#64748b', width: '40%' }}></th>
-                <th style={{ color: '#94a3b8' }}>UptimeRobot</th>
-                <th style={{ color: '#00e5b4' }}>CheckAPI</th>
+                <th style={{ color: '#94a3b8' }}>UptimeRobot<br /><span style={{ fontSize: '11px', fontWeight: 400, color: '#475569' }}>Free</span></th>
+                <th style={{ color: '#00e5b4' }}>CheckAPI<br /><span style={{ fontSize: '11px', fontWeight: 400, color: '#00b890' }}>Free</span></th>
               </tr>
             </thead>
             <tbody>
