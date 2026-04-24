@@ -228,6 +228,18 @@ def get_status_badge(monitor_id: str, db: Session = Depends(get_db)):
     }
 
 
+@router.get("/by-domain")
+def get_monitor_by_domain(domain: str, db: Session = Depends(get_db)):
+    """
+    Resolve a custom domain to a monitor ID.
+    Used by the frontend middleware to handle custom-domain status pages.
+    """
+    monitor = db.query(Monitor).filter(Monitor.custom_domain == domain.lower()).first()
+    if not monitor:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Domain not configured")
+    return {"monitor_id": str(monitor.id)}
+
+
 @router.get("/status/{monitor_id}/history")
 def get_check_history(
     monitor_id: str,

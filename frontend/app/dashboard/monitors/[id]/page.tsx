@@ -19,8 +19,10 @@ import {
   Bell,
   Plus,
   X,
-  Link
+  Link,
+  Globe
 } from 'lucide-react';
+import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -29,8 +31,11 @@ export default function MonitorDetailPage() {
   const router = useRouter();
   const monitorId = params.id as string;
 
+  const user = useAuthStore((state) => state.user);
   const [monitor, setMonitor] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
+  const [customDomain, setCustomDomain] = useState('');
+  const [customDomainSaving, setCustomDomainSaving] = useState(false);
   const [percentiles, setPercentiles] = useState<any>(null);
   const [checks, setChecks] = useState<any[]>([]);
   const [checksTotal, setChecksTotal] = useState(0);
@@ -53,6 +58,7 @@ export default function MonitorDetailPage() {
       // Get monitor details
       const monitorResponse = await monitorsAPI.get(monitorId);
       setMonitor(monitorResponse);
+      setCustomDomain(monitorResponse.custom_domain || '');
 
       // Get analytics
       const analyticsResponse = await analyticsAPI.monitor(monitorId, 7);
@@ -203,6 +209,27 @@ export default function MonitorDetailPage() {
       toast.error('Failed to load more checks');
     } finally {
       setChecksLoadingMore(false);
+    }
+  };
+
+  const handleSaveCustomDomain = async () => {
+    setCustomDomainSaving(true);
+    try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app';
+      const token = (await import('@/lib/api')).getAccessToken();
+      const res = await fetch(`${apiBase}/api/v1/monitors/${monitorId}/custom-domain`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ custom_domain: customDomain.trim() || null }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Failed to save');
+      setCustomDomain(data.custom_domain || '');
+      toast.success(data.custom_domain ? 'Custom domain saved!' : 'Custom domain removed');
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to save custom domain');
+    } finally {
+      setCustomDomainSaving(false);
     }
   };
 
@@ -403,6 +430,60 @@ export default function MonitorDetailPage() {
                 <ConfigItem label="Interval" value={`${monitor.interval}s`} />
                 <ConfigItem label="Timeout" value={`${monitor.timeout}s`} />
                 <ConfigItem label="Expected Status" value={monitor.expected_status} />
+              </div>
+            </div>
+
+            {/* Custom Domain for Status Page */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
+                <Globe className="h-5 w-5 text-gray-400" />
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Custom Domain</h2>
+                {!['pro', 'business'].includes(user?.plan || '') && (
+                  <span className="ml-2 text-xs bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium">Pro / Business</span>
+                )}
+              </div>
+              <div className="px-6 py-5 space-y-4">
+                {['pro', 'business'].includes(user?.plan || '') ? (
+                  <>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Point a CNAME from your domain to <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs">cname.vercel-dns.com</code>, then add the domain in your Vercel project settings.
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={customDomain}
+                        onChange={(e) => setCustomDomain(e.target.value)}
+                        placeholder="status.yourcompany.com"
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      />
+                      <button
+                        onClick={handleSaveCustomDomain}
+                        disabled={customDomainSaving}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition disabled:opacity-50"
+                      >
+                        {customDomainSaving ? 'Saving...' : 'Save'}
+                      </button>
+                      {customDomain && (
+                        <button
+                          onClick={() => { setCustomDomain(''); }}
+                          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                          title="Clear"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                    {monitor.custom_domain && (
+                      <p className="text-xs text-green-600 dark:text-green-400">
+                        Active: <a href={`https://${monitor.custom_domain}`} target="_blank" rel="noopener noreferrer" className="underline">{monitor.custom_domain}</a>
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Upgrade to <strong>Pro</strong> or <strong>Business</strong> to use a custom domain for your public status page (e.g. <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-xs">status.yourcompany.com</code>).
+                  </div>
+                )}
               </div>
             </div>
           </div>

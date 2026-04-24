@@ -366,7 +366,61 @@ def resume_monitor(
     monitor.is_active = True
     monitor.next_check_at = datetime.utcnow()  # Check immediately
     monitor.updated_at = datetime.utcnow()
-    
+
     db.commit()
-    
+
     return {"message": "Monitor resumed"}
+
+
+@router.put("/{monitor_id}/custom-domain")
+def set_custom_domain(
+    monitor_id: str,
+    payload: dict,
+    current_user: User = Depends(get_current_user_flexible),
+    db: Session = Depends(get_db)
+):
+    """Set or clear the custom domain for a monitor's status page (Pro/Business only)."""
+    owner = get_effective_owner(current_user, db)
+    if owner.plan not in ("pro", "business"):
+        raise HTTPException(status_code=403, detail="Custom domain requires Pro or Business plan")
+
+    monitor = db.query(Monitor).filter(
+        Monitor.id == monitor_id,
+        Monitor.user_id == owner.id
+    ).first()
+    if not monitor:
+        raise HTTPException(status_code=404, detail="Monitor not found")
+
+    domain = (payload.get("custom_domain") or "").strip().lower() or None
+
+    if domain:
+        # Check uniqueness across all monitors
+        conflict = db.query(Monitor).filter(
+            Monitor.custom_domain == domain,
+            Monitor.id != monitor_id
+        ).first()
+        if conflict:
+            raise HTTPException(status_code=409, detail="Domain already in use by another monitor")
+
+    monitor.custom_domain = domain
+    monitor.updated_at = datetime.utcnow()
+    db.commit()
+
+    return {"custom_domain": monitor.custom_domain}
+
+
+@router.get("/{monitor_id}/custom-domain")
+def get_custom_domain(
+    monitor_id: str,
+    current_user: User = Depends(get_current_user_flexible),
+    db: Session = Depends(get_db)
+):
+    """Get the custom domain setting for a monitor."""
+    owner = get_effective_owner(current_user, db)
+    monitor = db.query(Monitor).filter(
+        Monitor.id == monitor_id,
+        Monitor.user_id == owner.id
+    ).first()
+    if not monitor:
+        raise HTTPException(status_code=404, detail="Monitor not found")
+    return {"custom_domain": monitor.custom_domain}
