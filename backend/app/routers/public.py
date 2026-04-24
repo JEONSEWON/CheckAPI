@@ -2,7 +2,7 @@
 Public routes (no authentication required)
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func
 from typing import List, Dict, Any
@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from uuid import UUID
 
 from app.database import get_db
+from app.limiter import limiter
 from app.models import Monitor, Check, User
 
 router = APIRouter(prefix="/public", tags=["Public"])
@@ -117,7 +118,8 @@ def get_public_stats(db: Session = Depends(get_db)):
     }
 
 @router.get("/status/{monitor_id}")
-def get_public_status(monitor_id: str, db: Session = Depends(get_db)):
+@limiter.limit("60/minute")
+def get_public_status(request: Request, monitor_id: str, db: Session = Depends(get_db)):
     """
     Get public status page data for a monitor
     No authentication required - anyone can view
@@ -229,7 +231,8 @@ def get_status_badge(monitor_id: str, db: Session = Depends(get_db)):
 
 
 @router.get("/by-domain")
-def get_monitor_by_domain(domain: str, db: Session = Depends(get_db)):
+@limiter.limit("60/minute")
+def get_monitor_by_domain(request: Request, domain: str, db: Session = Depends(get_db)):
     """
     Resolve a custom domain to a monitor ID.
     Used by the frontend middleware to handle custom-domain status pages.

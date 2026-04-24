@@ -1,11 +1,12 @@
 """
 Alert Channel management routes: CRUD operations for alert channels
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 from app.database import get_db
+from app.limiter import limiter
 from app.models import User, AlertChannel, Monitor
 from app.schemas import (
     AlertChannelCreate,
@@ -85,7 +86,9 @@ def list_alert_channels(
 
 
 @router.post("/", response_model=AlertChannelResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("20/minute")
 def create_alert_channel(
+    request: Request,
     channel_data: AlertChannelCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -104,7 +107,9 @@ def create_alert_channel(
 
 
 @router.post("/{channel_id}/test", response_model=MessageResponse)
+@limiter.limit("10/minute")
 def test_alert_channel(
+    request: Request,
     channel_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)

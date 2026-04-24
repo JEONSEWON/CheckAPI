@@ -4,12 +4,13 @@ API Keys management routes - Business plan feature
 
 import secrets
 import hashlib
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
 
 from app.database import get_db
+from app.limiter import limiter
 from app.models import User, APIKey
 from app.auth import get_current_user
 
@@ -51,7 +52,9 @@ def list_api_keys(
 
 
 @router.post("/")
+@limiter.limit("10/minute")
 def create_api_key(
+    request: Request,
     name: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)

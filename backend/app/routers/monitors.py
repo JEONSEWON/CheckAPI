@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from uuid import UUID
 
 from app.database import get_db
+from app.limiter import limiter
 from app.models import User, Monitor, Check, TeamMember
 from app.schemas import (
     MonitorCreate,
@@ -129,7 +130,9 @@ def list_monitors(
 
 
 @router.post("/", response_model=MonitorResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("30/minute")
 def create_monitor(
+    request: Request,
     monitor_data: MonitorCreate,
     current_user: User = Depends(get_current_user_flexible),
     db: Session = Depends(get_db)

@@ -1,13 +1,14 @@
 """
 Team collaboration routes
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
 import uuid, secrets
 
 from app.database import get_db
+from app.limiter import limiter
 from app.models import User, TeamMember, Monitor
 from app.auth import get_current_user
 from app.schemas import MessageResponse
@@ -67,7 +68,9 @@ def list_members(
 
 
 @router.post("/invite")
+@limiter.limit("10/minute")
 def invite_member(
+    request: Request,
     payload: dict,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
