@@ -10,7 +10,6 @@ from slowapi.middleware import SlowAPIMiddleware
 from datetime import datetime
 
 from app.config import get_settings
-from app.database import init_db
 from app.limiter import limiter
 from app.routers import auth
 from app.routers import maintenance
@@ -61,8 +60,6 @@ app.include_router(heartbeat.router)
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize database on startup"""
-    init_db()
     print(f"🚀 {settings.APP_NAME} started")
     print(f"📝 Environment: {settings.APP_ENV}")
     print(f"🔧 Debug mode: {settings.DEBUG}")
