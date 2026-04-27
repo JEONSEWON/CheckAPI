@@ -238,13 +238,18 @@ export default function HomePage() {
           </div>
 
           <h1 style={{ fontSize: 'clamp(38px, 6.5vw, 72px)', fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.04em', marginBottom: '24px', color: '#f8fafc' }}>
-            API monitoring that&apos;s<br />
-            <span className="teal glow-text">actually free for business.</span>
+            Catch silent API failures<br />
+            <span className="teal glow-text">before your users do.</span>
           </h1>
 
           <p style={{ fontSize: '18px', color: '#94a3b8', maxWidth: '560px', margin: '0 auto 12px', lineHeight: 1.7 }}>
-            Unlike UptimeRobot <span style={{ color: '#64748b', fontSize: '15px' }}>(restricted commercial use Oct 2024)</span>, CheckAPI has zero commercial restrictions — JSON Path, Regex, Silent Failure Detection included.
+            CheckAPI tests the real response content — not just whether your endpoint returns 200 OK.
           </p>
+
+          <div style={{ margin: '16px auto 0', maxWidth: '480px', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '10px', padding: '10px 16px', justifyContent: 'center' }}>
+            <X style={{ width: '14px', height: '14px', color: '#f87171', flexShrink: 0 }} />
+            <span style={{ fontSize: '14px', color: '#f87171', fontFamily: "'DM Mono', monospace" }}>login returns 200, but the token is missing</span>
+          </div>
 
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', margin: '32px 0 20px' }}>
             <Link href="/register" className="btn-primary">
