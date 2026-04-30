@@ -7,9 +7,49 @@ export const metadata = {
   description: 'Your API returns 200 OK but the response body is broken or empty. This is a silent failure — and most monitoring tools miss it. Here\'s how to catch it.',
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What makes an API failure "silent"?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A silent failure is when an API returns HTTP 200 OK — so standard monitors report it as "up" — but the response body contains wrong, empty, or error data. Examples include a payment API returning {"error": "insufficient_funds"} with a 200 status, or a data API returning an empty array instead of results.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Why do most monitoring tools miss silent API failures?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Most uptime monitors only check two things: did the server respond, and what was the HTTP status code? They do not inspect the response body. A silent failure passes both checks because the HTTP handshake succeeded — only the content is wrong.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do you detect silent API failures?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'You can detect silent failures using three levels of response body validation: keyword checks (is a specific string present or absent), regex patterns (validate the body with a regular expression), and JSON Path assertions (query specific fields and validate their values).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does CheckAPI detect silent API failures?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "CheckAPI's Silent Failure Detection runs after the HTTP status check. If the API returns 200 OK, CheckAPI validates the response body against your keyword, regex, or JSON Path rules. If validation fails, the monitor is marked as degraded — not up — and your alert channels fire immediately.",
+      },
+    },
+  ],
+};
+
 export default function BlogPostSilentFailure() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 dark:bg-gray-900/80 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -69,7 +109,7 @@ export default function BlogPostSilentFailure() {
             In every case, your standard uptime monitor would report the API as "up" — because technically, it is. The HTTP handshake succeeded. But your users are experiencing real failures.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">Why Most Monitoring Tools Miss This</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">Why Do Most Monitoring Tools Miss Silent API Failures?</h2>
           <p>
             Most uptime monitors work by checking two things: did the server respond, and what was the HTTP status code? If both look good, the check passes.
           </p>
@@ -77,7 +117,7 @@ export default function BlogPostSilentFailure() {
             This made sense in the early web, when a 200 response reliably meant the page loaded correctly. Modern APIs are different. A 200 response just means the request was received and processed — not that the result is correct.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">How to Detect Silent Failures</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">How Do You Detect Silent API Failures?</h2>
           <p>There are three levels of response body validation, from simple to advanced:</p>
 
           <div className="space-y-4">
@@ -99,7 +139,7 @@ export default function BlogPostSilentFailure() {
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">Real-World Examples</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">What Are Real-World Examples of Silent API Failures?</h2>
 
           <div className="space-y-4">
             <div className="border-l-4 border-green-500 pl-4">
@@ -116,7 +156,7 @@ export default function BlogPostSilentFailure() {
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">How CheckAPI Handles This</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">How Does CheckAPI Detect Silent API Failures?</h2>
           <p>
             CheckAPI's Silent Failure Detection runs after the HTTP status check. If your API returns 200 OK, CheckAPI then validates the response body against your keyword or regex pattern. If the validation fails, the monitor is marked as <strong>degraded</strong> — not "up" — and your alert channels fire immediately.
           </p>

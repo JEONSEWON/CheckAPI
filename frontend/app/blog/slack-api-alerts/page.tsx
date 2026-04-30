@@ -6,9 +6,41 @@ export const metadata = {
   description: 'Step-by-step guide to getting instant Slack notifications when your API goes down. No code required. Works with CheckAPI free plan.',
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What do you need to set up Slack API alerts?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'You need: a CheckAPI account (free plan works), a Slack workspace where you have permission to add apps, and about 5 minutes. No code is required.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What do Slack API down alerts look like?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'When your API goes down you get a Slack message with: which monitor went down, the URL that failed, the HTTP status code or timeout error, the exact time it went down, and a direct link to the monitor in your dashboard. A recovery alert fires when it comes back up.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What other alert channels does CheckAPI support?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'CheckAPI supports 5 alert channels on all plans including free: Email, Slack, Telegram, Discord, and Custom Webhook. The setup process is similar for each — get a webhook URL, paste it in, and test it.',
+      },
+    },
+  ],
+};
+
 export default function BlogPost3() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-gray-700 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,7 +96,7 @@ export default function BlogPost3() {
             </p>
           </div>
 
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">What You'll Need</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">What Do You Need to Set Up Slack API Alerts?</h2>
           <ul className="space-y-2">
             {[
               'A CheckAPI account (free)',
@@ -115,7 +147,7 @@ export default function BlogPost3() {
             ))}
           </div>
 
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">What Alerts Look Like</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">What Do Slack API Down Alerts Look Like?</h2>
           <p>When your API goes down, you'll get a Slack message that includes:</p>
           <ul className="space-y-2">
             {[
@@ -133,7 +165,7 @@ export default function BlogPost3() {
           </ul>
           <p>When it comes back up, you'll get a recovery alert too — so you know when the issue is resolved.</p>
 
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">Other Alert Channels</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">What Other Alert Channels Does CheckAPI Support?</h2>
           <p>CheckAPI also supports Telegram, Discord, and custom webhooks — all on the free plan. The setup process is similar: get a webhook URL, paste it in, test it.</p>
 
           <div className="grid grid-cols-3 gap-4">

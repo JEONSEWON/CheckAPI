@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 function AuthButtons() {
@@ -58,7 +59,7 @@ export default function ClientHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex justify-between items-center h-16">
           <div className="flex items-center">
-            <img src="/logo.png" alt="CheckAPI" className="h-14 w-14 rounded-xl object-contain" style={{ filter: "drop-shadow(0 0 8px rgba(0,229,180,0.6))" }} />
+            <Image src="/logo.png" alt="CheckAPI" width={56} height={56} className="h-14 w-14 rounded-xl object-contain" style={{ filter: "drop-shadow(0 0 8px rgba(0,229,180,0.6))" }} priority />
           </div>
           <nav className="hidden md:flex space-x-8 absolute left-1/2 -translate-x-1/2">
             <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Features</a>

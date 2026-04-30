@@ -7,6 +7,37 @@ export const metadata = {
   description: 'A practical checklist of what to monitor, how often, and what to do when things go wrong — written for indie hackers and solo founders running production APIs.',
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the most common API monitoring mistake?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Creating a monitor but forgetting to attach an alert channel. The monitor runs, catches failures, and logs them — but sends no notification because there is no channel connected. Always test your alerts after setup.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should you monitor third-party APIs your app depends on?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Yes. If your app depends on a payment processor, email service, or any external API, monitor it directly. Don't assume their status page will notify you before your users experience problems. Point a monitor at their health endpoint if they have one.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How often should you check your API endpoints?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'For most solo projects, 5-minute checks (free plan) are sufficient. If you have paying customers or handle real-time transactions, 1-minute checks (Starter plan at $5/month) are worth it. The math is simple: find out about downtime 5 minutes in or 1 minute in.',
+      },
+    },
+  ],
+};
+
 export default function BlogPostChecklist() {
   const checks = [
     { category: 'Endpoints to Monitor', items: [
@@ -41,6 +72,7 @@ export default function BlogPostChecklist() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 dark:bg-gray-900/80 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -99,7 +131,7 @@ export default function BlogPostChecklist() {
             ))}
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">The Most Common Mistake</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">What Is the Most Common API Monitoring Mistake?</h2>
           <p>
             Creating a monitor but forgetting to attach an alert channel. The monitor runs, catches failures, logs them — and sends no notification because there's no channel connected. Always test your alerts after setup.
           </p>
@@ -109,7 +141,7 @@ export default function BlogPostChecklist() {
             If your app depends on a payment processor, email service, or any external API, monitor it directly. Don't assume their status page will tell you before your users do. Point a monitor at their health endpoint if they have one, or your own integration endpoint.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-8">How Often to Check</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-8">How Often Should You Check Your API Endpoints?</h2>
           <p>
             For most solo projects, 5-minute checks (free plan) are fine. If you're doing real-time transactions or have paying customers, 1-minute checks (Starter plan) is worth the $5/month. The math is simple: would you rather find out about downtime 5 minutes in or 1 minute in?
           </p>

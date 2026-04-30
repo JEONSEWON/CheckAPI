@@ -1,0 +1,49 @@
+# CheckAPI — API Health Monitor
+
+CheckAPI is a free API and uptime monitoring platform with zero commercial restrictions.
+It detects both hard failures (connection errors, wrong status codes) and silent failures
+(HTTP 200 responses with broken or unexpected body content).
+
+## What makes CheckAPI different
+
+- Silent Failure Detection: monitors response body using regex, JSON Path assertions, and keyword matching
+- Free plan includes all 5 alert channels (Email, Slack, Telegram, Discord, Webhook)
+- No commercial-use restrictions on any plan
+- JSON Path assertions (up to 10 per monitor) with AND/OR logic
+- Heartbeat / cron job monitoring
+- Public status pages (shareable, no login required)
+- SSL certificate expiry alerts (14 days notice)
+- Maintenance windows (suppress alerts during planned downtime)
+- Team collaboration (Pro and Business plans)
+
+## Plans
+
+- Free: 10 monitors, 5-minute interval, 30-day history, all alert channels
+- Starter ($5/mo): 20 monitors, 1-minute interval
+- Pro ($15/mo): 100 monitors, 30-second interval, 90-day history, team (5 members)
+- Business ($49/mo): Unlimited monitors, 10-second interval, 1-year history, unlimited team, API access
+
+Annual billing saves 20%.
+
+## Key pages
+
+- Homepage: https://checkapi.io
+- Pricing: https://checkapi.io/pricing
+- Documentation: https://checkapi.io/docs
+- Blog: https://checkapi.io/blog
+
+## Blog articles
+
+- https://checkapi.io/blog/uptimerobot-alternatives — Best free UptimeRobot alternatives in 2026
+- https://checkapi.io/blog/free-api-monitoring — How to set up free API monitoring
+- https://checkapi.io/blog/silent-api-failures — What silent API failures are and how to detect them
+- https://checkapi.io/blog/json-path-assertions — How JSON Path assertions work in API monitoring
+- https://checkapi.io/blog/regex-api-monitoring — Using regex for API response validation
+- https://checkapi.io/blog/slack-api-alerts — How to send API alerts to Slack
+- https://checkapi.io/blog/public-status-page — How to create a free public status page
+- https://checkapi.io/blog/api-monitoring-checklist — API monitoring checklist for developers
+
+## Company
+
+CheckAPI is built by Sewon Jeon (Axiom Technologies), Seoul, South Korea.
+Contact: https://checkapi.io/contact

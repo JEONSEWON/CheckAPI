@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { CheckCircle, X } from 'lucide-react';
 import PricingSection from '@/components/PricingSection';
 import type { Metadata } from 'next';
@@ -21,7 +22,7 @@ export default function PricingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center gap-2">
-              <img src="/logo.png" alt="CheckAPI" className="h-10 w-10 rounded-xl object-contain" style={{ filter: 'drop-shadow(0 0 6px rgba(0,229,180,0.5))' }} />
+              <Image src="/logo.png" alt="CheckAPI" width={40} height={40} className="h-10 w-10 rounded-xl object-contain" style={{ filter: 'drop-shadow(0 0 6px rgba(0,229,180,0.5))' }} priority />
             </Link>
             <nav className="hidden md:flex space-x-8">
               <Link href="/#features" className="text-gray-600 dark:text-gray-400 hover:text-green-600 transition text-sm">Features</Link>

@@ -7,9 +7,57 @@ export const metadata = {
   description: 'A public status page reduces support tickets, builds user trust, and takes 2 minutes to set up. Here\'s how to do it for free with CheckAPI.',
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Why should you set up a public status page?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Three reasons: fewer support tickets (users who can self-diagnose do not email you), more trust (transparency during incidents builds credibility), and professionalism (enterprise tools all have status pages, having one signals you take reliability seriously).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do you set up a public status page with CheckAPI?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Four steps: (1) Create a monitor for your API endpoint. (2) Open the monitor detail page. (3) Copy the public status page URL — it looks like checkapi.io/status/your-monitor-id. (4) Share it in your app footer or help docs. The page updates automatically.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What does a CheckAPI public status page show?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "CheckAPI's public status page shows: current status (Operational / Degraded / Outage), 90-day uptime history bar chart, 24h/7d/30d uptime percentages, average response time, and recent incidents with timestamps. No login required to view.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is a CheckAPI public status page free?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Yes. Public status pages are included on CheckAPI's free plan. You get one status page per monitor, and the free plan includes up to 10 monitors. Most standalone status page tools like Statuspage by Atlassian charge $29/month separately.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where should you share your public status page URL?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Best places to link your status page: footer of your web app, help center or FAQ page, GitHub repository README, Twitter/X bio, and auto-response for support emails.',
+      },
+    },
+  ],
+};
+
 export default function BlogPostStatusPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 dark:bg-gray-900/80 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -53,7 +101,7 @@ export default function BlogPostStatusPage() {
             <li><strong className="text-gray-900 dark:text-white">Professionalism.</strong> Enterprise tools all have status pages. Having one signals you take reliability seriously.</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">How to Set It Up with CheckAPI</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">How Do You Set Up a Public Status Page with CheckAPI?</h2>
 
           <div className="space-y-4">
             {[
@@ -72,7 +120,7 @@ export default function BlogPostStatusPage() {
             ))}
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">What the Status Page Shows</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">What Does a CheckAPI Public Status Page Show?</h2>
           <p>CheckAPI's public status page includes:</p>
           <ul className="space-y-1 pl-4 list-disc text-gray-600 dark:text-gray-300">
             <li>Current status (Operational / Degraded / Outage)</li>
@@ -91,7 +139,7 @@ export default function BlogPostStatusPage() {
             Most status page tools charge separately — Statuspage by Atlassian starts at $29/month just for the status page. CheckAPI includes it as part of the monitoring package, because a status page without real monitoring data isn't very useful anyway.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">Where to Link Your Status Page</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10">Where Should You Share Your Public Status Page URL?</h2>
           <ul className="space-y-1 pl-4 list-disc text-gray-600 dark:text-gray-300">
             <li>Footer of your web app</li>
             <li>Help center or FAQ page</li>

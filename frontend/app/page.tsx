@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Bell, Globe, Code2, Terminal, Lock, Activity, X } from 'lucide-react';
 import ClientHeader from '@/components/ClientHeader';
 import PricingSection from '@/components/PricingSection';
@@ -27,8 +28,6 @@ export default function HomePage() {
   return (
     <div className="min-h-screen" style={{ background: '#080d1a', color: '#e2e8f0', fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
         :root {
           --teal: #00e5b4;
           --teal-dim: #00b890;
@@ -611,7 +610,7 @@ export default function HomePage() {
         <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '40px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-              <img src="/logo.png" alt="CheckAPI" style={{ width: '56px', height: '56px', borderRadius: '12px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(0,229,180,0.6))' }} />
+              <Image src="/logo.png" alt="CheckAPI" width={56} height={56} style={{ width: '56px', height: '56px', borderRadius: '12px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(0,229,180,0.6))' }} />
               <span style={{ fontSize: '16px', fontWeight: 700, color: '#00e5b4' }}>CheckAPI</span>
             </div>
             <p style={{ fontSize: '12px', color: '#475569', marginBottom: '4px' }}>by Axiom Technologies</p>

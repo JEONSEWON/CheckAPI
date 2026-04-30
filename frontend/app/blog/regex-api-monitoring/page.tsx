@@ -7,9 +7,57 @@ export const metadata = {
   description: 'HTTP status codes only tell half the story. Learn how to use regex patterns to validate API response bodies and catch silent failures before your users do.',
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: "What's wrong with status-code-only API monitoring?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'HTTP status codes are a poor proxy for API health. An API can return 200 OK while its database connection has failed and it is serving broken data. Standard monitors that only check the status code will report the API as "up" while users experience real failures.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is regex body validation for APIs?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Instead of stopping at the status code, regex validation runs a regular expression pattern against the actual response body text. If the pattern does not match (or does match, depending on the rule), the check is marked as degraded and an alert fires.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are practical regex patterns for API response validation?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Common patterns: "status":\\s*"(ok|healthy)" — status field must be ok or healthy. "error":\\s*null — error field must be null. "data":\\s*\\[[^\\]]+\\] — data array must not be empty. "balance":\\s*[1-9][0-9]* — balance must be a positive number.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do you test regex patterns before going live?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'CheckAPI has a built-in Test Regex button. Paste a sample response body and your pattern — it shows you immediately whether the pattern matches before the monitor goes live, preventing regex typos from silently breaking your validation.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'When should you use regex vs JSON Path assertions for API monitoring?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use regex for simple string patterns, error detection, and format validation. Use JSON Path for specific field values, numeric comparisons, and null checks on nested fields. Combining both gives maximum coverage.',
+      },
+    },
+  ],
+};
+
 export default function RegexApiMonitoringPost() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 dark:bg-gray-900/80 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -47,7 +95,7 @@ export default function RegexApiMonitoringPost() {
 
         <div className="prose prose-lg dark:prose-invert max-w-none space-y-8 text-gray-700 dark:text-gray-300">
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">The problem with status-only monitoring</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">What&apos;s Wrong with Status-Code-Only API Monitoring?</h2>
           <p>
             Most API monitoring tools check exactly one thing: did the server respond with a 200? If yes, the monitor turns green and everyone moves on. But HTTP status codes are a terrible proxy for API health.
           </p>
@@ -73,7 +121,7 @@ export default function RegexApiMonitoringPost() {
             In CheckAPI, enable the <strong>Use Regex</strong> toggle when creating or editing a monitor. Then write your pattern.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Practical regex patterns</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">What Are Practical Regex Patterns for API Response Validation?</h2>
           <p>Here are real-world patterns you can use today:</p>
 
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">1. Status field must be "ok" or "healthy"</h3>
@@ -100,7 +148,7 @@ export default function RegexApiMonitoringPost() {
           <pre className="bg-gray-900 text-green-400 rounded-xl p-4 text-sm overflow-x-auto">{`"version":\s*"[^"]+"`}</pre>
           <p className="text-sm text-gray-600 dark:text-gray-400">Verifies the version field is a non-empty string — useful for health check endpoints.</p>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Testing patterns before you save</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">How Do You Test Regex Patterns Before Going Live?</h2>
           <p>
             CheckAPI has a built-in <strong>Test Regex</strong> button. Paste a sample response body and your pattern — it shows you immediately whether the pattern matches before the monitor goes live. No more regex typos silently making your monitor worthless.
           </p>

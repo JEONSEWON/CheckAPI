@@ -7,9 +7,57 @@ export const metadata = {
   description: 'Go beyond status codes. Use JSON Path assertions to validate specific fields inside your API response — catch null data, wrong values, and broken logic automatically.',
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is a JSON Path assertion?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A JSON Path assertion is a rule that points to a specific field inside a JSON response body and validates its value. Instead of scanning the entire body for a pattern (regex), you target exactly the field you care about using a path like $.data.status.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which operators does CheckAPI support for JSON Path assertions?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'CheckAPI supports 11 operators: == (exact match), != (must not equal), > >= < <= (numeric ranges), contains (string contains substring), not_contains (must not contain), is_null (field must be null), is_not_null (field must not be null), and exists (field key must exist).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should you use AND or OR logic for JSON Path assertions?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'By default, all assertions use AND logic — every assertion must pass for the check to be green. You can switch individual assertions to OR logic, which means the check passes if at least one assertion is true.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many JSON Path assertions can you set per monitor?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'CheckAPI supports up to 10 JSON Path assertions per monitor. This is enough to comprehensively validate the critical fields of any API response in a single check — no code required.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can you combine JSON Path assertions with regex?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. A common pattern is to use Regex for a quick top-level sanity check (e.g. error field is null) and JSON Path for precise field-level validation (e.g. balance is positive, user_id exists). Both run on every check.',
+      },
+    },
+  ],
+};
+
 export default function JsonPathAssertionsPost() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 dark:bg-gray-900/80 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -68,7 +116,7 @@ $.data.balance    >=       100        ✓ passes
 $.error           is_null             ✓ passes
 $.data.plan       ==       "free"     ✗ fails → alert fires`}</pre>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Supported operators</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Which Operators Does CheckAPI Support for JSON Path Assertions?</h2>
           <p>CheckAPI supports 11 operators for JSON Path assertions:</p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
@@ -98,7 +146,7 @@ $.data.plan       ==       "free"     ✗ fails → alert fires`}</pre>
             </table>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Real-world examples</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">What Are Real-World JSON Path Assertion Examples?</h2>
 
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Health check endpoint</h3>
           <pre className="bg-gray-900 text-green-400 rounded-xl p-4 text-sm overflow-x-auto leading-relaxed">{`// GET /health
@@ -142,17 +190,17 @@ $.error             is_null`}</pre>
 $.total     >     0
 $.data      is_not_null`}</pre>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">AND vs OR logic</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Should You Use AND or OR Logic for JSON Path Assertions?</h2>
           <p>
             By default, all assertions are evaluated with AND logic — every assertion must pass for the check to be green. You can switch individual assertions to OR in the Assertions tab, which means the check passes if at least one assertion is true.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Up to 10 assertions per monitor</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">How Many JSON Path Assertions Can You Set Per Monitor?</h2>
           <p>
             CheckAPI supports up to 10 JSON Path assertions per monitor. This is enough to comprehensively validate the critical fields of any API response in a single check — no code required.
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">JSON Path + Regex together</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Can You Combine JSON Path Assertions with Regex?</h2>
           <p>
             JSON Path and Regex aren't mutually exclusive. A common pattern is to use Regex for a quick top-level sanity check (e.g. error field is null) and JSON Path for precise field-level validation (e.g. balance is positive, user_id exists). Both run on every check.
           </p>

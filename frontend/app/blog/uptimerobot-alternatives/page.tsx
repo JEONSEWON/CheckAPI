@@ -7,9 +7,49 @@ export const metadata = {
   description: 'UptimeRobot restricted commercial use on free plans. Here are the best free alternatives for API and uptime monitoring in 2026 — with no commercial restrictions.',
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What should you look for in a free monitoring plan?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A genuinely useful free tier should include at least 10 monitors, check intervals of 5 minutes or less, email alerts with no paywall, commercial use explicitly allowed, and no credit card required to sign up.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are the best free UptimeRobot alternatives?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The best free UptimeRobot alternatives in 2026 are CheckAPI (10 monitors, 5-min interval, all alert channels, commercial use allowed), Freshping (50 monitors, 1-min interval), and Better Stack (10 monitors, 3-min interval, status pages).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do free monitoring tools compare on commercial use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'CheckAPI, Freshping, and Better Stack all allow commercial use on their free plans. UptimeRobot restricted commercial use in a recent Terms of Service update, making it unsuitable for business use without a paid plan.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which free UptimeRobot alternative should you choose?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'If you need maximum free monitors, Freshping (50) is hard to beat. If you want a developer-focused experience with multi-channel alerts (Slack, Telegram, Discord) and no commercial restrictions, CheckAPI is the best fit.',
+      },
+    },
+  ],
+};
+
 export default function BlogPost1() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 dark:bg-gray-900/80 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,7 +108,7 @@ export default function BlogPost1() {
             This guide covers the best free alternatives — ranked by what actually matters: monitor count, check frequency, alert channels, and whether commercial use is actually allowed.
           </p>
 
-          <h2 className="text-3xl font-bold text-gray-900 mt-12">What to Look for in a Free Plan</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mt-12">What Should You Look for in a Free Monitoring Plan?</h2>
           <p>Before diving into the list, here's what separates a genuinely useful free tier from a marketing trick:</p>
           <ul className="space-y-3">
             {[
@@ -85,7 +125,7 @@ export default function BlogPost1() {
             ))}
           </ul>
 
-          <h2 className="text-3xl font-bold text-gray-900 mt-12">Top Free UptimeRobot Alternatives</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mt-12">What Are the Best Free UptimeRobot Alternatives?</h2>
 
           {/* Tool 1 */}
           <div className="bg-white rounded-xl border-2 border-green-500 p-8 shadow-sm">
@@ -163,7 +203,7 @@ export default function BlogPost1() {
           </div>
 
           {/* Comparison table */}
-          <h2 className="text-3xl font-bold text-gray-900 mt-12">Quick Comparison</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mt-12">How Do These Free Monitoring Tools Compare?</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <thead>
@@ -196,7 +236,7 @@ export default function BlogPost1() {
             </table>
           </div>
 
-          <h2 className="text-3xl font-bold text-gray-900 mt-12">Bottom Line</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mt-12">Which Free UptimeRobot Alternative Should You Choose?</h2>
           <p>
             If you need maximum free monitors, Freshping is hard to beat. If you want a clean, developer-focused experience with no commercial restrictions and multi-channel alerts including Slack, Telegram, and Discord, CheckAPI is the best fit.
           </p>

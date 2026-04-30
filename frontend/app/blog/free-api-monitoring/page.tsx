@@ -7,9 +7,49 @@ export const metadata = {
   description: 'A practical guide to setting up free API monitoring that actually works — with real alerts, no credit card required, and no commercial restrictions.',
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Why do most free API monitoring tools fall short?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Most free monitoring tiers have at least one catch: only 1–2 monitors (useless for a real project), alerts locked behind a paywall, check intervals of 10–30 minutes (your API could be down for half an hour before you know), or commercial use restricted.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do you set up free API monitoring?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Set up free API monitoring in four steps: (1) Create a free account at checkapi.io, no credit card required. (2) Add a monitor with your API URL, expected status code, and check interval. (3) Set up an alert channel — email, Slack, Telegram, or Discord, all free. (4) Test the alert to confirm it works.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What API endpoints should you monitor?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'At minimum monitor: your /health or /ping endpoint for basic availability, your most critical API endpoint for core functionality, and your login/auth endpoint since users cannot do anything without it.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are the best tips for API monitoring?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Three key tips: Add a /health endpoint to your API that returns {"status": "ok"} with a 200. Monitor response time, not just status — an API that takes 8 seconds is effectively broken. Set up a public status page so users can self-check instead of emailing support.',
+      },
+    },
+  ],
+};
+
 export default function BlogPost2() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-gray-700 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,7 +96,7 @@ export default function BlogPost2() {
             Your API went down last night. You found out at 9am when a user emailed you. Sound familiar? Here's how to make sure that never happens again — for free.
           </p>
 
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">Why Most "Free" Monitoring Falls Short</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">Why Do Most Free API Monitoring Tools Fall Short?</h2>
           <p>
             Most free monitoring tiers have at least one catch. Either you only get 1 or 2 monitors (useless for a real project), alerts are locked behind a paywall, check intervals are too slow (10–30 minutes means your API could be down for half an hour before you know), or commercial use is restricted.
           </p>
@@ -64,7 +104,7 @@ export default function BlogPost2() {
             The good news: there are tools that get this right. Here's how to set up solid free monitoring in under 10 minutes.
           </p>
 
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">Step-by-Step: Set Up Free API Monitoring</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">How Do You Set Up Free API Monitoring?</h2>
 
           {/* Step 1 */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-8 shadow-sm">
@@ -123,7 +163,7 @@ export default function BlogPost2() {
             </p>
           </div>
 
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">What to Monitor</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">What API Endpoints Should You Monitor?</h2>
           <p>At minimum, monitor these endpoints:</p>
           <ul className="space-y-3">
             {[
@@ -138,7 +178,7 @@ export default function BlogPost2() {
             ))}
           </ul>
 
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">Pro Tips</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-12">What Are the Best Tips for API Monitoring?</h2>
           <div className="space-y-4">
             {[
               { tip: 'Add a /health endpoint to your API', detail: 'Return a simple {"status": "ok"} with a 200. This is the standard pattern and makes monitoring much cleaner.' },
