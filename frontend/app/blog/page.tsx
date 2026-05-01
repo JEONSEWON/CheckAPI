@@ -4,6 +4,20 @@ import { ArrowRight, Calendar, Clock } from 'lucide-react';
 
 const posts = [
   {
+    title: 'API Uptime Checker: Track Availability, SLA & Uptime Percentage',
+    excerpt: '99.9% uptime sounds reliable — until you realize it allows 8.7 hours of downtime every year. Learn how to measure your real uptime %, track SLA compliance, and share it with customers.',
+    date: 'May 1, 2026',
+    readTime: '7 min read',
+    slug: '/blog/api-uptime-checker',
+  },
+  {
+    title: 'API Downtime Checker: How to Know the Moment Your API Goes Down',
+    excerpt: 'Your API went down at 2am. You found out at 9am when users started emailing. An API downtime checker fixes this — automatically, 24/7, before your users notice.',
+    date: 'May 1, 2026',
+    readTime: '6 min read',
+    slug: '/blog/api-downtime-checker',
+  },
+  {
     title: 'JSON Path Assertions: Validate Nested API Responses',
     excerpt: 'Go beyond status codes. Use JSON Path assertions to validate specific fields inside your API response — catch null data, wrong values, and broken logic automatically.',
     date: 'Apr 22, 2026',
