@@ -63,6 +63,7 @@ export default function ClientHeader() {
           </div>
           <nav className="hidden md:flex space-x-8 absolute left-1/2 -translate-x-1/2">
             <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Features</a>
+            <Link href="/api-checker" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">API Checker</Link>
             <a href="/pricing" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Pricing</a>
             <Link href="/docs" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Docs</Link>
             <Link href="/blog" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Blog</Link>
