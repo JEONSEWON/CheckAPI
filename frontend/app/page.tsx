@@ -7,19 +7,19 @@ import LiveUserCount from '@/components/LiveUserCount';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'CheckAPI — API monitoring actually free for business.',
-  description: 'Silent Failure Detection with Regex + JSON Path. Zero commercial restrictions on every plan. Unlike UptimeRobot, free forever.',
+  title: 'CheckAPI — Free API Health Checker & Uptime Monitor',
+  description: 'Check your API\'s uptime, response time, and response body automatically. Set up in 60 seconds. Free plan — 10 monitors, all alert channels, no credit card.',
   openGraph: {
-    title: 'CheckAPI — API monitoring actually free for business.',
-    description: 'Silent Failure Detection with Regex + JSON Path. Free forever for commercial use.',
+    title: 'CheckAPI — Free API Health Checker & Uptime Monitor',
+    description: 'Check your API\'s uptime, response time, and response body automatically. Free plan — 10 monitors, all alert channels, no credit card.',
     url: 'https://checkapi.io',
     siteName: 'CheckAPI',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CheckAPI — API monitoring actually free for business.',
-    description: 'Silent Failure Detection with Regex + JSON Path. Free forever for commercial use.',
+    title: 'CheckAPI — Free API Health Checker & Uptime Monitor',
+    description: 'Check your API\'s uptime, response time, and response body automatically. Free plan — 10 monitors, all alert channels, no credit card.',
     creator: '@imwon_dev',
   },
 };
