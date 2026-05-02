@@ -143,7 +143,8 @@ class CheckResponse(BaseModel):
     response_time: Optional[int]
     error_message: Optional[str]
     checked_at: datetime
-    
+    ai_analysis: Optional[dict] = None
+
     class Config:
         from_attributes = True
 

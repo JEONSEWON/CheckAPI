@@ -243,6 +243,22 @@ def check_single_monitor(monitor_id: str):
 
         db.commit()
 
+        # AI analysis for failed/degraded checks
+        ai_analysis = None
+        if status in ("down", "degraded"):
+            from app.ai.analyzer import analyze_incident
+            ai_analysis = analyze_incident(
+                monitor_name=monitor.name,
+                monitor_url=monitor.url,
+                status=status,
+                status_code=getattr(check, "status_code", None),
+                response_time=getattr(check, "response_time", None),
+                error_message=getattr(check, "error_message", None),
+            )
+            if ai_analysis:
+                check.ai_analysis = ai_analysis
+                db.commit()
+
         # Alert logic:
         # - Recovery (any → up): always alert immediately
         # - Failure (up → down/degraded): alert only when consecutive_failures hits threshold exactly
@@ -251,7 +267,7 @@ def check_single_monitor(monitor_id: str):
             send_alerts.delay(str(monitor.id), status, previous_status)
         elif status != "up" and monitor.consecutive_failures == threshold:
             print(f"Threshold reached ({threshold}): {previous_status} -> {status}")
-            send_alerts.delay(str(monitor.id), status, previous_status or status)
+            send_alerts.delay(str(monitor.id), status, previous_status or status, ai_analysis)
         
         print(f"✓ Check completed: {monitor.name} - {status}")
         
@@ -331,7 +347,8 @@ class AlertDeliveryError(Exception):
 )
 def send_channel_alert(self, channel_type: str, channel_config: dict,
                        monitor_name: str, monitor_url: str,
-                       new_status: str, old_status: str, monitor_id: str):
+                       new_status: str, old_status: str, monitor_id: str,
+                       ai_analysis: dict = None):
     """Send a single alert channel with exponential backoff retry (max 4 retries)."""
     from app.alerts import (
         send_email_alert, send_slack_alert, send_telegram_alert,
@@ -339,9 +356,9 @@ def send_channel_alert(self, channel_type: str, channel_config: dict,
     )
 
     if channel_type == "email":
-        success = send_email_alert(channel_config, monitor_name, monitor_url, new_status, old_status)
+        success = send_email_alert(channel_config, monitor_name, monitor_url, new_status, old_status, ai_analysis)
     elif channel_type == "slack":
-        success = send_slack_alert(channel_config, monitor_name, monitor_url, new_status, old_status)
+        success = send_slack_alert(channel_config, monitor_name, monitor_url, new_status, old_status, ai_analysis)
     elif channel_type == "telegram":
         success = send_telegram_alert(channel_config, monitor_name, monitor_url, new_status, old_status)
     elif channel_type == "discord":
@@ -358,7 +375,7 @@ def send_channel_alert(self, channel_type: str, channel_config: dict,
 
 
 @celery_app.task(name="app.tasks.send_alerts")
-def send_alerts(monitor_id: str, new_status: str, old_status: str):
+def send_alerts(monitor_id: str, new_status: str, old_status: str, ai_analysis: dict = None):
     """
     Send alerts when monitor status changes.
     Dispatches each channel as a separate retryable task.
@@ -391,6 +408,7 @@ def send_alerts(monitor_id: str, new_status: str, old_status: str):
                 new_status,
                 old_status,
                 str(monitor.id),
+                ai_analysis,
             )
             dispatched += 1
 

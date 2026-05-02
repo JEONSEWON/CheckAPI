@@ -761,28 +761,57 @@ function ConfigItem({ label, value }: { label: string; value: any }) {
 }
 
 function CheckRow({ check }: any) {
+  const [showAI, setShowAI] = useState(false);
   const statusColors = {
     up: 'text-green-600',
     down: 'text-red-600',
     degraded: 'text-yellow-600',
   };
+  const ai = check.ai_analysis;
 
   return (
-    <div className="px-6 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700">
-      <div className="flex items-center space-x-4">
-        <span className={`font-medium ${statusColors[check.status as keyof typeof statusColors]}`}>
-          {check.status.toUpperCase()}
+    <div className="px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <span className={`font-medium ${statusColors[check.status as keyof typeof statusColors]}`}>
+            {check.status.toUpperCase()}
+          </span>
+          {check.status_code && (
+            <span className="text-gray-500 dark:text-gray-400 text-sm">Status: {check.status_code}</span>
+          )}
+          {check.response_time && (
+            <span className="text-gray-500 dark:text-gray-400 text-sm">{check.response_time}ms</span>
+          )}
+          {ai && (
+            <button
+              onClick={() => setShowAI(v => !v)}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 hover:bg-yellow-200 dark:hover:bg-yellow-800 transition"
+            >
+              🤖 AI
+            </button>
+          )}
+        </div>
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          {formatDistanceToNow(new Date(check.checked_at + "Z"), { addSuffix: true })}
         </span>
-        {check.status_code && (
-          <span className="text-gray-500 dark:text-gray-400 text-sm">Status: {check.status_code}</span>
-        )}
-        {check.response_time && (
-          <span className="text-gray-500 dark:text-gray-400 text-sm">{check.response_time}ms</span>
-        )}
       </div>
-      <span className="text-sm text-gray-500 dark:text-gray-400">
-        {formatDistanceToNow(new Date(check.checked_at + "Z"), { addSuffix: true })}
-      </span>
+      {ai && showAI && (
+        <div className="mt-2 ml-0 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-sm">
+          <p className="font-medium text-yellow-900 dark:text-yellow-200 mb-1">{ai.summary}</p>
+          {ai.possible_causes?.length > 0 && (
+            <div className="mb-1">
+              <span className="text-yellow-700 dark:text-yellow-400 text-xs font-medium">Possible causes: </span>
+              <span className="text-gray-700 dark:text-gray-300 text-xs">{ai.possible_causes.join(' · ')}</span>
+            </div>
+          )}
+          {ai.recommended_actions?.length > 0 && (
+            <div>
+              <span className="text-yellow-700 dark:text-yellow-400 text-xs font-medium">Actions: </span>
+              <span className="text-gray-700 dark:text-gray-300 text-xs">{ai.recommended_actions.join(' · ')}</span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

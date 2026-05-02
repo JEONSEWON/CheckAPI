@@ -3,7 +3,7 @@ Alert sending utilities for different channels
 """
 
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from datetime import datetime
 
 from app.config import get_settings
@@ -11,8 +11,25 @@ from app.config import get_settings
 settings = get_settings()
 
 
+def _build_email_ai_block(ai_analysis: Optional[Dict[str, Any]]) -> str:
+    if not ai_analysis:
+        return ""
+    summary = ai_analysis.get("summary", "")
+    causes = ai_analysis.get("possible_causes", [])
+    actions = ai_analysis.get("recommended_actions", [])
+    causes_html = "".join(f"<li>{c}</li>" for c in causes)
+    actions_html = "".join(f"<li>{a}</li>" for a in actions)
+    return f"""
+    <div style="background:#fef9c3;border:1px solid #fde047;border-radius:6px;padding:16px;margin:16px 0;">
+        <p style="margin:0 0 8px 0;font-weight:bold;color:#854d0e;">🤖 AI Analysis</p>
+        <p style="margin:0 0 8px 0;color:#1c1917;">{summary}</p>
+        {"<p style='margin:4px 0;color:#6b7280;font-size:13px;'><strong>Possible causes:</strong></p><ul style='margin:4px 0 8px 0;padding-left:18px;color:#1c1917;font-size:13px;'>" + causes_html + "</ul>" if causes else ""}
+        {"<p style='margin:4px 0;color:#6b7280;font-size:13px;'><strong>Recommended actions:</strong></p><ul style='margin:4px 0 0 0;padding-left:18px;color:#1c1917;font-size:13px;'>" + actions_html + "</ul>" if actions else ""}
+    </div>"""
+
+
 def send_email_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_url: str,
-                     new_status: str, old_status: str) -> bool:
+                     new_status: str, old_status: str, ai_analysis: Dict[str, Any] = None) -> bool:
     """
     Send email alert using Resend
     """
@@ -43,6 +60,7 @@ def send_email_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_
                     <tr><td style="padding: 8px 0; color: #6b7280;">Status</td><td style="padding: 8px 0;">{old_status.upper()} → <strong style="color: {status_color};">{new_status.upper()}</strong></td></tr>
                     <tr><td style="padding: 8px 0; color: #6b7280;">Time</td><td style="padding: 8px 0;">{datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")}</td></tr>
                 </table>
+                {_build_email_ai_block(ai_analysis)}
                 <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
                 <p style="font-size: 12px; color: #9ca3af; margin: 0;">
                     Sent by <a href="https://checkapi.io" style="color: #16a34a;">CheckAPI</a>
@@ -232,7 +250,7 @@ def send_team_invite_email(invited_email: str, inviter_name: str, invite_url: st
 
 
 def send_slack_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_url: str,
-                     new_status: str, old_status: str) -> bool:
+                     new_status: str, old_status: str, ai_analysis: Dict[str, Any] = None) -> bool:
     """
     Send Slack alert using webhook
     """
@@ -277,7 +295,20 @@ def send_slack_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_
                 ]
             }]
         }
-        
+
+        if ai_analysis and ai_analysis.get("summary"):
+            causes = " / ".join(ai_analysis.get("possible_causes", []))
+            actions = " / ".join(ai_analysis.get("recommended_actions", []))
+            ai_text = f"*{ai_analysis['summary']}*"
+            if causes:
+                ai_text += f"\n• Causes: {causes}"
+            if actions:
+                ai_text += f"\n• Actions: {actions}"
+            payload["attachments"].append({
+                "color": "#fde047",
+                "fields": [{"title": "🤖 AI Analysis", "value": ai_text, "short": False}],
+            })
+
         response = requests.post(webhook_url, json=payload, timeout=10)
         
         if response.status_code == 200:

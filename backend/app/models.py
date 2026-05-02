@@ -103,7 +103,8 @@ class Check(Base):
     response_time = Column(Integer)  # milliseconds
     error_message = Column(Text)
     checked_at = Column(DateTime, default=datetime.utcnow, index=True)
-    
+    ai_analysis = Column(JSON, nullable=True)
+
     # Relationships
     monitor = relationship("Monitor", back_populates="checks")
 
