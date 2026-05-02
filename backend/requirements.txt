@@ -34,3 +34,6 @@ pytz==2023.3
 
 # Email (Resend - uses requests library)
 jsonpath-ng==1.6.1
+
+# AI
+anthropic==0.40.0
