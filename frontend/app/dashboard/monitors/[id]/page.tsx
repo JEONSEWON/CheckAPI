@@ -761,7 +761,9 @@ function ConfigItem({ label, value }: { label: string; value: any }) {
 }
 
 function CheckRow({ check }: any) {
-  const [showAI, setShowAI] = useState(false);
+  const [showAI, setShowAI] = useState(
+    check.status === 'down' || check.status === 'degraded'
+  );
   const statusColors = {
     up: 'text-green-600',
     down: 'text-red-600',
