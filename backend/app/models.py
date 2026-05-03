@@ -219,6 +219,19 @@ class MaintenanceWindowMonitor(Base):
     monitor_id = Column(String(36), ForeignKey("monitors.id", ondelete="CASCADE"), primary_key=True)
 
 
+class AuditLog(Base):
+    """Audit log — records user-initiated actions on monitors and alert channels."""
+    __tablename__ = "audit_logs"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    action = Column(String(50), nullable=False, index=True)  # monitor.create, monitor.delete, etc.
+    resource_type = Column(String(50))  # monitor, alert_channel, subscription, ...
+    resource_id = Column(String(36))
+    detail = Column(JSON)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+
 class WebhookLog(Base):
     """Log of incoming LemonSqueezy webhook events for debugging and auditing."""
     __tablename__ = "webhook_logs"

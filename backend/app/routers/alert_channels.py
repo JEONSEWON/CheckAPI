@@ -9,6 +9,7 @@ from app.database import get_db
 from app.limiter import limiter
 from app.models import User, AlertChannel, Monitor
 from app.ai.analyzer import _is_blocked_url
+from app.audit import log_action
 from app.schemas import (
     AlertChannelCreate,
     AlertChannelUpdate,
@@ -126,6 +127,8 @@ def create_alert_channel(
     db.add(new_channel)
     db.commit()
     db.refresh(new_channel)
+    log_action(db, str(current_user.id), "alert_channel.create", "alert_channel",
+               str(new_channel.id), {"type": channel_data.type})
     return new_channel
 
 
@@ -253,8 +256,11 @@ def delete_alert_channel(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Alert channel not found"
         )
+    channel_type = channel.type
     db.delete(channel)
     db.commit()
+    log_action(db, str(current_user.id), "alert_channel.delete", "alert_channel",
+               channel_id, {"type": channel_type})
     return {"message": "Alert channel deleted successfully"}
 
 

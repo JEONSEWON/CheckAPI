@@ -22,6 +22,7 @@ from app.schemas import (
     MessageResponse
 )
 from app.auth import get_current_user, _get_user_by_api_key as get_user_by_api_key
+from app.audit import log_action
 
 def get_current_user_flexible(
     request: Request,
@@ -165,7 +166,10 @@ def create_monitor(
     db.add(new_monitor)
     db.commit()
     db.refresh(new_monitor)
-    
+
+    log_action(db, str(current_user.id), "monitor.create", "monitor", str(new_monitor.id),
+               {"name": new_monitor.name, "url": str(monitor_data.url), "interval": new_monitor.interval})
+
     return new_monitor
 
 
@@ -231,7 +235,10 @@ def update_monitor(
     
     db.commit()
     db.refresh(monitor)
-    
+
+    log_action(db, str(current_user.id), "monitor.update", "monitor", str(monitor.id),
+               {k: v for k, v in update_data.items() if k in ("name", "url", "interval", "is_active")})
+
     return monitor
 
 
@@ -255,9 +262,14 @@ def delete_monitor(
             detail="Monitor not found"
         )
     
+    monitor_name = monitor.name
+    monitor_url = monitor.url
     db.delete(monitor)
     db.commit()
-    
+
+    log_action(db, str(current_user.id), "monitor.delete", "monitor", monitor_id,
+               {"name": monitor_name, "url": monitor_url})
+
     return {"message": "Monitor deleted successfully"}
 
 
