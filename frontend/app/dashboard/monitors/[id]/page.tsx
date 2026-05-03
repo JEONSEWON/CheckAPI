@@ -496,6 +496,8 @@ export default function MonitorDetailPage() {
             <RegexTestPanel
               initialPattern={monitor.keyword || ''}
               initialPresent={monitor.keyword_present ?? true}
+              monitorId={monitorId}
+              onSaved={loadData}
             />
           </div>
         )}

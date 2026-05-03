@@ -1,18 +1,52 @@
 'use client';
 
 import { useState } from 'react';
-import { Play, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Play, CheckCircle, XCircle, AlertCircle, Save, Trash2, Loader2 } from 'lucide-react';
+import { monitorsAPI } from '@/lib/api';
+import toast from 'react-hot-toast';
 
 interface RegexTestPanelProps {
   initialPattern?: string;
   initialPresent?: boolean;
+  monitorId?: string;
+  onSaved?: () => void;
 }
 
-export default function RegexTestPanel({ initialPattern = '', initialPresent = true }: RegexTestPanelProps) {
+export default function RegexTestPanel({ initialPattern = '', initialPresent = true, monitorId, onSaved }: RegexTestPanelProps) {
   const [pattern, setPattern] = useState(initialPattern);
   const [testBody, setTestBody] = useState('');
   const [mustBePresent, setMustBePresent] = useState(initialPresent);
   const [result, setResult] = useState<{ passed: boolean; found: boolean; match: string | null; error: string | null } | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!monitorId || !pattern.trim()) return;
+    setIsSaving(true);
+    try {
+      await monitorsAPI.update(monitorId, { keyword: pattern, keyword_present: mustBePresent, use_regex: true });
+      toast.success('Pattern saved!');
+      onSaved?.();
+    } catch {
+      toast.error('Failed to save');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleRemove = async () => {
+    if (!monitorId) return;
+    setIsSaving(true);
+    try {
+      await monitorsAPI.update(monitorId, { keyword: null, keyword_present: true, use_regex: false });
+      setPattern('');
+      toast.success('Pattern removed');
+      onSaved?.();
+    } catch {
+      toast.error('Failed to remove');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const runTest = () => {
     if (!pattern.trim()) {
@@ -109,14 +143,36 @@ export default function RegexTestPanel({ initialPattern = '', initialPresent = t
           />
         </div>
 
-        {/* Run button */}
-        <button
-          onClick={runTest}
-          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition font-medium"
-        >
-          <Play className="h-4 w-4" />
-          Test Pattern
-        </button>
+        {/* Action buttons */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={runTest}
+            className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition font-medium"
+          >
+            <Play className="h-4 w-4" />
+            Test Pattern
+          </button>
+          {monitorId && (
+            <button
+              onClick={handleSave}
+              disabled={isSaving || !pattern.trim()}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              Save Pattern
+            </button>
+          )}
+          {monitorId && pattern && (
+            <button
+              onClick={handleRemove}
+              disabled={isSaving}
+              className="flex items-center gap-2 px-4 py-2 border border-red-200 dark:border-red-800 text-red-500 dark:text-red-400 text-sm rounded-lg hover:bg-red-50 dark:hover:bg-red-950 transition font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Trash2 className="h-4 w-4" />
+              Remove Pattern
+            </button>
+          )}
+        </div>
 
         {/* Result */}
         {result && (
