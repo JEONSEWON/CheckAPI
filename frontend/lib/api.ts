@@ -5,6 +5,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-p
 // Token management
 let accessToken: string | null = null;
 let refreshToken: string | null = null;
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
 
 export function setTokens(access: string, refresh: string) {
   accessToken = access;
@@ -59,18 +61,23 @@ async function apiRequest(
     headers,
   });
 
-  // If 401 and we have refresh token, try to refresh
+  // If 401 and we have refresh token, try to refresh (deduplicate concurrent refreshes)
   if (response.status === 401 && getRefreshToken()) {
-    const refreshed = await refreshAccessToken();
+    if (!isRefreshing) {
+      isRefreshing = true;
+      refreshPromise = refreshAccessToken().finally(() => {
+        isRefreshing = false;
+        refreshPromise = null;
+      });
+    }
+    const refreshed = await refreshPromise!;
     if (refreshed) {
-      // Retry with new token
       headers['Authorization'] = `Bearer ${getAccessToken()}`;
       response = await fetch(`${API_URL}${endpoint}`, {
         ...options,
         headers,
       });
     } else {
-      // Refresh failed, clear tokens and redirect to login
       clearTokens();
       if (typeof window !== 'undefined') {
         window.location.href = '/login';
