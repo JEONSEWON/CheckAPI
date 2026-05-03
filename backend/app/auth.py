@@ -107,15 +107,16 @@ def get_current_user(
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user")
         return user
 
-    # 2. Fall back to JWT Bearer
-    if not credentials:
+    # 2. JWT from Bearer header or HttpOnly cookie
+    token = credentials.credentials if credentials else request.cookies.get("access_token")
+    if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authentication required",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    payload = decode_token(credentials.credentials)
+    payload = decode_token(token)
 
     if payload.get("type") != "access":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token type")

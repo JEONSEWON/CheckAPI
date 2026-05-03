@@ -151,11 +151,12 @@ class CheckResponse(BaseModel):
 
 
 class CheckListResponse(BaseModel):
-    """List of checks with pagination"""
+    """List of checks with keyset pagination"""
     checks: List[CheckResponse]
     total: int
     page: int
     page_size: int
+    next_cursor: Optional[str] = None
 
 
 # ============== Alert Channel Schemas ==============

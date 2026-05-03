@@ -268,7 +268,8 @@ def get_monitor_checks(
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
-    hours: int = Query(None, ge=1)
+    hours: int = Query(None, ge=1),
+    cursor: str = Query(None, description="ISO datetime cursor for keyset pagination (before this timestamp)")
 ):
     """
     Get check history for a monitor
@@ -292,31 +293,38 @@ def get_monitor_checks(
         hours = max_hours
     # Get checks from last N hours
     since = datetime.utcnow() - timedelta(hours=hours)
-    
-    # Count total
-    total = db.query(Check).filter(
+
+    base_filter = [
         Check.monitor_id == monitor_id,
-        Check.checked_at >= since
-    ).count()
-    
-    # Get paginated checks
+        Check.checked_at >= since,
+    ]
+
+    # Keyset pagination: if cursor provided, skip offset scan
+    if cursor:
+        try:
+            cursor_dt = datetime.fromisoformat(cursor)
+            base_filter.append(Check.checked_at < cursor_dt)
+        except ValueError:
+            pass  # Invalid cursor — ignore, fall back to first page
+
+    total = db.query(Check).filter(*base_filter).count()
+
     checks = (
         db.query(Check)
-        .filter(
-            Check.monitor_id == monitor_id,
-            Check.checked_at >= since
-        )
+        .filter(*base_filter)
         .order_by(desc(Check.checked_at))
-        .offset((page - 1) * page_size)
         .limit(page_size)
         .all()
     )
-    
+
+    next_cursor = checks[-1].checked_at.isoformat() if len(checks) == page_size else None
+
     return {
         "checks": checks,
         "total": total,
         "page": page,
-        "page_size": page_size
+        "page_size": page_size,
+        "next_cursor": next_cursor,
     }
 
 

@@ -9,25 +9,23 @@ let isRefreshing = false;
 let refreshPromise: Promise<boolean> | null = null;
 
 export function setTokens(access: string, refresh: string) {
+  // Keep in-memory only — tokens are also stored as HttpOnly cookies by the server.
+  // localStorage is no longer used to prevent XSS token theft.
   accessToken = access;
   refreshToken = refresh;
+  // Migrate: remove legacy localStorage tokens on next setTokens call
   if (typeof window !== 'undefined') {
-    localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
   }
 }
 
 export function getAccessToken(): string | null {
-  if (!accessToken && typeof window !== 'undefined') {
-    accessToken = localStorage.getItem('access_token');
-  }
+  // In-memory only; no localStorage fallback (migration: old tokens are cleared above)
   return accessToken;
 }
 
 export function getRefreshToken(): string | null {
-  if (!refreshToken && typeof window !== 'undefined') {
-    refreshToken = localStorage.getItem('refresh_token');
-  }
   return refreshToken;
 }
 
@@ -59,6 +57,7 @@ async function apiRequest(
   let response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers,
+    credentials: 'include',
   });
 
   // If 401 and we have refresh token, try to refresh (deduplicate concurrent refreshes)
@@ -76,6 +75,7 @@ async function apiRequest(
       response = await fetch(`${API_URL}${endpoint}`, {
         ...options,
         headers,
+        credentials: 'include',
       });
     } else {
       clearTokens();
@@ -103,6 +103,7 @@ async function refreshAccessToken(): Promise<boolean> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refresh_token: refresh }),
+      credentials: 'include',
     });
 
     if (response.ok) {

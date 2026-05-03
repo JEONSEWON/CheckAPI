@@ -219,6 +219,20 @@ class MaintenanceWindowMonitor(Base):
     monitor_id = Column(String(36), ForeignKey("monitors.id", ondelete="CASCADE"), primary_key=True)
 
 
+class WebhookLog(Base):
+    """Log of incoming LemonSqueezy webhook events for debugging and auditing."""
+    __tablename__ = "webhook_logs"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    event_name = Column(String(100), nullable=False, index=True)
+    lemonsqueezy_subscription_id = Column(String(100))
+    user_id = Column(String(36))
+    payload = Column(JSON, nullable=False)
+    processed_at = Column(DateTime, default=datetime.utcnow, index=True)
+    success = Column(Boolean, default=True)
+    error_message = Column(Text)
+
+
 class MonitorAssertion(Base):
     """Assertion model - response validation rules per monitor"""
     __tablename__ = "monitor_assertions"

@@ -9,7 +9,7 @@ import hmac
 import hashlib
 
 from app.database import get_db
-from app.models import User, Subscription, Monitor
+from app.models import User, Subscription, Monitor, WebhookLog
 from app.schemas import SubscriptionResponse, MessageResponse
 from app.auth import get_current_user
 from app.lemonsqueezy import LemonSqueezyAPI, get_variant_id_for_plan
@@ -358,5 +358,16 @@ async def lemonsqueezy_webhook(request: Request, db: Session = Depends(get_db)):
             user.plan = subscription.plan
             db.commit()
             print(f"✅ Subscription resumed for user {user.email}")
-    
+
+    # Persist webhook event for audit/debugging
+    log = WebhookLog(
+        event_name=event_name or "unknown",
+        lemonsqueezy_subscription_id=str(lemonsqueezy_subscription_id) if lemonsqueezy_subscription_id else None,
+        user_id=str(user.id) if user else None,
+        payload=data,
+        success=True,
+    )
+    db.add(log)
+    db.commit()
+
     return {"message": "Webhook processed"}

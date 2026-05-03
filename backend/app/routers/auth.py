@@ -2,7 +2,7 @@
 Authentication routes: register, login, refresh token
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 from datetime import datetime
 
@@ -18,13 +18,32 @@ from app.auth import (
     decode_token,
     get_current_user
 )
+from app.config import get_settings
+
+_settings = get_settings()
+
+
+def _set_auth_cookies(response: Response, access_token: str, refresh_token: str) -> None:
+    """Set HttpOnly secure cookies for both tokens."""
+    is_secure = _settings.APP_ENV != "development"
+    response.set_cookie(
+        key="access_token", value=access_token,
+        httponly=True, secure=is_secure, samesite="none",
+        max_age=_settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60, path="/"
+    )
+    response.set_cookie(
+        key="refresh_token", value=refresh_token,
+        httponly=True, secure=is_secure, samesite="none",
+        max_age=_settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 3600,
+        path="/api/v1/auth/refresh"
+    )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
 @limiter.limit("5/minute")
-def register(request: Request, user_data: UserRegister, db: Session = Depends(get_db)):
+def register(request: Request, response: Response, user_data: UserRegister, db: Session = Depends(get_db)):
     """
     Register a new user and return tokens (auto-login)
     """
@@ -59,6 +78,7 @@ def register(request: Request, user_data: UserRegister, db: Session = Depends(ge
     access_token = create_access_token(data={"sub": str(new_user.id)})
     refresh_token = create_refresh_token(data={"sub": str(new_user.id)})
 
+    _set_auth_cookies(response, access_token, refresh_token)
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -68,7 +88,7 @@ def register(request: Request, user_data: UserRegister, db: Session = Depends(ge
 
 @router.post("/login", response_model=Token)
 @limiter.limit("10/minute")
-def login(request: Request, credentials: UserLogin, db: Session = Depends(get_db)):
+def login(request: Request, response: Response, credentials: UserLogin, db: Session = Depends(get_db)):
     """
     Login and get access token
     """
@@ -98,6 +118,7 @@ def login(request: Request, credentials: UserLogin, db: Session = Depends(get_db
     access_token = create_access_token(data={"sub": str(user.id)})
     refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
+    _set_auth_cookies(response, access_token, refresh_token)
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -107,7 +128,7 @@ def login(request: Request, credentials: UserLogin, db: Session = Depends(get_db
 
 @router.post("/refresh", response_model=Token)
 @limiter.limit("30/minute")
-def refresh_token(request: Request, token_data: TokenRefresh, db: Session = Depends(get_db)):
+def refresh_token(request: Request, response: Response, token_data: TokenRefresh, db: Session = Depends(get_db)):
     """
     Refresh access token using refresh token
     """
@@ -135,6 +156,7 @@ def refresh_token(request: Request, token_data: TokenRefresh, db: Session = Depe
     access_token = create_access_token(data={"sub": str(user.id)})
     new_refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
+    _set_auth_cookies(response, access_token, new_refresh_token)
     return {
         "access_token": access_token,
         "refresh_token": new_refresh_token,
@@ -151,10 +173,12 @@ def get_current_user_info(current_user: User = Depends(get_current_user)):
 
 
 @router.post("/logout", response_model=MessageResponse)
-def logout(current_user: User = Depends(get_current_user)):
+def logout(response: Response, current_user: User = Depends(get_current_user)):
     """
-    Logout (client should delete tokens)
+    Logout — clear HttpOnly cookies and instruct client to delete tokens.
     """
+    response.delete_cookie(key="access_token", path="/")
+    response.delete_cookie(key="refresh_token", path="/api/v1/auth/refresh")
     return {"message": "Successfully logged out"}
 
 
