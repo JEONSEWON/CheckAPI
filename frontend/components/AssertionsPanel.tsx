@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { assertionsAPI } from '@/lib/api';
-import { Plus, Trash2, Play, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
+import { assertionsAPI, aiAPI } from '@/lib/api';
+import { Plus, Trash2, Play, CheckCircle, XCircle, ChevronDown, Loader2, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const OPERATORS = [
@@ -32,9 +32,10 @@ const DEFAULT_ASSERTION = {
 
 interface AssertionsPanelProps {
   monitorId: string;
+  monitorUrl?: string;
 }
 
-export default function AssertionsPanel({ monitorId }: AssertionsPanelProps) {
+export default function AssertionsPanel({ monitorId, monitorUrl }: AssertionsPanelProps) {
   const [assertions, setAssertions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -42,6 +43,7 @@ export default function AssertionsPanel({ monitorId }: AssertionsPanelProps) {
   const [testResults, setTestResults] = useState<any>(null);
   const [testing, setTesting] = useState(false);
   const [showTest, setShowTest] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState(false);
 
   useEffect(() => { loadAssertions(); }, [monitorId]);
 
@@ -77,6 +79,37 @@ export default function AssertionsPanel({ monitorId }: AssertionsPanelProps) {
       updated.forEach(a => a.logic = val);
     }
     setAssertions(updated);
+  };
+
+  const handleAIGenerate = async () => {
+    if (!monitorUrl) return;
+    setAiGenerating(true);
+    try {
+      const result = await aiAPI.analyzeEndpoint(monitorUrl);
+      const suggested: any[] = result.assertions ?? [];
+      const existingPaths = new Set(assertions.map((a: any) => a.path));
+      const toAdd = suggested.filter((s: any) => !existingPaths.has(s.path));
+      const available = 10 - assertions.length;
+      if (available <= 0) {
+        toast.error('최대 10개 어설션까지 추가할 수 있어요');
+        return;
+      }
+      const adding = toAdd.slice(0, available);
+      if (adding.length < toAdd.length) {
+        toast.error('최대 10개 한도로 일부만 추가됐어요');
+      }
+      if (adding.length === 0) {
+        toast('추가할 새 어설션이 없어요 (중복)');
+        return;
+      }
+      const logic = assertions.length > 0 ? assertions[0].logic : 'AND';
+      setAssertions([...assertions, ...adding.map((s: any) => ({ ...DEFAULT_ASSERTION, ...s, logic }))]);
+      toast.success(`AI가 ${adding.length}개 어설션을 추가했어요`);
+    } catch (e: any) {
+      toast.error(e.message || 'AI 분석에 실패했어요');
+    } finally {
+      setAiGenerating(false);
+    }
   };
 
   const handleSave = async () => {
@@ -148,7 +181,21 @@ export default function AssertionsPanel({ monitorId }: AssertionsPanelProps) {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">JSON Path Assertions</h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Validate response body fields. Fires alert if any assertion fails.</p>
         </div>
-        <span className="text-sm text-gray-500 dark:text-gray-400">{assertions.length} / 10</span>
+        <div className="flex items-center gap-3">
+          {monitorUrl && (
+            <button
+              onClick={handleAIGenerate}
+              disabled={aiGenerating || assertions.length >= 10}
+              className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {aiGenerating
+                ? <Loader2 className="h-3 w-3 animate-spin" />
+                : <Sparkles className="h-3 w-3" />}
+              AI로 자동 생성
+            </button>
+          )}
+          <span className="text-sm text-gray-500 dark:text-gray-400">{assertions.length} / 10</span>
+        </div>
       </div>
 
       <div className="px-6 py-4 space-y-3">

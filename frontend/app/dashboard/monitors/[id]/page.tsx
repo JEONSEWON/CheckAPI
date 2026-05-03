@@ -492,7 +492,7 @@ export default function MonitorDetailPage() {
         {/* ── ASSERTIONS TAB ── */}
         {activeTab === 'assertions' && (
           <div className="space-y-6">
-            <AssertionsPanel monitorId={monitorId} />
+            <AssertionsPanel monitorId={monitorId} monitorUrl={monitor?.url} />
             <RegexTestPanel
               initialPattern={monitor.keyword || ''}
               initialPresent={monitor.keyword_present ?? true}
