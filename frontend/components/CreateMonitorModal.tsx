@@ -460,7 +460,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
                       type="button"
                       onClick={handleAnalyze}
                       disabled={!url || isAnalyzing}
-                      className="flex items-center gap-1.5 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-40 disabled:cursor-not-allowed text-sm font-medium whitespace-nowrap"
+                      className="flex items-center gap-1.5 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-40 disabled:cursor-not-allowed text-sm font-medium whitespace-nowrap"
                     >
                       {isAnalyzing
                         ? <Loader2 className="h-4 w-4 animate-spin" />
