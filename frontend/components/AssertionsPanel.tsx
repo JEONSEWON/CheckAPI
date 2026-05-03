@@ -191,7 +191,7 @@ export default function AssertionsPanel({ monitorId, monitorUrl }: AssertionsPan
               {aiGenerating
                 ? <Loader2 className="h-3 w-3 animate-spin" />
                 : <Sparkles className="h-3 w-3" />}
-              AI로 자동 생성
+              Auto-generate with AI
             </button>
           )}
           <span className="text-sm text-gray-500 dark:text-gray-400">{assertions.length} / 10</span>
