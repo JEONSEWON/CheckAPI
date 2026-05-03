@@ -8,6 +8,7 @@ from uuid import UUID
 from app.database import get_db
 from app.limiter import limiter
 from app.models import User, AlertChannel, Monitor
+from app.ai.analyzer import _is_blocked_url
 from app.schemas import (
     AlertChannelCreate,
     AlertChannelUpdate,
@@ -70,6 +71,11 @@ def validate_channel_config(channel_type: str, config: dict) -> None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid webhook URL"
+            )
+        if _is_blocked_url(config["url"]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Webhook URL must be a public internet address"
             )
         headers = config.get("headers", {})
         if not isinstance(headers, dict):

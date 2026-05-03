@@ -1,5 +1,5 @@
+import ipaddress
 import json
-import re
 import socket
 import urllib.parse
 from typing import Optional
@@ -13,14 +13,21 @@ _settings = get_settings()
 
 # ── SSRF Protection ──────────────────────────────────────────────────────────
 
-_BLOCKED_HOSTS = {"localhost", "127.0.0.1", "::1", "0.0.0.0"}
-_BLOCKED_IP_PATTERNS = [
-    re.compile(r"^10\."),
-    re.compile(r"^192\.168\."),
-    re.compile(r"^172\.(1[6-9]|2[0-9]|3[01])\."),
-    re.compile(r"^127\."),
-    re.compile(r"^169\.254\."),
-]
+
+def _is_private_ip(ip_str: str) -> bool:
+    """Return True if the IP address is private, loopback, link-local, or reserved."""
+    try:
+        addr = ipaddress.ip_address(ip_str)
+        return (
+            addr.is_private
+            or addr.is_loopback
+            or addr.is_link_local
+            or addr.is_reserved
+            or addr.is_unspecified
+            or addr.is_multicast
+        )
+    except ValueError:
+        return True  # unparseable → block
 
 
 def _is_blocked_url(url: str) -> bool:
@@ -29,19 +36,26 @@ def _is_blocked_url(url: str) -> bool:
         if parsed.scheme not in ("http", "https"):
             return True
         hostname = parsed.hostname or ""
-        if hostname.lower() in _BLOCKED_HOSTS:
+        if not hostname:
             return True
-        if any(p.match(hostname) for p in _BLOCKED_IP_PATTERNS):
-            return True
-        # Resolve DNS and re-check resolved IP to prevent DNS rebinding
+
+        # Direct IP address check (IPv4 and IPv6)
         try:
-            resolved = socket.gethostbyname(hostname)
-            if resolved in _BLOCKED_HOSTS:
+            if _is_private_ip(hostname):
                 return True
-            if any(p.match(resolved) for p in _BLOCKED_IP_PATTERNS):
-                return True
+        except ValueError:
+            pass  # hostname is a domain name, not an IP — continue
+
+        # DNS resolution check (prevents DNS rebinding, handles both IPv4/IPv6)
+        try:
+            results = socket.getaddrinfo(hostname, None)
+            for _, _, _, _, sockaddr in results:
+                ip = sockaddr[0]
+                if _is_private_ip(ip):
+                    return True
         except socket.gaierror:
             return True  # Can't resolve → block
+
         return False
     except Exception:
         return True
