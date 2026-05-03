@@ -45,7 +45,7 @@ class Monitor(Base):
     __tablename__ = "monitors"
     
     id = Column(String(36), primary_key=True, default=generate_uuid)
-    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     name = Column(String(255), nullable=False)
     url = Column(String(2048), nullable=False)
     method = Column(String(10), default="GET")  # GET, POST, PUT, DELETE
@@ -79,7 +79,7 @@ class Monitor(Base):
     # Custom domain for public status page (Pro/Business)
     custom_domain = Column(String(255), unique=True, nullable=True)
 
-    is_active = Column(Boolean, default=True)
+    is_active = Column(Boolean, default=True, index=True)
     last_status = Column(String(20))  # up, down, degraded
     last_checked_at = Column(DateTime)
     next_check_at = Column(DateTime)
@@ -99,7 +99,7 @@ class Check(Base):
     __tablename__ = "checks"
     
     id = Column(String(36), primary_key=True, default=generate_uuid)
-    monitor_id = Column(String(36), ForeignKey("monitors.id", ondelete="CASCADE"), nullable=False)
+    monitor_id = Column(String(36), ForeignKey("monitors.id", ondelete="CASCADE"), nullable=False, index=True)
     status = Column(String(20), nullable=False)  # up, down, degraded
     status_code = Column(Integer)
     response_time = Column(Integer)  # milliseconds
