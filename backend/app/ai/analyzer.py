@@ -44,18 +44,16 @@ def _is_blocked_url(url: str) -> bool:
         if hostname.lower() in _BLOCKED_NAMES:
             return True
 
-        # If hostname is a literal IP address, check directly
+        # Check whether hostname is a literal IP address (not a domain)
         try:
-            if _is_private_ip(hostname):
-                return True
-            # It's a public literal IP — allow
-            return False
+            ipaddress.ip_address(hostname)  # raises ValueError if it's a domain
+            # It's a literal IP — check if private
+            return _is_private_ip(hostname)
         except ValueError:
-            pass  # Not an IP — it's a domain name, continue
+            pass  # hostname is a domain name — continue with DNS check
 
-        # Domain name: attempt DNS resolution to block internal IPs
-        # If resolution fails for any reason, allow (fail-open) —
-        # blocking on DNS failure would prevent legitimate webhooks in restricted networks.
+        # Domain name: attempt DNS resolution to block IPs in private ranges
+        # Fail-open: if DNS is unavailable, allow the URL so legitimate webhooks aren't broken
         try:
             results = socket.getaddrinfo(hostname, 80, proto=socket.IPPROTO_TCP)
             for _, _, _, _, sockaddr in results:
@@ -63,7 +61,7 @@ def _is_blocked_url(url: str) -> bool:
                 if _is_private_ip(ip):
                     return True
         except Exception:
-            pass  # DNS unavailable — allow and let the actual request fail naturally
+            pass  # DNS unavailable — allow
 
         return False
     except Exception:
