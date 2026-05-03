@@ -75,6 +75,7 @@ class Monitor(Base):
     # Alert threshold — N consecutive failures before alerting (default 1 = alert immediately)
     alert_threshold = Column(Integer, default=1)
     consecutive_failures = Column(Integer, default=0)
+    alert_sent = Column(Boolean, default=False)  # True while an ongoing incident alert has been sent
     # Custom domain for public status page (Pro/Business)
     custom_domain = Column(String(255), unique=True, nullable=True)
 

@@ -71,6 +71,23 @@ def validate_channel_config(channel_type: str, config: dict) -> None:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid webhook URL"
             )
+        headers = config.get("headers", {})
+        if not isinstance(headers, dict):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Webhook headers must be a key-value object"
+            )
+        for k, v in headers.items():
+            if not isinstance(k, str) or not isinstance(v, str):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Webhook header keys and values must be strings"
+                )
+            if "\n" in k or "\r" in k or "\n" in v or "\r" in v:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Webhook header contains invalid characters"
+                )
 
 
 @router.get("/", response_model=List[AlertChannelResponse])

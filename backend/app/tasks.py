@@ -260,13 +260,17 @@ def check_single_monitor(monitor_id: str):
                 db.commit()
 
         # Alert logic:
-        # - Recovery (any → up): always alert immediately
-        # - Failure (up → down/degraded): alert only when consecutive_failures hits threshold exactly
+        # - Recovery (any → up): always alert immediately, reset alert_sent flag
+        # - Failure: alert only when threshold is first reached AND no alert sent yet for this incident
         if status == "up" and previous_status and previous_status != "up":
             print(f"Recovery: {previous_status} -> up")
+            monitor.alert_sent = False
+            db.commit()
             send_alerts.delay(str(monitor.id), status, previous_status)
-        elif status != "up" and monitor.consecutive_failures == threshold:
+        elif status != "up" and monitor.consecutive_failures >= threshold and not monitor.alert_sent:
             print(f"Threshold reached ({threshold}): {previous_status} -> {status}")
+            monitor.alert_sent = True
+            db.commit()
             send_alerts.delay(str(monitor.id), status, previous_status or status, ai_analysis)
         
         print(f"✓ Check completed: {monitor.name} - {status}")
@@ -360,11 +364,11 @@ def send_channel_alert(self, channel_type: str, channel_config: dict,
     elif channel_type == "slack":
         success = send_slack_alert(channel_config, monitor_name, monitor_url, new_status, old_status, ai_analysis)
     elif channel_type == "telegram":
-        success = send_telegram_alert(channel_config, monitor_name, monitor_url, new_status, old_status)
+        success = send_telegram_alert(channel_config, monitor_name, monitor_url, new_status, old_status, ai_analysis)
     elif channel_type == "discord":
-        success = send_discord_alert(channel_config, monitor_name, monitor_url, new_status, old_status)
+        success = send_discord_alert(channel_config, monitor_name, monitor_url, new_status, old_status, ai_analysis)
     elif channel_type == "webhook":
-        success = send_webhook_alert(channel_config, monitor_name, monitor_url, new_status, old_status, monitor_id)
+        success = send_webhook_alert(channel_config, monitor_name, monitor_url, new_status, old_status, monitor_id, ai_analysis)
     else:
         return
 

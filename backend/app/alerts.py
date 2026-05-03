@@ -324,16 +324,16 @@ def send_slack_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_
 
 
 def send_telegram_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_url: str,
-                        new_status: str, old_status: str) -> bool:
+                        new_status: str, old_status: str, ai_analysis: Dict[str, Any] = None) -> bool:
     """
     Send Telegram alert using bot API
     """
     chat_id = channel_config.get("chat_id")
     bot_token = channel_config.get("bot_token")
-    
+
     if not chat_id or not bot_token:
         return False
-    
+
     try:
         # Status emoji
         status_emoji = {
@@ -341,7 +341,17 @@ def send_telegram_alert(channel_config: Dict[str, Any], monitor_name: str, monit
             "down": "🔴",
             "degraded": "⚠️"
         }
-        
+
+        ai_block = ""
+        if ai_analysis and ai_analysis.get("summary"):
+            causes = " / ".join(ai_analysis.get("possible_causes", []))
+            actions = " / ".join(ai_analysis.get("recommended_actions", []))
+            ai_block = f"\n\n🤖 *AI Analysis*\n{ai_analysis['summary']}"
+            if causes:
+                ai_block += f"\n• Causes: {causes}"
+            if actions:
+                ai_block += f"\n• Actions: {actions}"
+
         # Message
         message = f"""
 {status_emoji.get(new_status, '🔔')} *Monitor Status Changed*
@@ -349,7 +359,7 @@ def send_telegram_alert(channel_config: Dict[str, Any], monitor_name: str, monit
 *Monitor:* {monitor_name}
 *URL:* {monitor_url}
 *Status:* {old_status.upper()} → *{new_status.upper()}*
-*Time:* {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}
+*Time:* {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}{ai_block}
 """
         
         url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
@@ -375,14 +385,14 @@ def send_telegram_alert(channel_config: Dict[str, Any], monitor_name: str, monit
 
 
 def send_discord_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_url: str,
-                       new_status: str, old_status: str) -> bool:
+                       new_status: str, old_status: str, ai_analysis: Dict[str, Any] = None) -> bool:
     """
     Send Discord alert using webhook
     """
     webhook_url = channel_config.get("webhook_url")
     if not webhook_url:
         return False
-    
+
     try:
         # Status color (decimal)
         color = {
@@ -390,32 +400,34 @@ def send_discord_alert(channel_config: Dict[str, Any], monitor_name: str, monito
             "down": 14423100,  # red
             "degraded": 16098571  # yellow
         }
-        
+
+        embeds = [{
+            "title": "🔔 Monitor Status Changed",
+            "color": color.get(new_status, 7119450),
+            "fields": [
+                {"name": "Monitor", "value": monitor_name, "inline": True},
+                {"name": "Status", "value": f"{old_status.upper()} → **{new_status.upper()}**", "inline": True},
+                {"name": "URL", "value": monitor_url, "inline": False},
+            ],
+            "timestamp": datetime.utcnow().isoformat()
+        }]
+
+        if ai_analysis and ai_analysis.get("summary"):
+            causes = " / ".join(ai_analysis.get("possible_causes", []))
+            actions = " / ".join(ai_analysis.get("recommended_actions", []))
+            ai_value = ai_analysis["summary"]
+            if causes:
+                ai_value += f"\n• Causes: {causes}"
+            if actions:
+                ai_value += f"\n• Actions: {actions}"
+            embeds.append({
+                "title": "🤖 AI Analysis",
+                "color": 16763904,  # gold
+                "description": ai_value,
+            })
+
         # Discord embed
-        payload = {
-            "embeds": [{
-                "title": "🔔 Monitor Status Changed",
-                "color": color.get(new_status, 7119450),
-                "fields": [
-                    {
-                        "name": "Monitor",
-                        "value": monitor_name,
-                        "inline": True
-                    },
-                    {
-                        "name": "Status",
-                        "value": f"{old_status.upper()} → **{new_status.upper()}**",
-                        "inline": True
-                    },
-                    {
-                        "name": "URL",
-                        "value": monitor_url,
-                        "inline": False
-                    }
-                ],
-                "timestamp": datetime.utcnow().isoformat()
-            }]
-        }
+        payload = {"embeds": embeds}
         
         response = requests.post(webhook_url, json=payload, timeout=10)
         
@@ -560,14 +572,15 @@ def send_sla_report_email(
 
 
 def send_webhook_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_url: str,
-                       new_status: str, old_status: str, monitor_id: str) -> bool:
+                       new_status: str, old_status: str, monitor_id: str,
+                       ai_analysis: Dict[str, Any] = None) -> bool:
     """
     Send webhook alert (custom HTTP POST)
     """
     webhook_url = channel_config.get("url")
     if not webhook_url:
         return False
-    
+
     try:
         # Webhook payload
         payload = {
@@ -581,7 +594,8 @@ def send_webhook_alert(channel_config: Dict[str, Any], monitor_name: str, monito
                 "old": old_status,
                 "new": new_status
             },
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
+            "ai_analysis": ai_analysis,
         }
         
         # Custom headers if provided
