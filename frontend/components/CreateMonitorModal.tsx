@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap, Sparkles } from 'lucide-react';
-import { monitorsAPI, aiAPI, assertionsAPI } from '@/lib/api';
+import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap, Sparkles, Bell } from 'lucide-react';
+import { monitorsAPI, aiAPI, assertionsAPI, alertChannelsAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 interface CreateMonitorModalProps {
@@ -31,6 +31,14 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
     reasoning: string;
     assertions: { path: string; operator: string; expected: string }[];
   } | null>(null);
+
+  // Alert prompt state (shown after monitor creation)
+  const [createdMonitorId, setCreatedMonitorId] = useState<string | null>(null);
+  const [showAlertPrompt, setShowAlertPrompt] = useState(false);
+  const [alertChannelType, setAlertChannelType] = useState<'email' | 'slack' | 'telegram' | 'discord' | 'webhook'>('email');
+  const [alertInput1, setAlertInput1] = useState('');
+  const [alertInput2, setAlertInput2] = useState('');
+  const [isAddingAlert, setIsAddingAlert] = useState(false);
 
   if (!isOpen) return null;
 
@@ -167,6 +175,8 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
 
       toast.success('Monitor created!');
       onSuccess();
+      setCreatedMonitorId(monitor.id);
+      setShowAlertPrompt(true);
     } catch (error: any) {
       if (error.message && error.message.includes('Monitor limit reached')) {
         setShowUpgradeModal(true);
@@ -191,8 +201,171 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
     setHeartbeatInterval(60);
     setHeartbeatGrace(5);
     setAiSuggestion(null);
+    setCreatedMonitorId(null);
+    setShowAlertPrompt(false);
+    setAlertChannelType('email');
+    setAlertInput1('');
+    setAlertInput2('');
     onClose();
   };
+
+  const handleAddAlert = async () => {
+    if (!createdMonitorId) return;
+    const type = alertChannelType;
+    let config: Record<string, string> = {};
+    let name = '';
+    if (type === 'email') {
+      if (!alertInput1) return;
+      config = { email: alertInput1 };
+      name = `Email — ${alertInput1}`;
+    } else if (type === 'slack') {
+      if (!alertInput1) return;
+      config = { webhook_url: alertInput1 };
+      name = 'Slack Webhook';
+    } else if (type === 'telegram') {
+      if (!alertInput1 || !alertInput2) return;
+      config = { bot_token: alertInput1, chat_id: alertInput2 };
+      name = `Telegram — ${alertInput2}`;
+    } else if (type === 'discord') {
+      if (!alertInput1) return;
+      config = { webhook_url: alertInput1 };
+      name = 'Discord Webhook';
+    } else if (type === 'webhook') {
+      if (!alertInput1) return;
+      config = { url: alertInput1 };
+      name = 'Custom Webhook';
+    }
+    setIsAddingAlert(true);
+    try {
+      const channel = await alertChannelsAPI.create({ name, type, config });
+      await alertChannelsAPI.linkToMonitor(createdMonitorId, channel.id);
+      toast.success('Alert channel added!');
+      handleClose();
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to add alert channel');
+    } finally {
+      setIsAddingAlert(false);
+    }
+  };
+
+  const CHANNEL_TABS = [
+    { type: 'email', label: '📧 Email' },
+    { type: 'slack', label: '💬 Slack' },
+    { type: 'telegram', label: '✈️ Telegram' },
+    { type: 'discord', label: '🎮 Discord' },
+    { type: 'webhook', label: '🔗 Webhook' },
+  ] as const;
+
+  if (showAlertPrompt) {
+    return (
+      <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={handleClose} />
+        <div className="flex min-h-full items-center justify-center p-4">
+          <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2">
+                <Bell className="h-5 w-5 text-green-600" />
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Get notified</h2>
+              </div>
+              <button onClick={handleClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                <X className="h-5 w-5 dark:text-gray-400" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-start gap-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-green-700 dark:text-green-400">Monitor created!</p>
+                  <p className="text-xs text-green-600 dark:text-green-500 mt-0.5">Add an alert channel to get notified when it goes down.</p>
+                </div>
+              </div>
+
+              {/* Channel type tabs */}
+              <div className="flex gap-1 flex-wrap">
+                {CHANNEL_TABS.map((tab) => (
+                  <button
+                    key={tab.type}
+                    type="button"
+                    onClick={() => { setAlertChannelType(tab.type); setAlertInput1(''); setAlertInput2(''); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                      alertChannelType === tab.type
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Channel-specific input */}
+              <div className="space-y-2">
+                {alertChannelType === 'email' && (
+                  <input
+                    type="email" autoFocus
+                    value={alertInput1} onChange={e => setAlertInput1(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 text-sm"
+                  />
+                )}
+                {(alertChannelType === 'slack' || alertChannelType === 'discord') && (
+                  <input
+                    type="url" autoFocus
+                    value={alertInput1} onChange={e => setAlertInput1(e.target.value)}
+                    placeholder={alertChannelType === 'slack' ? 'https://hooks.slack.com/services/...' : 'https://discord.com/api/webhooks/...'}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 text-sm"
+                  />
+                )}
+                {alertChannelType === 'webhook' && (
+                  <input
+                    type="url" autoFocus
+                    value={alertInput1} onChange={e => setAlertInput1(e.target.value)}
+                    placeholder="https://your-server.com/webhook"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 text-sm"
+                  />
+                )}
+                {alertChannelType === 'telegram' && (
+                  <>
+                    <input
+                      type="text" autoFocus
+                      value={alertInput1} onChange={e => setAlertInput1(e.target.value)}
+                      placeholder="Bot Token (from @BotFather)"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 text-sm"
+                    />
+                    <input
+                      type="text"
+                      value={alertInput2} onChange={e => setAlertInput2(e.target.value)}
+                      placeholder="Chat ID (e.g. -100123456789)"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 text-sm"
+                    />
+                  </>
+                )}
+              </div>
+
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleAddAlert}
+                  disabled={isAddingAlert || !alertInput1 || (alertChannelType === 'telegram' && !alertInput2)}
+                  className="flex-1 bg-green-600 text-white py-2.5 px-4 rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium text-sm"
+                >
+                  {isAddingAlert ? <Loader2 className="animate-spin h-4 w-4" /> : <Bell className="h-4 w-4" />}
+                  {isAddingAlert ? 'Adding...' : 'Add & Connect'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
