@@ -36,9 +36,9 @@ class Settings(BaseSettings):
     RESEND_API_KEY: str = ""
     FROM_EMAIL: str = "noreply@checkapi.io"
 
-    # SendGrid (legacy)
-    SENDGRID_API_KEY: str = ""
-    
+    # AI
+    AI_MODEL: str = "claude-haiku-4-5-20251001"
+
     # Frontend
     FRONTEND_URL: str = "http://localhost:3000"
     

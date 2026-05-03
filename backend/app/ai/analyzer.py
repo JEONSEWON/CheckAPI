@@ -7,6 +7,9 @@ from typing import Optional
 import httpx
 
 from app.ai.client import get_client
+from app.config import get_settings
+
+_settings = get_settings()
 
 # ── SSRF Protection ──────────────────────────────────────────────────────────
 
@@ -71,7 +74,7 @@ def analyze_incident(
         context = "\n".join(lines)
 
         message = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model=_settings.AI_MODEL,
             max_tokens=300,
             messages=[{
                 "role": "user",
@@ -145,7 +148,7 @@ def analyze_endpoint(url: str) -> dict:
         )
 
         message = ai_client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model=_settings.AI_MODEL,
             max_tokens=400,
             messages=[{"role": "user", "content": prompt}],
         )
