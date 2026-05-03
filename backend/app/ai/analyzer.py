@@ -39,22 +39,31 @@ def _is_blocked_url(url: str) -> bool:
         if not hostname:
             return True
 
-        # Direct IP address check (IPv4 and IPv6)
+        # Block obviously internal hostnames
+        _BLOCKED_NAMES = {"localhost", "metadata.google.internal", "169.254.169.254"}
+        if hostname.lower() in _BLOCKED_NAMES:
+            return True
+
+        # If hostname is a literal IP address, check directly
         try:
             if _is_private_ip(hostname):
                 return True
+            # It's a public literal IP — allow
+            return False
         except ValueError:
-            pass  # hostname is a domain name, not an IP — continue
+            pass  # Not an IP — it's a domain name, continue
 
-        # DNS resolution check (prevents DNS rebinding, handles both IPv4/IPv6)
+        # Domain name: attempt DNS resolution to block internal IPs
+        # If resolution fails for any reason, allow (fail-open) —
+        # blocking on DNS failure would prevent legitimate webhooks in restricted networks.
         try:
-            results = socket.getaddrinfo(hostname, None)
+            results = socket.getaddrinfo(hostname, 80, proto=socket.IPPROTO_TCP)
             for _, _, _, _, sockaddr in results:
                 ip = sockaddr[0]
                 if _is_private_ip(ip):
                     return True
-        except socket.gaierror:
-            return True  # Can't resolve → block
+        except Exception:
+            pass  # DNS unavailable — allow and let the actual request fail naturally
 
         return False
     except Exception:
