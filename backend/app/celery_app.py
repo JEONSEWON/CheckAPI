@@ -49,4 +49,8 @@ celery_app.conf.beat_schedule = {
         "task": "app.tasks.check_ssl_certificates",
         "schedule": crontab(hour=9, minute=0),  # 9 AM daily
     },
+    "send-monthly-sla-reports": {
+        "task": "app.tasks.send_monthly_sla_reports",
+        "schedule": crontab(hour=9, minute=0, day_of_month=1),  # 1st of each month, 9 AM UTC
+    },
 }

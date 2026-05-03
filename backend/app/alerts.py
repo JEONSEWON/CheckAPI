@@ -431,6 +431,134 @@ def send_discord_alert(channel_config: Dict[str, Any], monitor_name: str, monito
         return False
 
 
+def send_sla_report_email(
+    user_email: str,
+    user_name: str,
+    month_label: str,
+    monitors_data: list,
+) -> bool:
+    """
+    Send monthly SLA report email.
+    monitors_data: list of dicts with keys:
+      name, url, uptime_percentage, downtime_minutes, incidents, avg_response_time
+    """
+    resend_api_key = settings.RESEND_API_KEY
+    if not resend_api_key:
+        print("⚠️  Resend API key not configured")
+        return False
+
+    name = user_name or user_email.split("@")[0]
+    dashboard_url = f"{settings.FRONTEND_URL}/dashboard/analytics"
+
+    def uptime_color(pct):
+        if pct is None:
+            return "#9ca3af"
+        if pct >= 99.9:
+            return "#16a34a"
+        if pct >= 99.0:
+            return "#d97706"
+        return "#dc2626"
+
+    def uptime_badge(pct):
+        if pct is None:
+            return '<span style="color:#9ca3af;">—</span>'
+        color = uptime_color(pct)
+        return f'<span style="color:{color};font-weight:bold;">{pct:.3f}%</span>'
+
+    rows_html = ""
+    for m in monitors_data:
+        pct = m.get("uptime_percentage")
+        rows_html += f"""
+        <tr style="border-bottom:1px solid #f3f4f6;">
+          <td style="padding:12px 8px;color:#111827;font-weight:500;">{m['name']}</td>
+          <td style="padding:12px 8px;text-align:center;">{uptime_badge(pct)}</td>
+          <td style="padding:12px 8px;text-align:center;color:#374151;">{m.get('downtime_minutes', 0):.1f} min</td>
+          <td style="padding:12px 8px;text-align:center;color:#374151;">{m.get('incidents', 0)}</td>
+          <td style="padding:12px 8px;text-align:center;color:#374151;">{m.get('avg_response_time', 0)} ms</td>
+        </tr>"""
+
+    valid = [m for m in monitors_data if m.get("uptime_percentage") is not None]
+    overall = round(sum(m["uptime_percentage"] for m in valid) / len(valid), 3) if valid else None
+    overall_html = uptime_badge(overall)
+
+    try:
+        html_content = f"""
+        <html>
+        <body style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;padding:20px;background:#f9fafb;">
+          <div style="background:white;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+
+            <div style="background:#16a34a;padding:28px 28px 24px;text-align:center;">
+              <h1 style="color:white;margin:0;font-size:22px;">📊 Monthly SLA Report</h1>
+              <p style="color:#bbf7d0;margin:6px 0 0;font-size:14px;">{month_label}</p>
+            </div>
+
+            <div style="padding:28px;">
+              <p style="color:#374151;margin-top:0;">Hey {name},</p>
+              <p style="color:#6b7280;line-height:1.6;">
+                Here's your API uptime summary for <strong>{month_label}</strong>.
+                Overall uptime across all monitors: {overall_html}
+              </p>
+
+              <table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:16px;">
+                <thead>
+                  <tr style="background:#f9fafb;border-bottom:2px solid #e5e7eb;">
+                    <th style="padding:10px 8px;text-align:left;color:#6b7280;font-weight:600;">Monitor</th>
+                    <th style="padding:10px 8px;text-align:center;color:#6b7280;font-weight:600;">Uptime</th>
+                    <th style="padding:10px 8px;text-align:center;color:#6b7280;font-weight:600;">Downtime</th>
+                    <th style="padding:10px 8px;text-align:center;color:#6b7280;font-weight:600;">Incidents</th>
+                    <th style="padding:10px 8px;text-align:center;color:#6b7280;font-weight:600;">Avg Response</th>
+                  </tr>
+                </thead>
+                <tbody>{rows_html}</tbody>
+              </table>
+
+              <div style="text-align:center;margin:28px 0 8px;">
+                <a href="{dashboard_url}"
+                   style="background:#16a34a;color:white;padding:12px 28px;border-radius:8px;
+                          text-decoration:none;font-weight:bold;font-size:14px;display:inline-block;">
+                  View Full Analytics →
+                </a>
+              </div>
+            </div>
+
+            <div style="background:#f9fafb;padding:16px 28px;text-align:center;border-top:1px solid #e5e7eb;">
+              <p style="font-size:12px;color:#9ca3af;margin:0;">
+                <a href="https://checkapi.io" style="color:#16a34a;">CheckAPI</a> ·
+                You're receiving this as a Pro/Business plan member.
+              </p>
+            </div>
+          </div>
+        </body>
+        </html>
+        """
+
+        response = requests.post(
+            "https://api.resend.com/emails",
+            json={
+                "from": "CheckAPI Reports <noreply@checkapi.io>",
+                "to": [user_email],
+                "subject": f"📊 Your SLA Report — {month_label}",
+                "html": html_content,
+            },
+            headers={
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json",
+            },
+            timeout=10,
+        )
+
+        if response.status_code == 200:
+            print(f"✉️  SLA report sent to {user_email}")
+            return True
+        else:
+            print(f"❌ SLA report email failed: {response.status_code} - {response.text}")
+            return False
+
+    except Exception as e:
+        print(f"❌ SLA report email error: {e}")
+        return False
+
+
 def send_webhook_alert(channel_config: Dict[str, Any], monitor_name: str, monitor_url: str,
                        new_status: str, old_status: str, monitor_id: str) -> bool:
     """

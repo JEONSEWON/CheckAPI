@@ -586,3 +586,99 @@ def cleanup_old_checks():
 
     finally:
         db.close()
+
+
+@celery_app.task(name="app.tasks.send_monthly_sla_reports")
+def send_monthly_sla_reports():
+    """
+    Monthly task (1st of each month, 9 AM UTC):
+    Send SLA report emails to all Pro/Business users.
+    """
+    from app.alerts import send_sla_report_email
+    from app.models import AlertChannel
+
+    db = SessionLocal()
+    try:
+        now = datetime.utcnow()
+
+        # Last month's range
+        first_of_this_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        last_month_end = first_of_this_month - timedelta(seconds=1)
+        last_month_start = last_month_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        month_label = last_month_start.strftime("%B %Y")
+
+        users = db.query(User).filter(User.plan.in_(["pro", "business"]), User.is_active == True).all()
+        print(f"[sla-report] Sending to {len(users)} Pro/Business users for {month_label}")
+
+        sent = 0
+        for user in users:
+            monitors = db.query(Monitor).filter(
+                Monitor.user_id == user.id,
+                Monitor.is_active == True,
+            ).all()
+
+            if not monitors:
+                continue
+
+            monitors_data = []
+            for monitor in monitors:
+                checks = db.query(Check).filter(
+                    Check.monitor_id == monitor.id,
+                    Check.checked_at >= last_month_start,
+                    Check.checked_at <= last_month_end,
+                ).all()
+
+                if not checks:
+                    continue
+
+                total = len(checks)
+                up_count = sum(1 for c in checks if c.status == "up")
+                uptime_pct = round((up_count / total) * 100, 3)
+
+                downtime_seconds = 0
+                in_incident = False
+                incident_start = None
+                incidents = 0
+
+                for c in sorted(checks, key=lambda x: x.checked_at):
+                    if c.status in ["down", "degraded"] and not in_incident:
+                        in_incident = True
+                        incident_start = c.checked_at
+                        incidents += 1
+                    elif c.status == "up" and in_incident:
+                        in_incident = False
+                        if incident_start:
+                            downtime_seconds += (c.checked_at - incident_start).total_seconds()
+
+                if in_incident and incident_start:
+                    downtime_seconds += (last_month_end - incident_start).total_seconds()
+
+                response_times = [c.response_time for c in checks if c.response_time]
+                avg_response = int(sum(response_times) / len(response_times)) if response_times else 0
+
+                monitors_data.append({
+                    "name": monitor.name,
+                    "url": monitor.url,
+                    "uptime_percentage": uptime_pct,
+                    "downtime_minutes": round(downtime_seconds / 60, 1),
+                    "incidents": incidents,
+                    "avg_response_time": avg_response,
+                })
+
+            if not monitors_data:
+                continue
+
+            ok = send_sla_report_email(
+                user_email=user.email,
+                user_name=user.name or "",
+                month_label=month_label,
+                monitors_data=monitors_data,
+            )
+            if ok:
+                sent += 1
+
+        print(f"[sla-report] Done — sent {sent}/{len(users)} reports")
+        return {"sent": sent, "total_users": len(users)}
+
+    finally:
+        db.close()
