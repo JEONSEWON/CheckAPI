@@ -19,6 +19,7 @@ export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [alertChannels, setAlertChannels] = useState<any[]>([]);
   const [showWizard, setShowWizard] = useState(false);
+  const [showAIBanner, setShowAIBanner] = useState(true);
 
   useEffect(() => {
     loadData();
@@ -71,6 +72,23 @@ export default function DashboardPage() {
             Here's what's happening with your monitors
           </p>
         </div>
+
+        {/* AI Banner */}
+        {showAIBanner && (monitors.length === 0 || monitors.some(m => m.status === 'down' || m.status === 'degraded')) && (
+          <div className="flex items-start gap-3 rounded-lg border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-700/40 px-4 py-3">
+            <span className="text-yellow-600 dark:text-yellow-400 text-lg leading-none mt-0.5">✦</span>
+            <p className="flex-1 text-sm text-yellow-800 dark:text-yellow-300">
+              AI가 장애 원인을 자동으로 분석합니다. 체크 히스토리에서 AI 분석 결과를 확인하세요.
+            </p>
+            <button
+              onClick={() => setShowAIBanner(false)}
+              className="text-yellow-500 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-200 transition text-lg leading-none"
+              aria-label="닫기"
+            >
+              ×
+            </button>
+          </div>
+        )}
 
         {/* Stats */}
         {overview && (
