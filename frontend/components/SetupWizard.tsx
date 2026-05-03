@@ -45,7 +45,7 @@ export default function SetupWizard({ onComplete }: SetupWizardProps) {
   const [isCompleting, setIsCompleting] = useState(false);
 
   const markStepDone = (s: number) =>
-    setCompletedSteps((prev) => new Set([...prev, s]));
+    setCompletedSteps((prev) => new Set(Array.from(prev).concat(s)));
 
   const handleFinish = async () => {
     setIsCompleting(true);
