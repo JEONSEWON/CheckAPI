@@ -4,6 +4,7 @@ Authentication routes: register, login, refresh token
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from app.database import get_db
 from app.limiter import limiter
@@ -154,3 +155,16 @@ def logout(current_user: User = Depends(get_current_user)):
     Logout (client should delete tokens)
     """
     return {"message": "Successfully logged out"}
+
+
+@router.post("/complete-onboarding", response_model=UserResponse)
+def complete_onboarding(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Mark onboarding as completed for the current user."""
+    current_user.onboarding_completed = True
+    current_user.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(current_user)
+    return current_user

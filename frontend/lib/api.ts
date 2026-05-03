@@ -125,6 +125,9 @@ export const authAPI = {
     }),
 
   me: () => apiRequest('/api/v1/auth/me'),
+
+  completeOnboarding: () =>
+    apiRequest('/api/v1/auth/complete-onboarding', { method: 'POST' }),
 };
 
 // Monitors API

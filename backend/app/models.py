@@ -25,9 +25,10 @@ class User(Base):
     plan = Column(String(20), default="free")  # free, starter, pro, business
     stripe_customer_id = Column(String(100))
     is_active = Column(Boolean, default=True)
+    onboarding_completed = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relationships
     monitors = relationship("Monitor", back_populates="user", cascade="all, delete-orphan")
     alert_channels = relationship("AlertChannel", back_populates="user", cascade="all, delete-orphan")

@@ -6,6 +6,7 @@ import { useAuthStore } from '@/lib/store';
 import { authAPI, monitorsAPI, analyticsAPI, alertChannelsAPI } from '@/lib/api';
 import DashboardLayout from '@/components/DashboardLayout';
 import CreateMonitorModal from '@/components/CreateMonitorModal';
+import SetupWizard from '@/components/SetupWizard';
 import { Activity, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -17,6 +18,7 @@ export default function DashboardPage() {
   const [loading, setLoadingState] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [alertChannels, setAlertChannels] = useState<any[]>([]);
+  const [showWizard, setShowWizard] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -32,6 +34,9 @@ export default function DashboardPage() {
       if (!user) {
         const userResponse = await authAPI.me();
         setUser(userResponse);
+        if (!userResponse.onboarding_completed) {
+          setShowWizard(true);
+        }
       }
       const monitorsResponse = await monitorsAPI.list();
       setMonitors(monitorsResponse);
@@ -58,6 +63,9 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
+      {showWizard && (
+        <SetupWizard onComplete={() => { setShowWizard(false); loadData(); }} />
+      )}
       <div className="space-y-6">
         {/* Header */}
         <div>

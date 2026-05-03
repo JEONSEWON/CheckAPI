@@ -42,8 +42,9 @@ class UserResponse(BaseModel):
     name: Optional[str]
     plan: str
     is_active: bool
+    onboarding_completed: bool = False
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 

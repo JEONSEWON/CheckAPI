@@ -21,7 +21,14 @@
       "WebFetch(domain:notifier.so)",
       "WebFetch(domain:www.indiehackers.com)",
       "WebFetch(domain:uptimerobot.com)",
-      "WebFetch(domain:help.uptimerobot.com)"
+      "WebFetch(domain:help.uptimerobot.com)",
+      "Bash(export DATABASE_URL=\"postgresql://postgres:WEzAJLmpnaxWPGWArLwTRkHMgqfEmvXl@maglev.proxy.rlwy.net:50883/railway\")",
+      "Bash(alembic upgrade *)",
+      "Bash(pip install *)",
+      "Bash(export REDIS_URL=\"redis://default:vpFcBuNESQVwvbBchQrCZuaAOTNBHKuI@redis.railway.internal:6379\")",
+      "Bash(export JWT_SECRET_KEY=\"vxP<c21#*8vik\\)tddx_h7]sotr\\)mMfwomDL.L{J|%\")",
+      "Bash(alembic current *)",
+      "Bash(xargs -I {} sh -c 'echo \"=== {} ===\" && head -5 {}')"
     ]
   }
 }
