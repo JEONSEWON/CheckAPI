@@ -237,8 +237,8 @@ export default function HomePage() {
           </div>
 
           <h1 style={{ fontSize: 'clamp(38px, 6.5vw, 72px)', fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.04em', marginBottom: '24px', color: '#f8fafc' }}>
-            Catch silent API failures<br />
-            <span className="teal glow-text">before your users do.</span>
+            Catch silent API failures.<br />
+            <span className="teal glow-text">AI tells you why.</span>
           </h1>
 
           <p style={{ fontSize: '18px', color: '#94a3b8', maxWidth: '560px', margin: '0 auto 12px', lineHeight: 1.7 }}>
