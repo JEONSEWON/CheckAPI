@@ -245,6 +245,12 @@ export default function HomePage() {
             CheckAPI tests the real response content — not just whether your endpoint returns 200 OK.
           </p>
 
+          <div style={{ margin: '8px auto 0', display: 'flex', justifyContent: 'center' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(134,239,172,0.12)', border: '1px solid rgba(134,239,172,0.3)', color: '#86efac', padding: '5px 14px', borderRadius: '999px', fontSize: '12px', fontWeight: 600, letterSpacing: '0.03em' }}>
+              ✦ AI-powered incident analysis
+            </span>
+          </div>
+
           <div style={{ margin: '16px auto 0', maxWidth: '480px', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '10px', padding: '10px 16px', justifyContent: 'center' }}>
             <X style={{ width: '14px', height: '14px', color: '#f87171', flexShrink: 0 }} />
             <span style={{ fontSize: '14px', color: '#f87171', fontFamily: "'DM Mono', monospace" }}>login returns 200, but the token is missing</span>
