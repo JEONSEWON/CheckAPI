@@ -40,7 +40,9 @@ def check_ssl_expiry(url: str):
         cert = conn.getpeercert()
         conn.close()
         expiry_str = cert["notAfter"]
-        return datetime.strptime(expiry_str, "%b %d %H:%M:%S %Y %Z")
+        # Strip trailing timezone label (e.g. " GMT") before parsing — %Z is unreliable
+        expiry_no_tz = expiry_str.rsplit(" ", 1)[0]
+        return datetime.strptime(expiry_no_tz, "%b %d %H:%M:%S %Y")
     except Exception as e:
         print(f"[SSL] check error for {url}: {e}")
         return None
@@ -301,7 +303,7 @@ def is_in_maintenance(monitor, db) -> bool:
     """Check if monitor is currently in an active maintenance window"""
     from app.models import MaintenanceWindow
     from datetime import datetime, timezone
-    import pytz
+    from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
     now_utc = datetime.utcnow()
 
@@ -318,9 +320,9 @@ def is_in_maintenance(monitor, db) -> bool:
 
         # Convert now to window timezone
         try:
-            tz = pytz.timezone(window.timezone)
+            tz = ZoneInfo(window.timezone)
             now_local = datetime.now(tz)
-        except Exception:
+        except ZoneInfoNotFoundError:
             now_local = now_utc.replace(tzinfo=timezone.utc)
 
         current_time = now_local.strftime("%H:%M")

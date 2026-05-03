@@ -577,14 +577,24 @@ def send_webhook_alert(channel_config: Dict[str, Any], monitor_name: str, monito
     """
     Send webhook alert (custom HTTP POST)
     """
+    import hashlib
     webhook_url = channel_config.get("url")
     if not webhook_url:
         return False
 
     try:
+        now = datetime.utcnow()
+        # Idempotency key: hash of monitor_id + status transition + 5-minute time bucket.
+        # Retries within the same 5-minute window carry the same key so receivers can deduplicate.
+        time_bucket = now.strftime("%Y%m%d%H") + str(now.minute // 5)
+        idempotency_key = hashlib.sha256(
+            f"{monitor_id}:{old_status}:{new_status}:{time_bucket}".encode()
+        ).hexdigest()[:32]
+
         # Webhook payload
         payload = {
             "event": "status_changed",
+            "idempotency_key": idempotency_key,
             "monitor": {
                 "id": monitor_id,
                 "name": monitor_name,
@@ -594,13 +604,14 @@ def send_webhook_alert(channel_config: Dict[str, Any], monitor_name: str, monito
                 "old": old_status,
                 "new": new_status
             },
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": now.isoformat(),
             "ai_analysis": ai_analysis,
         }
-        
+
         # Custom headers if provided
         headers = channel_config.get("headers", {})
         headers["Content-Type"] = "application/json"
+        headers["X-CheckAPI-Idempotency-Key"] = idempotency_key
         
         response = requests.post(webhook_url, json=payload, headers=headers, timeout=10)
         

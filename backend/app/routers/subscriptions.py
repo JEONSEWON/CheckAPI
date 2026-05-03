@@ -19,6 +19,18 @@ settings = get_settings()
 router = APIRouter(prefix="/subscription", tags=["Subscription"])
 
 FREE_MONITOR_LIMIT = 10
+FREE_MIN_INTERVAL = 300  # 5 minutes
+
+
+def enforce_plan_constraints(user: User, db: Session) -> None:
+    """Enforce free plan constraints: monitor limit + minimum interval."""
+    # Clamp intervals to free plan minimum
+    monitors = db.query(Monitor).filter(Monitor.user_id == user.id).all()
+    for m in monitors:
+        if m.interval < FREE_MIN_INTERVAL:
+            m.interval = FREE_MIN_INTERVAL
+    db.commit()
+    enforce_monitor_limit(user, db)
 
 
 def enforce_monitor_limit(user: User, db: Session) -> int:
@@ -332,7 +344,7 @@ async def lemonsqueezy_webhook(request: Request, db: Session = Depends(get_db)):
 
             user.plan = "free"
             db.commit()
-            enforce_monitor_limit(user, db)
+            enforce_plan_constraints(user, db)
             print(f"✅ Subscription expired for user {user.email}, downgraded to free")
     
     elif event_name == "subscription_resumed":

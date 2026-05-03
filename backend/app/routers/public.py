@@ -118,7 +118,7 @@ def get_public_stats(db: Session = Depends(get_db)):
     }
 
 @router.get("/status/{monitor_id}")
-@limiter.limit("60/minute")
+@limiter.limit("30/minute")
 def get_public_status(request: Request, monitor_id: str, db: Session = Depends(get_db)):
     """
     Get public status page data for a monitor
