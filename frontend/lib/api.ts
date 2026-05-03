@@ -322,6 +322,23 @@ export default {
   publicApi,
 };
 
+// AI API
+export const aiAPI = {
+  analyzeEndpoint: (url: string): Promise<{
+    method: string;
+    expected_status: number;
+    keyword: string | null;
+    keyword_present: boolean;
+    assertions: { path: string; operator: string; expected: string }[];
+    reasoning: string;
+    actual_status: number;
+  }> =>
+    apiRequest('/api/v1/ai/analyze-endpoint', {
+      method: 'POST',
+      body: JSON.stringify({ url }),
+    }),
+};
+
 export const teamsAPI = {
   listMembers: () => apiRequest('/api/v1/teams/members'),
   invite: (email: string) =>

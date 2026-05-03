@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap } from 'lucide-react';
-import { monitorsAPI } from '@/lib/api';
+import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap, Sparkles } from 'lucide-react';
+import { monitorsAPI, aiAPI, assertionsAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 interface CreateMonitorModalProps {
@@ -26,6 +26,11 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
   const [heartbeatInterval, setHeartbeatInterval] = useState(60);
   const [heartbeatGrace, setHeartbeatGrace] = useState(5);
   const [alertThreshold, setAlertThreshold] = useState(1);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState<{
+    reasoning: string;
+    assertions: { path: string; operator: string; expected: string }[];
+  } | null>(null);
 
   if (!isOpen) return null;
 
@@ -62,6 +67,27 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
       </div>
     );
   }
+
+  const handleAnalyze = async () => {
+    if (!url) return;
+    setIsAnalyzing(true);
+    setAiSuggestion(null);
+    try {
+      const result = await aiAPI.analyzeEndpoint(url);
+      setMethod(result.method);
+      setExpectedStatus(result.expected_status);
+      if (result.keyword) {
+        setKeyword(result.keyword);
+        setKeywordPresent(result.keyword_present);
+      }
+      setAiSuggestion({ reasoning: result.reasoning, assertions: result.assertions });
+      setShowAdvanced(true);
+    } catch (e: any) {
+      toast.error(e.message || 'AI analysis failed');
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   const generateName = (rawUrl: string) => {
     try {
@@ -125,6 +151,20 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
         // instant check failure is OK
       }
 
+      // Save AI-suggested assertions if any
+      if (aiSuggestion?.assertions?.length) {
+        try {
+          await assertionsAPI.save(monitor.id, aiSuggestion.assertions.map((a) => ({
+            type: 'json_path',
+            path: a.path,
+            operator: a.operator,
+            expected: a.expected,
+          })));
+        } catch {
+          // Non-critical — monitor already created
+        }
+      }
+
       toast.success('Monitor created!');
       onSuccess();
     } catch (error: any) {
@@ -150,6 +190,7 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
     setMonitorType('http');
     setHeartbeatInterval(60);
     setHeartbeatGrace(5);
+    setAiSuggestion(null);
     onClose();
   };
 
@@ -235,13 +276,41 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
                 {/* URL */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">API URL *</label>
-                  <input
-                    type="url" required value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                    placeholder="https://api.example.com/health"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="url" required value={url}
+                      onChange={(e) => { setUrl(e.target.value); setAiSuggestion(null); }}
+                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                      placeholder="https://api.example.com/health"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAnalyze}
+                      disabled={!url || isAnalyzing}
+                      className="flex items-center gap-1.5 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-40 disabled:cursor-not-allowed text-sm font-medium whitespace-nowrap"
+                    >
+                      {isAnalyzing
+                        ? <Loader2 className="h-4 w-4 animate-spin" />
+                        : <Sparkles className="h-4 w-4" />}
+                      {isAnalyzing ? 'Analyzing...' : 'AI Auto-detect'}
+                    </button>
+                  </div>
                 </div>
+
+                {/* AI Suggestion Banner */}
+                {aiSuggestion && (
+                  <div className="bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 rounded-lg p-3 space-y-1.5">
+                    <p className="text-xs font-semibold text-purple-700 dark:text-purple-300 flex items-center gap-1">
+                      <Sparkles className="h-3.5 w-3.5" /> AI auto-filled your settings
+                    </p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400">{aiSuggestion.reasoning}</p>
+                    {aiSuggestion.assertions.length > 0 && (
+                      <p className="text-xs text-purple-500 dark:text-purple-500">
+                        + {aiSuggestion.assertions.length} JSON Path assertion{aiSuggestion.assertions.length > 1 ? 's' : ''} will be saved automatically
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Check Result */}
                 {checkResult && (
