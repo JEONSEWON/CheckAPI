@@ -60,8 +60,8 @@ async function apiRequest(
     credentials: 'include',
   });
 
-  // If 401 and we have refresh token, try to refresh (deduplicate concurrent refreshes)
-  if (response.status === 401 && getRefreshToken()) {
+  // If 401, always try to refresh (cookie-based fallback works even after page reload)
+  if (response.status === 401) {
     if (!isRefreshing) {
       isRefreshing = true;
       refreshPromise = refreshAccessToken().finally(() => {
@@ -95,26 +95,24 @@ async function apiRequest(
 }
 
 async function refreshAccessToken(): Promise<boolean> {
-  const refresh = getRefreshToken();
-  if (!refresh) return false;
-
   try {
     const response = await fetch(`${API_URL}/api/v1/auth/refresh`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: refresh }),
+      // Send in-memory token in body if available; backend falls back to HttpOnly cookie
+      body: JSON.stringify({ refresh_token: getRefreshToken() || null }),
       credentials: 'include',
     });
 
     if (response.ok) {
       const data = await response.json();
-      setTokens(data.access_token, refresh);
+      setTokens(data.access_token, data.refresh_token);
       return true;
     }
   } catch (error) {
     console.error('Token refresh failed:', error);
   }
-  
+
   return false;
 }
 

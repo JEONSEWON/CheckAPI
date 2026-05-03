@@ -130,10 +130,12 @@ def login(request: Request, response: Response, credentials: UserLogin, db: Sess
 @limiter.limit("30/minute")
 def refresh_token(request: Request, response: Response, token_data: TokenRefresh, db: Session = Depends(get_db)):
     """
-    Refresh access token using refresh token
+    Refresh access token using refresh token (body or HttpOnly cookie fallback)
     """
-    # Decode refresh token
-    payload = decode_token(token_data.refresh_token)
+    raw_token = token_data.refresh_token or request.cookies.get("refresh_token")
+    if not raw_token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token required")
+    payload = decode_token(raw_token)
 
     # Check token type
     if payload.get("type") != "refresh":

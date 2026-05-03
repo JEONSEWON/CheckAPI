@@ -31,8 +31,8 @@ class Token(BaseModel):
 
 
 class TokenRefresh(BaseModel):
-    """Token refresh request"""
-    refresh_token: str
+    """Token refresh request — body token optional; falls back to HttpOnly cookie"""
+    refresh_token: Optional[str] = None
 
 
 class UserResponse(BaseModel):
