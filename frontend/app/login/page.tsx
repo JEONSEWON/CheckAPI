@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { authAPI } from '@/lib/api';
+import { authAPI, setTokens } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
@@ -20,9 +20,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const response = await authAPI.login(email, password);
-      const { access_token, refresh_token } = response;
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('refresh_token', refresh_token);
+      setTokens(response.access_token, response.refresh_token);
       const userResponse = await authAPI.me();
       setUser(userResponse);
       toast.success('Welcome back!');

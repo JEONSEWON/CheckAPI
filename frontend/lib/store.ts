@@ -69,10 +69,6 @@ export const useAuthStore = create<AppState>((set) => ({
   
   logout: () => {
     set({ user: null, isAuthenticated: false, monitors: [], alertChannels: [] });
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-    }
   },
   
   setMonitors: (monitors) => set({ monitors }),

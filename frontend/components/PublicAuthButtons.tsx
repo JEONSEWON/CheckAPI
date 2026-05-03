@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { authAPI } from '@/lib/api';
 
 export default function PublicAuthButtons() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -9,13 +10,11 @@ export default function PublicAuthButtons() {
 
   useEffect(() => {
     setMounted(true);
-    const token = localStorage.getItem('access_token');
-    setIsLoggedIn(!!token);
+    authAPI.me().then(() => setIsLoggedIn(true)).catch(() => setIsLoggedIn(false));
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+  const handleLogout = async () => {
+    await authAPI.logout();
     setIsLoggedIn(false);
     window.location.href = '/';
   };

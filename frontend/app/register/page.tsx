@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { authAPI } from '@/lib/api';
+import { authAPI, setTokens } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
@@ -22,13 +22,7 @@ export default function RegisterPage() {
 
     try {
       const response = await authAPI.register(email, password, name || undefined);
-      const { access_token, refresh_token } = response;
-
-      // Save tokens — auto login
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('refresh_token', refresh_token);
-
-      // Fetch user info and store
+      setTokens(response.access_token, response.refresh_token);
       const userResponse = await authAPI.me();
       setUser(userResponse);
 

@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-
+import { authAPI } from '@/lib/api';
 import Link from 'next/link';
 import { ArrowRight, Mail, MessageCircle, Twitter } from 'lucide-react';
 import { useState } from 'react';
@@ -133,8 +133,7 @@ function AuthButtons() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
   React.useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    setIsLoggedIn(!!token);
+    authAPI.me().then(() => setIsLoggedIn(true)).catch(() => {});
   }, []);
 
   if (isLoggedIn) {

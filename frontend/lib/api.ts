@@ -132,6 +132,9 @@ export const authAPI = {
 
   me: () => apiRequest('/api/v1/auth/me'),
 
+  logout: () =>
+    apiRequest('/api/v1/auth/logout', { method: 'POST' }).catch(() => {}).finally(() => clearTokens()),
+
   completeOnboarding: () =>
     apiRequest('/api/v1/auth/complete-onboarding', { method: 'POST' }),
 };

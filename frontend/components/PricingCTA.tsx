@@ -25,13 +25,10 @@ export default function PricingCTA({ planName, ctaHref, highlight, billing = 'mo
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
+    authAPI.me().then((user: any) => {
       setIsLoggedIn(true);
-      authAPI.me().then((user: any) => {
-        setCurrentPlan(user.plan || 'free');
-      }).catch(() => {});
-    }
+      setCurrentPlan(user.plan || 'free');
+    }).catch(() => {});
   }, []);
 
   const isCurrent = planName.toLowerCase() === currentPlan;

@@ -20,18 +20,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   useEffect(() => {
     if (!user) {
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
       authAPI.me()
         .then((userData) => setUser(userData))
         .catch(() => router.push('/login'));
     }
   }, [user, setUser, router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await authAPI.logout();
     logout();
     router.push('/login');
   };

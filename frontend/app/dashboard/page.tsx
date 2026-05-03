@@ -21,11 +21,6 @@ export default function DashboardPage() {
   const [showWizard, setShowWizard] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
     loadData();
   }, []);
 
