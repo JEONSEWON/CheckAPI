@@ -140,12 +140,14 @@ def create_monitor(
     """
     Create a new monitor
     """
-    # Check plan limits
-    check_plan_limits(current_user, db, creating_new=True)
-    
+    # Lock the user row to prevent TOCTOU: concurrent requests could both pass the
+    # plan limit check before either inserts, allowing limit bypass.
+    locked_user = db.query(User).filter(User.id == current_user.id).with_for_update().first()
+    check_plan_limits(locked_user, db, creating_new=True)
+
     # Validate interval
-    validate_interval(current_user, monitor_data.interval)
-    
+    validate_interval(locked_user, monitor_data.interval)
+
     # Create monitor
     new_monitor = Monitor(
         user_id=current_user.id,

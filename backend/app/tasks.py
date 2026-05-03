@@ -62,28 +62,37 @@ def get_db():
 @celery_app.task(name="app.tasks.check_monitors")
 def check_monitors():
     """
-    Periodic task: Find monitors that need checking and schedule individual checks
-    Runs every minute
+    Periodic task: Find monitors that need checking and schedule individual checks.
+    Uses row-level locking (SKIP LOCKED) to prevent multiple workers from picking
+    up the same monitors simultaneously.
     """
     db = SessionLocal()
-    
+
     try:
         now = datetime.utcnow()
-        
-        # Find monitors that need checking
+
+        # Atomically claim monitors with row-level lock + advance next_check_at
+        # so concurrent workers skip them.
         monitors = db.query(Monitor).filter(
             Monitor.is_active == True,
             or_(Monitor.next_check_at == None, Monitor.next_check_at <= now)
-        ).all()
-        
-        print(f"[{now}] Found {len(monitors)} monitors to check")
-        
-        # Schedule individual check for each monitor
+        ).with_for_update(skip_locked=True).all()
+
+        monitor_ids = []
         for monitor in monitors:
-            check_single_monitor.delay(str(monitor.id))
-        
-        return {"scheduled": len(monitors)}
-        
+            # Advance next_check_at so other workers won't re-pick this monitor
+            monitor.next_check_at = now + timedelta(seconds=monitor.interval)
+            monitor_ids.append(str(monitor.id))
+
+        db.commit()
+
+        print(f"[{now}] Claimed {len(monitor_ids)} monitors to check")
+
+        for monitor_id in monitor_ids:
+            check_single_monitor.delay(monitor_id)
+
+        return {"scheduled": len(monitor_ids)}
+
     finally:
         db.close()
 
@@ -100,12 +109,14 @@ def check_single_monitor(monitor_id: str):
     db = SessionLocal()
     
     try:
-        monitor = db.query(Monitor).filter(Monitor.id == monitor_id).first()
-        
+        monitor = db.query(Monitor).filter(
+            Monitor.id == monitor_id
+        ).with_for_update(skip_locked=True).first()
+
         if not monitor:
-            print(f"Monitor {monitor_id} not found")
+            # Another worker is processing this monitor — skip
             return
-        
+
         print(f"Checking monitor: {monitor.name} ({monitor.url})")
         
         # Prepare request
