@@ -96,14 +96,14 @@ export default function SettingsPage() {
       monthlyPrice: '$0',
       annualPrice: '$0',
       annualMonthly: '$0',
-      features: ['10 monitors', '5-minute checks', 'All alert channels', 'Public status page', 'Keyword validation', 'SSL monitoring', '30-day history'],
+      features: ['10 monitors', '5-minute checks', 'All alert channels', 'Public status page', 'Keyword validation', 'SSL monitoring', '🤖 AI incident analysis', '✨ AI auto-detect assertions', '30-day history'],
     },
     {
       name: 'Starter',
       monthlyPrice: '$5',
       annualPrice: '$48',
       annualMonthly: '$4',
-      features: ['20 monitors', '1-minute checks', 'All alert channels', 'Analytics', 'Keyword validation', 'SSL monitoring', '30-day history'],
+      features: ['20 monitors', '1-minute checks', 'All alert channels', 'Analytics', 'Keyword validation', 'SSL monitoring', '🤖 AI incident analysis', '✨ AI auto-detect assertions', '30-day history'],
       popular: true,
     },
     {
@@ -111,14 +111,14 @@ export default function SettingsPage() {
       monthlyPrice: '$15',
       annualPrice: '$144',
       annualMonthly: '$12',
-      features: ['100 monitors', '30-second checks', 'All alert channels', 'Analytics', 'Team sharing (5 members)', 'Keyword validation', 'SSL monitoring', '90-day history'],
+      features: ['100 monitors', '30-second checks', 'All alert channels', 'Analytics', 'Team sharing (5 members)', 'Keyword validation', 'SSL monitoring', '🤖 AI incident analysis', '✨ AI auto-detect assertions', '90-day history'],
     },
     {
       name: 'Business',
       monthlyPrice: '$49',
       annualPrice: '$470',
       annualMonthly: '$39',
-      features: ['Unlimited monitors', '10-second checks', 'All alert channels', 'Analytics', 'Team sharing (unlimited)', 'Keyword validation', 'SSL monitoring', 'REST API access', '1-year history'],
+      features: ['Unlimited monitors', '10-second checks', 'All alert channels', 'Analytics', 'Team sharing (unlimited)', 'Keyword validation', 'SSL monitoring', 'REST API access', '🤖 AI incident analysis', '✨ AI auto-detect assertions', '1-year history'],
     },
   ];
 
