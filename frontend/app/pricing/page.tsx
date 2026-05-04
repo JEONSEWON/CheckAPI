@@ -80,6 +80,8 @@ export default function PricingPage() {
                 { feature: 'Silent Failure Detection', values: [true, true, true, true] },
                 { feature: 'Regex validation', values: [true, true, true, true] },
                 { feature: 'JSON Path assertions', values: [true, true, true, true] },
+                { feature: 'AI incident analysis', values: [true, true, true, true] },
+                { feature: 'AI auto-detect', values: [true, true, true, true] },
                 { feature: 'Heartbeat / Cron monitoring', values: [true, true, true, true] },
                 { feature: 'Maintenance windows', values: [true, true, true, true] },
                 { feature: 'Analytics & SLA reports', values: [false, true, true, true] },

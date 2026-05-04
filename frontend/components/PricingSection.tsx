@@ -8,22 +8,22 @@ const plans = [
   {
     name: 'Free', price: '$0', annualPrice: '$0', annualMonthly: '$0',
     badge: null, highlight: false, ctaHref: '/register', cta: 'Start Free',
-    features: ['10 monitors','5-minute checks','All alert channels','Public status page','30-day history','Commercial use allowed'],
+    features: ['10 monitors','5-minute checks','All alert channels','Public status page','30-day history','AI incident analysis','AI auto-detect','Commercial use allowed'],
   },
   {
     name: 'Starter', price: '$5', annualPrice: '$48', annualMonthly: '$4',
     badge: 'POPULAR', highlight: true, ctaHref: '/register', cta: 'Get Started',
-    features: ['20 monitors','1-minute checks','All alert channels','Analytics','30-day history','Commercial use allowed'],
+    features: ['20 monitors','1-minute checks','All alert channels','Analytics','30-day history','AI incident analysis','AI auto-detect','Commercial use allowed'],
   },
   {
     name: 'Pro', price: '$15', annualPrice: '$144', annualMonthly: '$12',
     badge: 'Best for growing startups', highlight: false, ctaHref: '/register', cta: 'Get Started',
-    features: ['100 monitors','30-second checks','Team sharing','Priority support','90-day history','Commercial use allowed'],
+    features: ['100 monitors','30-second checks','Team sharing','Priority support','90-day history','AI incident analysis','AI auto-detect','Commercial use allowed'],
   },
   {
     name: 'Business', price: '$49', annualPrice: '$470', annualMonthly: '$39',
     badge: null, highlight: false, ctaHref: '/register', cta: 'Get Started',
-    features: ['Unlimited monitors','10-second checks','REST API access (API keys)','Custom features','SLA','1-year history'],
+    features: ['Unlimited monitors','10-second checks','REST API access (API keys)','Custom features','SLA','1-year history','AI incident analysis','AI auto-detect'],
   },
 ];
 
