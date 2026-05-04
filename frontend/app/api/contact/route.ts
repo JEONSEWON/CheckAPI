@@ -10,9 +10,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
   }
 
+  const to = process.env.CONTACT_EMAIL_TO;
+  if (!to) {
+    return NextResponse.json({ error: 'Contact not configured' }, { status: 500 });
+  }
+
   const { error } = await resend.emails.send({
     from: 'CheckAPI Contact <noreply@checkapi.io>',
-    to: 'wjsypdnjs123@gmail.com',
+    to,
     replyTo: email,
     subject: `[Contact] ${subject}`,
     text: `Name: ${name}\nEmail: ${email}\n\n${message}`,

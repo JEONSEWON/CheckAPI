@@ -109,6 +109,7 @@ def analyze_incident(
                     "JSON only, no markdown."
                 ),
             }],
+            timeout=30.0,
         )
 
         text = message.content[0].text.strip()
@@ -172,6 +173,7 @@ def analyze_endpoint(url: str) -> dict:
             model=_settings.AI_MODEL,
             max_tokens=400,
             messages=[{"role": "user", "content": prompt}],
+            timeout=30.0,
         )
 
         text = message.content[0].text.strip()

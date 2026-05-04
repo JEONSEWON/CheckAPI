@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     # App
     APP_NAME: str = "API Health Monitor"
     APP_ENV: str = "development"
-    DEBUG: bool = True
+    DEBUG: bool = False
     VERSION: str = "0.1.0"
     
     # Database
