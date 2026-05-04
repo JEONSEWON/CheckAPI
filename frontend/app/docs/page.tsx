@@ -68,6 +68,14 @@ const sections = [
     ],
   },
   {
+    id: 'ai-features',
+    title: 'AI Features',
+    items: [
+      { id: 'ai-incident-analysis', label: 'AI Incident Analysis' },
+      { id: 'ai-auto-detect', label: 'AI Auto-detect' },
+    ],
+  },
+  {
     id: 'plans',
     title: 'Plans & Limits',
     items: [
@@ -547,6 +555,101 @@ requests.get("https://checkapi.io/heartbeat/<your-token>")`}</pre>
               <pre className="bg-gray-900 text-green-400 rounded-xl p-4 text-sm overflow-x-auto">{`curl https://api-health-monitor-production.up.railway.app/api/monitors \\
   -H "X-API-Key: ck_live_your_key_here"`}</pre>
               <p className="mt-3 text-sm">Generate API keys in Dashboard → Settings → API Keys.</p>
+            </div>
+          </section>
+
+          {/* ── AI Features ── */}
+          <section>
+            <div className="flex items-center gap-3 mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">AI Features</h2>
+              <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs font-semibold rounded-full">New</span>
+            </div>
+            <p className="mb-8 text-gray-600 dark:text-gray-400">
+              CheckAPI uses AI to help you understand incidents faster and set up monitors without manual configuration. Both features are available on all plans.
+            </p>
+
+            <div id="ai-incident-analysis" className="mb-12">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">AI Incident Analysis</h3>
+              <p className="mb-4">
+                When a monitor goes down, CheckAPI automatically runs an AI analysis on the failed check. The AI examines the response body, status code, headers, and your configured assertions to explain <strong className="text-gray-800 dark:text-gray-200">why the check failed</strong> and suggest what might have caused it.
+              </p>
+
+              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2 mt-6">When it triggers</h4>
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 text-sm space-y-2 mb-6">
+                {[
+                  ['Status code mismatch', 'Your endpoint returned an unexpected HTTP status (e.g. 500, 503, 404)'],
+                  ['Assertion failure', 'A keyword, regex, JSON Path, or header assertion did not pass'],
+                  ['Timeout', 'The endpoint did not respond within the configured timeout window'],
+                  ['Connection error', 'The endpoint was unreachable (DNS failure, refused connection, etc.)'],
+                ].map(([trigger, desc]) => (
+                  <div key={trigger} className="flex gap-3">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 w-48 shrink-0">{trigger}</span>
+                    <span>{desc}</span>
+                  </div>
+                ))}
+              </div>
+
+              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">How to read the analysis</h4>
+              <p className="mb-4 text-sm">Open the monitor detail page and click any failed check in the incident history. The AI analysis panel appears below the raw response with three parts:</p>
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 text-sm space-y-3 mb-6">
+                {[
+                  ['Root cause', 'A plain-language explanation of what went wrong — e.g. "The error field contains DB_CONN_FAILED, indicating a database connection failure."'],
+                  ['Impact', 'What this failure means for your users or system — e.g. "Users may be unable to log in or see stale data."'],
+                  ['Suggested fix', 'Actionable recommendations to resolve the incident — e.g. "Check your database connection pool settings. This pattern typically occurs under high load."'],
+                ].map(([label, desc]) => (
+                  <div key={label} className="flex gap-3">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 w-36 shrink-0">{label}</span>
+                    <span>{desc}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-200">
+                <strong>Note:</strong> AI analysis is performed on the actual response body captured at the time of the failed check. If your endpoint returns sensitive data, be aware that the response is stored and processed. CheckAPI does not train on your data.
+              </div>
+            </div>
+
+            <div id="ai-auto-detect" className="mb-4">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">AI Auto-detect</h3>
+              <p className="mb-4">
+                When creating a new monitor, click <strong className="text-gray-800 dark:text-gray-200">Auto-detect</strong> (the sparkle button next to the URL field). CheckAPI will call your endpoint, analyze the real response, and automatically suggest:
+              </p>
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 text-sm space-y-2 mb-6">
+                {[
+                  ['HTTP method', 'GET vs POST detected from the endpoint behavior'],
+                  ['Expected status', 'The status code your endpoint actually returns'],
+                  ['JSON Path assertions', 'Up to 5 assertions based on the real response structure — e.g. $.status == "ok", $.error is_null'],
+                  ['Keyword suggestion', 'A keyword that should always be present based on the response body'],
+                ].map(([label, desc]) => (
+                  <div key={label} className="flex gap-3">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 w-44 shrink-0">{label}</span>
+                    <span>{desc}</span>
+                  </div>
+                ))}
+              </div>
+
+              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Example</h4>
+              <pre className="bg-gray-900 text-green-400 rounded-xl p-4 text-sm overflow-x-auto leading-relaxed mb-4">{`# Your endpoint returns:
+{
+  "status": "ok",
+  "data": { "version": "1.4.2", "db": "connected" },
+  "error": null
+}
+
+# AI Auto-detect suggests:
+Method:           GET
+Expected status:  200
+Assertions:
+  $.status        ==        "ok"
+  $.error         is_null
+  $.data.db       ==        "connected"
+  $.data.version  exists`}</pre>
+
+              <p className="text-sm mb-4">You can accept all suggestions with one click, or deselect individual assertions before saving. Auto-detect is a starting point — you can always add or edit assertions manually afterwards.</p>
+
+              <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-sm text-yellow-800 dark:text-yellow-200">
+                <strong>Tip:</strong> Auto-detect works best on JSON endpoints. For endpoints that require authentication, add your <code className="bg-yellow-100 dark:bg-yellow-900 px-1 rounded">Authorization</code> header first, then run Auto-detect — it will use that header when calling your endpoint.
+              </div>
             </div>
           </section>
 
