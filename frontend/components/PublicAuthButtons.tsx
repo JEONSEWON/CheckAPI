@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { authAPI } from '@/lib/api';
+import { authAPI, API_URL, getAccessToken } from '@/lib/api';
 
 export default function PublicAuthButtons() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -10,7 +10,13 @@ export default function PublicAuthButtons() {
 
   useEffect(() => {
     setMounted(true);
-    authAPI.me().then(() => setIsLoggedIn(true)).catch(() => setIsLoggedIn(false));
+    const token = getAccessToken();
+    fetch(`${API_URL}/api/v1/auth/me`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
+    })
+      .then((r) => setIsLoggedIn(r.ok))
+      .catch(() => setIsLoggedIn(false));
   }, []);
 
   const handleLogout = async () => {
