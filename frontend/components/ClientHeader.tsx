@@ -31,12 +31,12 @@ function AuthButtons() {
   if (isLoggedIn) {
     return (
       <div className="flex items-center space-x-3">
-        <a
+        <Link
           href="/dashboard"
           className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium"
         >
           Dashboard →
-        </a>
+        </Link>
         <button
           onClick={handleLogout}
           className="text-gray-500 dark:text-gray-400 hover:text-red-500 transition text-sm"
