@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { API_URL, getAccessToken } from '@/lib/api';
+import { API_URL, getAccessToken, authAPI } from '@/lib/api';
 
 function AuthButtons() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
