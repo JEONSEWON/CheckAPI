@@ -9,15 +9,9 @@ let isRefreshing = false;
 let refreshPromise: Promise<boolean> | null = null;
 
 export function setTokens(access: string, refresh: string) {
-  // Keep in-memory only — tokens are also stored as HttpOnly cookies by the server.
-  // localStorage is no longer used to prevent XSS token theft.
+  // In-memory only — HttpOnly cookies handle persistence across page reloads.
   accessToken = access;
   refreshToken = refresh;
-  // Migrate: remove legacy localStorage tokens on next setTokens call
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-  }
 }
 
 export function getAccessToken(): string | null {
