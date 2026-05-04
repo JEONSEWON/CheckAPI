@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { CheckCircle, AlertCircle, Activity, Clock, Zap, ExternalLink } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app';
+import { API_URL as API_BASE } from '@/lib/api';
 
 export default function PublicStatusPage() {
   const params = useParams();

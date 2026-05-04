@@ -1,6 +1,6 @@
 // API Client for API Health Monitor
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app';
 
 // Token management
 let accessToken: string | null = null;
@@ -99,8 +99,8 @@ async function refreshAccessToken(): Promise<boolean> {
       setTokens(data.access_token, data.refresh_token);
       return true;
     }
-  } catch (error) {
-    console.error('Token refresh failed:', error);
+  } catch {
+    // Refresh failed — user will be redirected to login
   }
 
   return false;

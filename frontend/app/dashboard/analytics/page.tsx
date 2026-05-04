@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { analyticsAPI, getAccessToken } from '@/lib/api';
+import { analyticsAPI, getAccessToken, API_URL } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 import { Activity, TrendingUp, AlertCircle, Clock, Shield, ChevronDown, ChevronUp } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -42,7 +42,6 @@ export default function AnalyticsPage() {
   const loadSLA = async (months: number) => {
     setSlaLoading(true);
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app';
       const token = getAccessToken();
       const res = await fetch(`${API_URL}/api/v1/analytics/sla?months=${months}`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},

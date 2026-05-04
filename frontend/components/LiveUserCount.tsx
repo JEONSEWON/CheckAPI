@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app';
+import { API_URL } from '@/lib/api';
 
 export default function LiveUserCount() {
   const [count, setCount] = useState<number | null>(null);

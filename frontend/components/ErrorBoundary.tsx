@@ -9,7 +9,7 @@ interface ErrorBoundaryProps {
 
 export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
   useEffect(() => {
-    console.error('[ErrorBoundary]', error);
+    // Error is shown in UI — no console output needed in production
   }, [error]);
 
   return (

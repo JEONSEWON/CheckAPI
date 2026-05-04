@@ -215,8 +215,8 @@ export default function MonitorDetailPage() {
   const handleSaveCustomDomain = async () => {
     setCustomDomainSaving(true);
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app';
-      const token = (await import('@/lib/api')).getAccessToken();
+      const { API_URL: apiBase, getAccessToken } = await import('@/lib/api');
+      const token = getAccessToken();
       const res = await fetch(`${apiBase}/api/v1/monitors/${monitorId}/custom-domain`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
