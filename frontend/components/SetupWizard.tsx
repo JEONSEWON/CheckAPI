@@ -197,6 +197,9 @@ export default function SetupWizard({ onComplete }: SetupWizardProps) {
                   {step < 3 && (
                     <button
                       onClick={() => {
+                        if (step === 2) {
+                          if (!window.confirm("Alert channel 없이 진행하시겠어요?\n모니터가 다운돼도 알림을 받을 수 없어요.")) return;
+                        }
                         markStepDone(step);
                         setStep(step + 1);
                       }}

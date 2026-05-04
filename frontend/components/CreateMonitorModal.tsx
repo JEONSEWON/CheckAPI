@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { X, Loader2, CheckCircle, XCircle, ArrowRight, Zap, Sparkles, Bell } from 'lucide-react';
 import { monitorsAPI, aiAPI, assertionsAPI, alertChannelsAPI } from '@/lib/api';
+import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 interface CreateMonitorModalProps {
@@ -11,7 +12,15 @@ interface CreateMonitorModalProps {
   onSuccess: () => void;
 }
 
+const PLAN_MONITOR_LIMITS: Record<string, { count: number | string; next: string }> = {
+  free:     { count: 10,          next: 'Starter' },
+  starter:  { count: 20,          next: 'Pro' },
+  pro:      { count: 100,         next: 'Business' },
+  business: { count: 'Unlimited', next: '' },
+};
+
 export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: CreateMonitorModalProps) {
+  const user = useAuthStore((state) => state.user);
   const [url, setUrl] = useState('');
   const [method, setMethod] = useState('GET');
   const [expectedStatus, setExpectedStatus] = useState(200);
@@ -51,11 +60,21 @@ export default function CreateMonitorModal({ isOpen, onClose, onSuccess }: Creat
           </div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Monitor limit reached</h2>
           <p className="text-gray-500 dark:text-gray-400 mb-2">
-            You've used all <span className="font-semibold text-gray-700 dark:text-gray-300">10 monitors</span> on the Free plan.
+            You've used all{' '}
+            <span className="font-semibold text-gray-700 dark:text-gray-300">
+              {PLAN_MONITOR_LIMITS[user?.plan || 'free']?.count} monitors
+            </span>{' '}
+            on the <span className="capitalize font-semibold text-gray-700 dark:text-gray-300">{user?.plan || 'Free'}</span> plan.
           </p>
-          <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
-            Upgrade to <span className="text-green-600 font-semibold">Starter</span> for 20 monitors and 1-minute checks, or <span className="text-green-600 font-semibold">Pro</span> for 100 monitors and faster intervals.
-          </p>
+          {PLAN_MONITOR_LIMITS[user?.plan || 'free']?.next && (
+            <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
+              Upgrade to{' '}
+              <span className="text-green-600 font-semibold">
+                {PLAN_MONITOR_LIMITS[user?.plan || 'free'].next}
+              </span>{' '}
+              for more monitors and faster check intervals.
+            </p>
+          )}
           <div className="flex flex-col gap-3">
             <a
               href="/dashboard/settings?tab=billing"
