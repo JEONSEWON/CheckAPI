@@ -193,4 +193,7 @@ def analyze_endpoint(url: str) -> dict:
     except json.JSONDecodeError as e:
         raise RuntimeError(f"AI returned invalid JSON: {e}")
     except Exception as e:
-        raise RuntimeError(f"AI analysis failed: {e}")
+        import traceback
+        print(f"[AI] analyze_endpoint error: {type(e).__name__}: {e}")
+        print(traceback.format_exc())
+        raise RuntimeError(f"AI analysis failed ({type(e).__name__}): {e}")
