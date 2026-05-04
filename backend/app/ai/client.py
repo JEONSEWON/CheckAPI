@@ -8,7 +8,7 @@ _async_client: anthropic.AsyncAnthropic | None = None
 def get_client() -> anthropic.Anthropic:
     global _sync_client
     if _sync_client is None:
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        api_key = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
         if not api_key:
             raise RuntimeError("ANTHROPIC_API_KEY is not set")
         _sync_client = anthropic.Anthropic(
@@ -22,7 +22,7 @@ def get_client() -> anthropic.Anthropic:
 def get_async_client() -> anthropic.AsyncAnthropic:
     global _async_client
     if _async_client is None:
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        api_key = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
         if not api_key:
             raise RuntimeError("ANTHROPIC_API_KEY is not set")
         _async_client = anthropic.AsyncAnthropic(
