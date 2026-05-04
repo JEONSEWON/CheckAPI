@@ -1,3 +1,4 @@
+import asyncio
 import ipaddress
 import json
 import socket
@@ -6,7 +7,7 @@ from typing import Optional
 
 import httpx
 
-from app.ai.client import get_client
+from app.ai.client import get_async_client, get_client
 from app.config import get_settings
 
 _settings = get_settings()
@@ -119,7 +120,7 @@ def analyze_incident(
         return None
 
 
-def analyze_endpoint(url: str) -> dict:
+async def analyze_endpoint(url: str) -> dict:
     """
     Call the URL, inspect the response, and ask Claude to recommend
     monitor settings: method, expected_status, keyword, assertions.
@@ -130,10 +131,10 @@ def analyze_endpoint(url: str) -> dict:
     if _is_blocked_url(url):
         raise ValueError("URL not allowed")
 
-    # ── Fetch the endpoint ────────────────────────────────────────────────
+    # ── Fetch the endpoint (async) ────────────────────────────────────────
     try:
-        with httpx.Client(timeout=10, follow_redirects=True, max_redirects=3) as client:
-            response = client.get(
+        async with httpx.AsyncClient(timeout=10, follow_redirects=True, max_redirects=3) as client:
+            response = await client.get(
                 url,
                 headers={"User-Agent": "CheckAPI-Wizard/1.0 (+https://checkapi.io)"},
             )
@@ -146,9 +147,9 @@ def analyze_endpoint(url: str) -> dict:
     content_type = response.headers.get("content-type", "")
     raw_body = response.text[:3000]
 
-    # ── Ask Claude ────────────────────────────────────────────────────────
+    # ── Ask Claude (async) ────────────────────────────────────────────────
     try:
-        ai_client = get_client()
+        ai_client = get_async_client()
 
         prompt = (
             "You are an API monitoring configuration assistant.\n\n"
@@ -168,7 +169,7 @@ def analyze_endpoint(url: str) -> dict:
             '- "reasoning": one sentence explaining your choices (max 120 chars)\n'
         )
 
-        message = ai_client.messages.create(
+        message = await ai_client.messages.create(
             model=_settings.AI_MODEL,
             max_tokens=400,
             messages=[{"role": "user", "content": prompt}],
@@ -177,7 +178,6 @@ def analyze_endpoint(url: str) -> dict:
         text = message.content[0].text.strip()
         result = json.loads(text)
 
-        # Sanitize fields
         return {
             "method": str(result.get("method", "GET")).upper(),
             "expected_status": int(result.get("expected_status", status_code)),
