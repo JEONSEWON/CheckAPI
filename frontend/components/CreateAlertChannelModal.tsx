@@ -58,7 +58,7 @@ export default function CreateAlertChannelModal({ isOpen, onClose, onSuccess }: 
       onSuccess();
       handleClose();
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || 'Failed to create channel');
+      toast.error(error.message || 'Failed to create channel');
     } finally {
       setIsLoading(false);
     }

@@ -14,12 +14,13 @@ from app.schemas import SubscriptionResponse, MessageResponse
 from app.auth import get_current_user
 from app.lemonsqueezy import LemonSqueezyAPI, get_variant_id_for_plan
 from app.config import get_settings
+from app.routers.monitors import PLAN_LIMITS
 
 settings = get_settings()
 router = APIRouter(prefix="/subscription", tags=["Subscription"])
 
-FREE_MONITOR_LIMIT = 10
-FREE_MIN_INTERVAL = 300  # 5 minutes
+FREE_MONITOR_LIMIT = PLAN_LIMITS["free"]["max_monitors"]
+FREE_MIN_INTERVAL = PLAN_LIMITS["free"]["min_interval"]
 
 
 def enforce_plan_constraints(user: User, db: Session) -> None:

@@ -32,10 +32,6 @@ export function getRefreshToken(): string | null {
 export function clearTokens() {
   accessToken = null;
   refreshToken = null;
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-  }
 }
 
 // API request helper with auto token refresh
@@ -349,6 +345,14 @@ export const aiAPI = {
       method: 'POST',
       body: JSON.stringify({ url }),
     }),
+};
+
+export const apiKeysAPI = {
+  list: () => apiRequest('/api/v1/api-keys/'),
+  create: (name: string) =>
+    apiRequest(`/api/v1/api-keys/?name=${encodeURIComponent(name)}`, { method: 'POST' }),
+  delete: (id: string) =>
+    apiRequest(`/api/v1/api-keys/${id}`, { method: 'DELETE' }),
 };
 
 export const teamsAPI = {

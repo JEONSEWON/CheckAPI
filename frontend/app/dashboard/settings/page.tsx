@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { useAuthStore } from '@/lib/store';
-import { subscriptionAPI, getAccessToken } from '@/lib/api';
+import { subscriptionAPI, apiKeysAPI } from '@/lib/api';
 import { CheckCircle, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -47,11 +47,8 @@ export default function SettingsPage() {
 
   const loadApiKeys = async () => {
     try {
-      const token = getAccessToken();
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app'}/api/v1/api-keys/`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) setApiKeys(await res.json());
+      const data = await apiKeysAPI.list();
+      setApiKeys(data);
     } catch {}
   };
 
@@ -59,22 +56,13 @@ export default function SettingsPage() {
     if (!newKeyName.trim()) return;
     setApiKeyLoading(true);
     try {
-      const token = getAccessToken();
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app'}/api/v1/api-keys/?name=${encodeURIComponent(newKeyName)}`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setCreatedKey(data.key);
-        setNewKeyName('');
-        loadApiKeys();
-        toast.success('API key created!');
-      } else {
-        toast.error(data.detail || 'Failed to create key');
-      }
-    } catch {
-      toast.error('Failed to create key');
+      const data = await apiKeysAPI.create(newKeyName.trim());
+      setCreatedKey(data.key);
+      setNewKeyName('');
+      loadApiKeys();
+      toast.success('API key created!');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create key');
     } finally {
       setApiKeyLoading(false);
     }
@@ -83,15 +71,11 @@ export default function SettingsPage() {
   const handleDeleteApiKey = async (keyId: string) => {
     if (!confirm('Delete this API key? This cannot be undone.')) return;
     try {
-      const token = getAccessToken();
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api-health-monitor-production.up.railway.app'}/api/v1/api-keys/${keyId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      await apiKeysAPI.delete(keyId);
       loadApiKeys();
       toast.success('API key deleted');
-    } catch {
-      toast.error('Failed to delete key');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to delete key');
     }
   };
 
@@ -265,7 +249,14 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-2">
                   <code className="flex-1 text-xs bg-white dark:bg-gray-900 px-3 py-2 rounded border border-green-200 dark:border-green-700 text-gray-900 dark:text-white font-mono break-all">{createdKey}</code>
                   <button
-                    onClick={() => { navigator.clipboard.writeText(createdKey); toast.success('Copied!'); }}
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(createdKey);
+                        toast.success('Copied!');
+                      } catch {
+                        toast.error('Copy failed — please select and copy manually');
+                      }
+                    }}
                     className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition"
                   >
                     Copy
