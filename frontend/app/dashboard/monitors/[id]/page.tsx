@@ -433,6 +433,49 @@ export default function MonitorDetailPage() {
               </div>
             )}
 
+            {/* Recent AI Analysis Preview */}
+            {(() => {
+              const recentFailed = checks.find(c => c.ai_analysis && (c.status === 'down' || c.status === 'degraded'));
+              if (!recentFailed) return null;
+              const ai = recentFailed.ai_analysis;
+              const isRecent = (new Date().getTime() - new Date(recentFailed.checked_at + 'Z').getTime()) < 60 * 60 * 1000;
+              return (
+                <div className={`rounded-xl border-2 p-5 ${isRecent ? 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30' : 'border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/30'}`}>
+                  <div className="flex items-center gap-2 mb-3 flex-wrap">
+                    <span className="text-lg">⚡</span>
+                    <span className="font-bold text-gray-900 dark:text-white text-base">AI Analysis</span>
+                    {isRecent && (
+                      <span className="text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 px-2 py-0.5 rounded-full border border-red-200 dark:border-red-700">
+                        Active incident
+                      </span>
+                    )}
+                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">
+                      {formatDistanceToNow(new Date(recentFailed.checked_at + 'Z'), { addSuffix: true })}
+                    </span>
+                  </div>
+                  <p className="font-semibold text-gray-800 dark:text-gray-200 mb-2">{ai.summary}</p>
+                  {ai.possible_causes?.length > 0 && (
+                    <div className="mb-1.5">
+                      <span className="text-xs font-semibold text-purple-700 dark:text-purple-400 uppercase tracking-wide">Possible causes </span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">{ai.possible_causes.join(' · ')}</span>
+                    </div>
+                  )}
+                  {ai.recommended_actions?.length > 0 && (
+                    <div>
+                      <span className="text-xs font-semibold text-purple-700 dark:text-purple-400 uppercase tracking-wide">Recommended actions </span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">{ai.recommended_actions.join(' · ')}</span>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => setActiveTab('history')}
+                    className="mt-3 text-xs text-purple-600 dark:text-purple-400 hover:underline"
+                  >
+                    View full history →
+                  </button>
+                </div>
+              );
+            })()}
+
             {/* Configuration */}
             <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
@@ -776,15 +819,16 @@ function ConfigItem({ label, value }: { label: string; value: any }) {
 }
 
 function CheckRow({ check }: any) {
-  const [showAI, setShowAI] = useState(
-    check.status === 'down' || check.status === 'degraded'
-  );
+  const ai = check.ai_analysis;
+  const isFailed = check.status === 'down' || check.status === 'degraded';
+  const isWithinHour = (new Date().getTime() - new Date(check.checked_at + 'Z').getTime()) < 60 * 60 * 1000;
+  const [showAI, setShowAI] = useState(!!ai && isFailed && isWithinHour);
+
   const statusColors = {
     up: 'text-green-600',
     down: 'text-red-600',
     degraded: 'text-yellow-600',
   };
-  const ai = check.ai_analysis;
 
   return (
     <div className="px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
@@ -802,28 +846,28 @@ function CheckRow({ check }: any) {
           {ai && (
             <button
               onClick={() => setShowAI(v => !v)}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 hover:bg-yellow-200 dark:hover:bg-yellow-800 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 hover:bg-purple-200 dark:hover:bg-purple-800 transition border border-purple-200 dark:border-purple-700"
             >
-              🤖 AI
+              ⚡ AI Analysis {showAI ? '▲' : '▼'}
             </button>
           )}
         </div>
         <span className="text-sm text-gray-500 dark:text-gray-400">
-          {formatDistanceToNow(new Date(check.checked_at + "Z"), { addSuffix: true })}
+          {formatDistanceToNow(new Date(check.checked_at + 'Z'), { addSuffix: true })}
         </span>
       </div>
       {ai && showAI && (
-        <div className="mt-2 ml-0 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-sm">
-          <p className="font-medium text-yellow-900 dark:text-yellow-200 mb-1">{ai.summary}</p>
+        <div className="mt-3 p-4 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-sm space-y-2">
+          <p className="font-semibold text-purple-900 dark:text-purple-200">{ai.summary}</p>
           {ai.possible_causes?.length > 0 && (
-            <div className="mb-1">
-              <span className="text-yellow-700 dark:text-yellow-400 text-xs font-medium">Possible causes: </span>
+            <div>
+              <span className="text-purple-700 dark:text-purple-400 text-xs font-semibold uppercase tracking-wide">Possible causes </span>
               <span className="text-gray-700 dark:text-gray-300 text-xs">{ai.possible_causes.join(' · ')}</span>
             </div>
           )}
           {ai.recommended_actions?.length > 0 && (
             <div>
-              <span className="text-yellow-700 dark:text-yellow-400 text-xs font-medium">Actions: </span>
+              <span className="text-purple-700 dark:text-purple-400 text-xs font-semibold uppercase tracking-wide">Recommended actions </span>
               <span className="text-gray-700 dark:text-gray-300 text-xs">{ai.recommended_actions.join(' · ')}</span>
             </div>
           )}
