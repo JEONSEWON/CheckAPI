@@ -175,7 +175,27 @@ async def analyze_endpoint(url: str) -> dict:
             messages=[{"role": "user", "content": prompt}],
         )
 
-        text = message.content[0].text.strip()
+        print(f"[AI] response stop_reason={message.stop_reason} content_blocks={len(message.content)}")
+        if not message.content:
+            raise RuntimeError("AI returned empty response (no content blocks)")
+
+        block = message.content[0]
+        if block.type != "text":
+            raise RuntimeError(f"AI returned unexpected block type: {block.type}")
+
+        text = block.text.strip()
+        print(f"[AI] raw text ({len(text)} chars): {text[:200]}")
+
+        if not text:
+            raise RuntimeError("AI returned empty text")
+
+        # Strip markdown code fences if present
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+            text = text.strip()
+
         result = json.loads(text)
 
         return {
@@ -190,6 +210,8 @@ async def analyze_endpoint(url: str) -> dict:
 
     except json.JSONDecodeError as e:
         raise RuntimeError(f"AI returned invalid JSON: {e}")
+    except RuntimeError:
+        raise
     except Exception as e:
         import traceback
         print(f"[AI] analyze_endpoint error: {type(e).__name__}: {e}")
