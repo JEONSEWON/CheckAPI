@@ -126,7 +126,7 @@ export default function DocsPage() {
 
         {/* Sidebar */}
         <aside className="hidden lg:block w-56 shrink-0">
-          <div className="sticky top-24 space-y-6">
+          <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7rem)] overflow-y-auto pr-2">
             {sections.map((section) => (
               <div key={section.id}>
                 <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">{section.title}</p>
