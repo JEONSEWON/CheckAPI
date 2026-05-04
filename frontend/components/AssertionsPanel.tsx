@@ -87,6 +87,12 @@ export default function AssertionsPanel({ monitorId, monitorUrl }: AssertionsPan
     try {
       const result = await aiAPI.analyzeEndpoint(monitorUrl);
       const suggested: any[] = result.assertions ?? [];
+
+      if (suggested.length === 0) {
+        toast('이 URL은 JSON 응답이 아니라 JSON Path 어설션을 생성할 수 없어요.\nJSON API 엔드포인트를 입력해보세요.', { duration: 4000 });
+        return;
+      }
+
       const existingPaths = new Set(assertions.map((a: any) => a.path));
       const toAdd = suggested.filter((s: any) => !existingPaths.has(s.path));
       const available = 10 - assertions.length;
@@ -99,7 +105,7 @@ export default function AssertionsPanel({ monitorId, monitorUrl }: AssertionsPan
         toast.error('최대 10개 한도로 일부만 추가됐어요');
       }
       if (adding.length === 0) {
-        toast('추가할 새 어설션이 없어요 (중복)');
+        toast('AI가 추천한 어설션이 이미 모두 추가돼 있어요');
         return;
       }
       const logic = assertions.length > 0 ? assertions[0].logic : 'AND';
