@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { subscriptionAPI, authAPI } from '@/lib/api';
+import { subscriptionAPI, API_URL, getAccessToken } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 const PLAN_MAP: Record<string, string> = {
@@ -25,10 +25,17 @@ export default function PricingCTA({ planName, ctaHref, highlight, billing = 'mo
   const router = useRouter();
 
   useEffect(() => {
-    authAPI.me().then((user: any) => {
-      setIsLoggedIn(true);
-      setCurrentPlan(user.plan || 'free');
-    }).catch(() => {});
+    const token = getAccessToken();
+    fetch(`${API_URL}/api/v1/auth/me`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((user: any) => {
+        setIsLoggedIn(true);
+        setCurrentPlan(user.plan || 'free');
+      })
+      .catch(() => {});
   }, []);
 
   const isCurrent = planName.toLowerCase() === currentPlan;
