@@ -109,7 +109,7 @@ export default function AssertionsPanel({ monitorId, monitorUrl }: AssertionsPan
         return;
       }
       const logic = assertions.length > 0 ? assertions[0].logic : 'AND';
-      setAssertions([...assertions, ...adding.map((s: any) => ({ ...DEFAULT_ASSERTION, ...s, logic }))]);
+      setAssertions([...assertions, ...adding.map((s: any) => ({ ...DEFAULT_ASSERTION, ...s, logic, _ai: true }))]);
       toast.success(`AI가 ${adding.length}개 어설션을 추가했어요`);
     } catch (e: any) {
       toast.error(e.message || 'AI 분석에 실패했어요');
@@ -236,7 +236,13 @@ export default function AssertionsPanel({ monitorId, monitorUrl }: AssertionsPan
           </div>
         ) : (
           assertions.map((a, i) => (
-            <div key={i} className="grid grid-cols-12 gap-2 items-center">
+            <div key={i} className="relative">
+              {a._ai && (
+                <span className="absolute -top-1.5 left-0 flex items-center gap-0.5 text-[10px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-700/40 px-1.5 py-0.5 rounded-full leading-none z-10">
+                  <Sparkles className="h-2.5 w-2.5" /> AI
+                </span>
+              )}
+            <div className={`grid grid-cols-12 gap-2 items-center ${a._ai ? 'mt-3' : ''}`}>
               {/* Type */}
               <select
                 value={a.assertion_type}
@@ -292,6 +298,7 @@ export default function AssertionsPanel({ monitorId, monitorUrl }: AssertionsPan
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
+            </div>
             </div>
           ))
         )}
