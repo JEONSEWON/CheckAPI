@@ -487,6 +487,75 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* AI Analysis demo card */}
+        <div className="glass-card" style={{ padding: '40px', marginBottom: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'center' }}>
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(134,239,172,0.08)', border: '1px solid rgba(134,239,172,0.25)', color: '#86efac', padding: '6px 14px', borderRadius: '999px', fontSize: '12px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '20px' }}>
+              ✦ AI-Powered
+            </div>
+            <h3 style={{ fontSize: '32px', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em', marginBottom: '16px', lineHeight: 1.2 }}>
+              AI Incident<br />Analysis
+            </h3>
+            <p style={{ color: '#64748b', fontSize: '16px', lineHeight: 1.7, marginBottom: '20px' }}>
+              When an incident occurs, AI instantly explains <strong style={{ color: '#e2e8f0' }}>what broke, why it broke, and what to do</strong> — so you spend less time debugging and more time fixing.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {['Root cause analysis in plain English', 'Traffic & timing correlation', 'Actionable fix suggestions', 'Auto-triggered on every incident'].map((f) => (
+                <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: '#94a3b8' }}>
+                  <CheckCircle style={{ width: '14px', height: '14px', color: '#86efac', flexShrink: 0 }} />
+                  {f}
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* AI analysis result mockup */}
+          <div style={{ background: '#0d1424', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', overflow: 'hidden', fontSize: '13px' }}>
+            <div style={{ background: 'rgba(134,239,172,0.06)', borderBottom: '1px solid rgba(134,239,172,0.12)', padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '14px' }}>✦</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#86efac' }}>AI Analysis</span>
+              <span style={{ marginLeft: 'auto', fontSize: '11px', color: '#475569', fontFamily: "'DM Mono', monospace" }}>incident #1042 · 03:17 UTC</span>
+            </div>
+            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <p style={{ fontSize: '11px', fontWeight: 700, color: '#475569', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>Summary</p>
+                <p style={{ color: '#e2e8f0', lineHeight: 1.6 }}>DB connection pool exhausted — endpoint returning 200 with null data since 03:14 UTC.</p>
+              </div>
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.05)' }} />
+              <div>
+                <p style={{ fontSize: '11px', fontWeight: 700, color: '#475569', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>Likely Causes</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {[
+                    { icon: '⚡', text: 'Traffic spike at 03:14 — 4.2× normal request volume' },
+                    { icon: '🔗', text: 'Pool limit hit (max_connections=20, active=20)' },
+                    { icon: '⏱', text: 'Idle connection timeout too aggressive (30s)' },
+                  ].map((c) => (
+                    <div key={c.text} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                      <span style={{ flexShrink: 0 }}>{c.icon}</span>
+                      <span style={{ color: '#94a3b8', lineHeight: 1.5 }}>{c.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.05)' }} />
+              <div>
+                <p style={{ fontSize: '11px', fontWeight: 700, color: '#475569', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>Suggested Actions</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {[
+                    'Restart connection pool to clear blocked connections',
+                    'Increase pool size or add read replica',
+                    'Add retry logic with exponential backoff',
+                  ].map((a, i) => (
+                    <div key={a} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                      <span style={{ flexShrink: 0, width: '18px', height: '18px', background: 'rgba(0,229,180,0.1)', border: '1px solid rgba(0,229,180,0.2)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, color: '#00e5b4', fontFamily: "'DM Mono', monospace" }}>{i + 1}</span>
+                      <span style={{ color: '#94a3b8', lineHeight: 1.5 }}>{a}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Other features grid */}
         <div className="feature-grid">
           {[
