@@ -2,8 +2,55 @@ import PublicAuthButtons from '@/components/PublicAuthButtons';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Documentation – CheckAPI',
-  description: 'Complete documentation for CheckAPI — Silent Failure Detection, Regex patterns, JSON Path assertions, Heartbeat monitoring, and more.',
+  title: 'Documentation – CheckAPI | AI-Powered API Monitoring',
+  description: 'Complete documentation for CheckAPI — AI Incident Analysis, AI Auto-detect, Silent Failure Detection, JSON Path assertions, Regex patterns, Heartbeat monitoring, and more.',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is AI Incident Analysis in CheckAPI?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AI Incident Analysis automatically examines failed checks — including the response body, status code, headers, and configured assertions — to explain why an API check failed and suggest what may have caused it. It provides a root cause, impact assessment, and suggested fix in plain language.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'When does CheckAPI trigger AI Incident Analysis?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AI analysis triggers on four conditions: status code mismatch (unexpected HTTP status like 500 or 503), assertion failure (keyword, regex, JSON Path, or header assertion not passing), timeout (endpoint did not respond within the configured window), and connection errors (DNS failure or refused connection).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is AI Auto-detect in CheckAPI?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AI Auto-detect calls your endpoint, analyzes the real response, and automatically suggests the HTTP method, expected status code, JSON Path assertions, and keyword to monitor — so you can set up a monitor in seconds without manual configuration.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does CheckAPI train on my API response data?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. CheckAPI does not train on your data. AI analysis is performed on the actual response captured at the time of the failed check and is used only to generate the analysis for that specific incident.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is Silent Failure Detection?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Silent Failure Detection catches API failures that return HTTP 200 OK but contain broken or incorrect response bodies. CheckAPI validates the response using keyword matching, regex patterns, JSON Path assertions, and header assertions to ensure the API is truly healthy — not just reachable.',
+      },
+    },
+  ],
 };
 
 const sections = [
@@ -89,6 +136,10 @@ const sections = [
 export default function DocsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 dark:bg-gray-900/80 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
