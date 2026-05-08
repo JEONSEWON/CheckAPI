@@ -340,6 +340,31 @@ def get_monitor_checks(
     }
 
 
+@router.post("/{monitor_id}/toggle")
+def toggle_monitor(
+    monitor_id: str,
+    body: dict,
+    current_user: User = Depends(get_current_user_flexible),
+    db: Session = Depends(get_db)
+):
+    monitor = db.query(Monitor).filter(
+        Monitor.id == monitor_id,
+        Monitor.user_id == current_user.id
+    ).first()
+
+    if not monitor:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Monitor not found")
+
+    enabled = body.get("enabled", True)
+    monitor.is_active = enabled
+    monitor.updated_at = datetime.utcnow()
+    if enabled:
+        monitor.next_check_at = datetime.utcnow()
+
+    db.commit()
+    return {"message": "Monitor updated", "is_active": enabled}
+
+
 @router.post("/{monitor_id}/pause", response_model=MessageResponse)
 def pause_monitor(
     monitor_id: str,
