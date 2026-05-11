@@ -54,10 +54,22 @@ app.add_middleware(
 @app.middleware("http")
 async def public_cors(request: Request, call_next):
     """Allow all origins for public (unauthenticated) routes — needed for custom domain status pages."""
-    response = await call_next(request)
     if request.url.path.startswith("/api/v1/public/"):
+        if request.method == "OPTIONS":
+            from starlette.responses import Response
+            return Response(
+                status_code=200,
+                headers={
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, OPTIONS",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Max-Age": "86400",
+                },
+            )
+        response = await call_next(request)
         response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+        return response
+    return await call_next(request)
 
 
 # Include routers

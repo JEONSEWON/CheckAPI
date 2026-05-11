@@ -155,9 +155,9 @@ def create_monitor(
     # Validate interval
     validate_interval(locked_user, monitor_data.interval)
 
-    # Create monitor
+    # Create monitor (always under owner's ID so team members' monitors are visible)
     new_monitor = Monitor(
-        user_id=current_user.id,
+        user_id=locked_user.id,
         name=monitor_data.name,
         url=str(monitor_data.url),
         method=monitor_data.method,

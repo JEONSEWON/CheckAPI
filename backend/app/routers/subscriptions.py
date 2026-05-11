@@ -337,10 +337,8 @@ async def lemonsqueezy_webhook(request: Request, db: Session = Depends(get_db)):
 
             if subscription:
                 subscription.status = "expired"
-                db.commit()
-
                 user.plan = "free"
-                enforce_plan_constraints(user, db)
+                enforce_plan_constraints(user, db)  # commits subscription.status + user.plan together
                 print(f"✅ Subscription expired for user {user.email}, downgraded to free")
 
         elif event_name == "subscription_resumed":
