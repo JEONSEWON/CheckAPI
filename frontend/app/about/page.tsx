@@ -89,7 +89,7 @@ export default function AboutPage() {
             {
               icon: <Shield className="h-8 w-8 text-green-600" />,
               title: 'Free for Real Work',
-              description: "Free means free. No commercial-use restrictions, no credit card required, no 1-monitor limits. 10 monitors, all alert channels, actual production use — on the free plan."
+              description: "Free means free. No commercial-use restrictions, no credit card required, no 1-monitor limits. 5 monitors, all alert channels, actual production use — on the free plan."
             },
             {
               icon: <Code2 className="h-8 w-8 text-green-600" />,

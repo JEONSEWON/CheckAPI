@@ -8,7 +8,7 @@ const plans = [
   {
     name: 'Free', price: '$0', annualPrice: '$0', annualMonthly: '$0',
     badge: null, highlight: false, ctaHref: '/register', cta: 'Start Free',
-    features: ['10 monitors','5-minute checks','All alert channels','Public status page','30-day history','AI incident analysis','AI auto-detect','Commercial use allowed'],
+    features: ['5 monitors','5-minute checks','All alert channels','Public status page','30-day history','AI incident analysis','AI auto-detect','Commercial use allowed'],
   },
   {
     name: 'Starter', price: '$5', annualPrice: '$48', annualMonthly: '$4',

@@ -96,7 +96,7 @@ export default function SettingsPage() {
       monthlyPrice: '$0',
       annualPrice: '$0',
       annualMonthly: '$0',
-      features: ['10 monitors', '5-minute checks', 'All alert channels', 'Public status page', 'Keyword validation', 'SSL monitoring', '🤖 AI incident analysis', '✨ AI auto-detect assertions', '30-day history'],
+      features: ['5 monitors', '5-minute checks', 'All alert channels', 'Public status page', 'Keyword validation', 'SSL monitoring', '🤖 AI incident analysis', '✨ AI auto-detect assertions', '30-day history'],
     },
     {
       name: 'Starter',
@@ -174,7 +174,7 @@ export default function SettingsPage() {
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
                 <p>Your subscription will be cancelled, but you'll keep full access to your current plan until the billing period ends.</p>
-                <p>After that, your account will downgrade to the <strong className="text-gray-900 dark:text-white">Free plan</strong> (10 monitors, 5-minute checks). Excess monitors will be paused automatically.</p>
+                <p>After that, your account will downgrade to the <strong className="text-gray-900 dark:text-white">Free plan</strong> (5 monitors, 5-minute checks). Excess monitors will be paused automatically.</p>
               </div>
               <div className="flex gap-3">
                 <button

@@ -79,7 +79,7 @@ def get_effective_owner(current_user: User, db: Session) -> User:
 
 # Plan limits
 PLAN_LIMITS = {
-    "free":     {"max_monitors": 10,  "min_interval": 300, "history_hours": 720},    # 30 days
+    "free":     {"max_monitors": 5,   "min_interval": 300, "history_hours": 720},    # 30 days
     "starter":  {"max_monitors": 20,  "min_interval": 60,  "history_hours": 720},    # 30 days
     "pro":      {"max_monitors": 100, "min_interval": 30,  "history_hours": 2160},   # 90 days
     "business": {"max_monitors": -1,  "min_interval": 10,  "history_hours": 8760},   # 365 days

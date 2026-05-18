@@ -13,7 +13,7 @@ interface CreateMonitorModalProps {
 }
 
 const PLAN_MONITOR_LIMITS: Record<string, { count: number | string; next: string }> = {
-  free:     { count: 10,          next: 'Starter' },
+  free:     { count: 5,           next: 'Starter' },
   starter:  { count: 20,          next: 'Pro' },
   pro:      { count: 100,         next: 'Business' },
   business: { count: 'Unlimited', next: '' },

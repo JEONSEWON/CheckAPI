@@ -392,7 +392,7 @@ Header: X-Auth-Status  ==   "valid"`}</pre>
                   </thead>
                   <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                     {[
-                      ['Free', '5 minutes', '10', '30 days'],
+                      ['Free', '5 minutes', '5', '30 days'],
                       ['Starter', '1 minute', '20', '30 days'],
                       ['Pro', '30 seconds', '100', '90 days'],
                       ['Business', '10 seconds', 'Unlimited', '365 days'],
@@ -711,7 +711,7 @@ Assertions:
             <div id="free-plan" className="mb-10">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Free Plan</h3>
               <p>
-                The free plan includes <strong className="text-gray-800 dark:text-gray-200">10 monitors</strong> with 5-minute check intervals, all 5 alert channels, and 30-day data retention — with <strong className="text-gray-800 dark:text-gray-200">no commercial-use restrictions</strong>. No credit card required. Most monitoring tools restrict their free tier to personal projects only. CheckAPI doesn't.
+                The free plan includes <strong className="text-gray-800 dark:text-gray-200">5 monitors</strong> with 5-minute check intervals, all 5 alert channels, and 30-day data retention — with <strong className="text-gray-800 dark:text-gray-200">no commercial-use restrictions</strong>. No credit card required. Most monitoring tools restrict their free tier to personal projects only. CheckAPI doesn't.
               </p>
             </div>
 
@@ -728,7 +728,7 @@ Assertions:
                   </thead>
                   <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                     {[
-                      ['Free', '$0', '10', '5 min', '—', '—'],
+                      ['Free', '$0', '5', '5 min', '—', '—'],
                       ['Starter', '$5/mo', '20', '1 min', '—', '—'],
                       ['Pro', '$15/mo', '100', '30 sec', '5 members', '—'],
                       ['Business', '$49/mo', 'Unlimited', '10 sec', 'Unlimited', '✓'],

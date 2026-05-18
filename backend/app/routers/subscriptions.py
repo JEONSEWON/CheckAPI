@@ -37,7 +37,7 @@ def enforce_plan_constraints(user: User, db: Session) -> None:
 def enforce_monitor_limit(user: User, db: Session) -> int:
     """
     Deactivate excess monitors when a user is downgraded to free plan.
-    Keeps the 10 most recently created monitors active, deactivates the rest.
+    Keeps the 5 most recently created monitors active, deactivates the rest.
     Returns the number of monitors deactivated.
     """
     active_monitors = (

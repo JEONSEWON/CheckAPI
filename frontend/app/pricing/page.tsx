@@ -69,7 +69,7 @@ export default function PricingPage() {
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
               {[
-                { feature: 'Monitors', values: ['10', '20', '100', 'Unlimited'] },
+                { feature: 'Monitors', values: ['5', '20', '100', 'Unlimited'] },
                 { feature: 'Check interval', values: ['5 min', '1 min', '30 sec', '10 sec'] },
                 { feature: 'Check history', values: ['30 days', '30 days', '90 days', '365 days'] },
                 { feature: 'Alert channels', values: [true, true, true, true] },
@@ -181,7 +181,7 @@ export default function PricingPage() {
       {/* CTA */}
       <section className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Start monitoring for free</h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">No credit card required. 10 monitors free forever.</p>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">No credit card required. 5 monitors free forever.</p>
         <Link href="/register" className="inline-flex items-center gap-2 bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition font-semibold text-lg">
           Get Started Free
         </Link>

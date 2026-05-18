@@ -8,10 +8,10 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'CheckAPI — Free API Health Checker & Uptime Monitor',
-  description: 'Check your API\'s uptime, response time, and response body automatically. Set up in 60 seconds. Free plan — 10 monitors, all alert channels, no credit card.',
+  description: 'Check your API\'s uptime, response time, and response body automatically. Set up in 60 seconds. Free plan — 5 monitors, all alert channels, no credit card.',
   openGraph: {
     title: 'CheckAPI — Free API Health Checker & Uptime Monitor',
-    description: 'Check your API\'s uptime, response time, and response body automatically. Free plan — 10 monitors, all alert channels, no credit card.',
+    description: 'Check your API\'s uptime, response time, and response body automatically. Free plan — 5 monitors, all alert channels, no credit card.',
     url: 'https://checkapi.io',
     siteName: 'CheckAPI',
     type: 'website',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'CheckAPI — Free API Health Checker & Uptime Monitor',
-    description: 'Check your API\'s uptime, response time, and response body automatically. Free plan — 10 monitors, all alert channels, no credit card.',
+    description: 'Check your API\'s uptime, response time, and response body automatically. Free plan — 5 monitors, all alert channels, no credit card.',
     creator: '@imwon_dev',
   },
 };
@@ -266,7 +266,7 @@ export default function HomePage() {
             </a>
           </div>
 
-          <p style={{ fontSize: '13px', color: '#475569' }}>No credit card required · 5-minute setup · 10 monitors free</p>
+          <p style={{ fontSize: '13px', color: '#475569' }}>No credit card required · 5-minute setup · 5 monitors free</p>
 
           {/* Dashboard mockup */}
           <div className="glass-card" style={{ marginTop: '64px', overflow: 'hidden', maxWidth: '820px', margin: '64px auto 0' }}>
@@ -676,7 +676,7 @@ export default function HomePage() {
             Protect My API for Free
             <ArrowRight style={{ width: '16px', height: '16px' }} />
           </Link>
-          <p style={{ fontSize: '12px', color: '#475569', marginTop: '16px' }}>No credit card required · 10 monitors free forever</p>
+          <p style={{ fontSize: '12px', color: '#475569', marginTop: '16px' }}>No credit card required · 5 monitors free forever</p>
         </div>
       </section>
 
